@@ -152,7 +152,7 @@ Where things live:
 | `src/data/seed.ts` | **Demo** data. Fictional except event dates. |
 | `src/data/repoData.ts` | Loads the real data in `data/`. |
 | `scripts/` | Importers, the data validator, the date helper. Plain Node.js, no build step. |
-| `.github/workflows/` | CI for pull requests, deploy to GitHub Pages, monthly Wikidata re-import. |
+| `.github/workflows/` | CI for pull requests, monthly Wikidata re-import, optional manual GitHub Pages deploy. |
 
 ## Code style
 
@@ -190,7 +190,7 @@ The goal is code a newcomer can read top to bottom.
 - Every pull request needs one approving review from a maintainer before merging. Data pull requests are checked for sources first and foremost.
 - Reviewers explain requested changes in plain language and link the rule they're applying.
 - Disagreements about *facts* are settled with evidence (and may become a claim or date dispute on the site). Disagreements about *rules* go through governance.
-- Once merged to `main`, the site redeploys to GitHub Pages automatically.
+- Once merged to `main`, the live site (hosted on Render) redeploys automatically.
 
 ## Licence
 

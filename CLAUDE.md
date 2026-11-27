@@ -23,7 +23,8 @@ A 3D community-edited timeline of human history. Every claim shows who made it, 
 - `src/lib/forceLayout.ts` — claim map layout (labels off lines); `src/lib/usePanZoom.ts` — drag/pinch/wheel
 - `src/components/River.tsx` — 3D timeline (spans, imported-event instancing); `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
 - `scripts/` — `import-wikidata-ww2.mjs` (+ `lib/wikidata.mjs`), `validate-data.mjs` (+ `lib/validate.mjs`), `make-date.mjs`
-- `.github/workflows/` — `ci.yml` (PRs), `deploy.yml` (Pages), `import-wikidata.yml` (monthly re-import PR)
+- `.github/workflows/` — `ci.yml` (PRs), `import-wikidata.yml` (monthly re-import PR), `deploy.yml` (optional GitHub Pages, manual only)
+- Hosting: Render static site built from `main` (`npm ci && npm run build`, publish `dist`). Keep `base` at `/` for Render.
 
 ## Commands
 `npm run dev` · `npm test` · `npm run build` · `npm run check` (validate + test + build) · `npm run validate:data` · `npm run import:ww2` · `npm run date -- 1944-06-06`

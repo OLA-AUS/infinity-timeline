@@ -15,7 +15,7 @@
 - Claim map: force layout (labels never on lines), drag / pinch / scroll zoom, large mobile sizing
 - Real data as JSON files in `data/`, edited through pull requests, validated in CI
 - Wikidata importer: 250 WW2 events; monthly re-import opens a pull request
-- Static deploy to GitHub Pages
+- Static site on Render, built from `main` (GitHub Pages available as a manual alternative)
 - CONTRIBUTING.md, issue templates (bug, idea, data correction, date dispute), PR template
 
 ## Phase 1 — Real data, one field

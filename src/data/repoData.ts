@@ -8,7 +8,7 @@
 //   data/sources/<id>.json               one source (book, paper, archive record) per file
 //
 // Vite bundles these at build time (import.meta.glob), so the site stays fully static
-// and can be hosted on GitHub Pages with no server.
+// and can be hosted on any static host (Render, GitHub Pages) with no server.
 import type { Dataset, Entity, Source, TimelineEvent } from '../types';
 
 type EventFile = Omit<TimelineEvent, 'provenance'> & { $schema?: string; provenance?: TimelineEvent['provenance'] };

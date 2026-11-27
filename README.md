@@ -51,10 +51,17 @@ npm run import:ww2     # (re-)import WW2 events from Wikidata into data/events/w
 npm run date -- 1944-06-06   # print a date block ready to paste into a data file
 ```
 
-## Deploying (GitHub Pages)
-The site is fully static. Pushing to `main` runs `.github/workflows/deploy.yml`, which validates the data, runs the tests, builds, and publishes to `https://<owner>.github.io/<repo>/`.
-One-time setup in the repository: **Settings → Pages → Source: GitHub Actions**. For the monthly Wikidata re-import pull requests, also tick **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"**.
+## Deploying
+The site is fully static and hosted on **Render** as a static site built from `main`:
+- **Build command:** `npm ci && npm run build`
+- **Publish directory:** `dist`
+
+Merging a pull request into `main` triggers a Render redeploy. Every pull request is checked first by `.github/workflows/ci.yml` (data validation, tests, build).
+
+For the monthly Wikidata re-import pull requests, tick **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"** in the GitHub repository.
+
+GitHub Pages is an optional alternative (useful for forks): enable **Settings → Pages → Source: GitHub Actions**, then run the **Deploy to GitHub Pages (manual)** workflow from the Actions tab.
 
 ## Stack
-React 18 · TypeScript · Vite · three.js via React Three Fiber + drei · Vitest · GitHub Pages.
+React 18 · TypeScript · Vite · three.js via React Three Fiber + drei · Vitest · hosted on Render.
 For now the data is versioned by git (JSON files + pull requests). Planned backend: Postgres (graph via adjacency tables) + an append-only event log for versioning. See `docs/ROADMAP.md`.
