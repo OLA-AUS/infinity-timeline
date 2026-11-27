@@ -21,7 +21,9 @@ A 3D community-edited timeline of human history. Every claim shows who made it, 
 - `src/lib/trust.ts` — trust scoring + funding propagation; `src/lib/status.ts` — claim status
 - `src/lib/dates.ts` — FuzzyDate helpers/formatting; `src/lib/dateDispute.ts` — resolve disputed dates
 - `src/lib/forceLayout.ts` — claim map layout (labels off lines); `src/lib/usePanZoom.ts` — drag/pinch/wheel
-- `src/components/River.tsx` — 3D timeline (spans, imported-event instancing); `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
+- `src/lib/timeScale.ts` — river time zoom (windows, linear-inside/squeezed-outside scale, breadcrumbs); `src/lib/importance.ts` — event importance + LOD thresholds; `src/lib/cluster.ts` — screen-space clustering / label planning; `src/lib/search.ts`
+- `src/components/River.tsx` — 3D timeline (LOD planner, clusters, faint dots, zoom gestures, ≥44px hit areas on mobile); `RiverSpans.tsx` — uncertainty spans; `TimeNav.tsx` — breadcrumb + overview bar; `SearchBar.tsx`; `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
+- Every 3D position goes through the current `TimeScale` (`place()` in RiverSpans.tsx) — never call `yearToS` directly in the scene.
 - `scripts/` — `import-wikidata-ww2.mjs` (+ `lib/wikidata.mjs`), `validate-data.mjs` (+ `lib/validate.mjs`), `make-date.mjs`
 - `.github/workflows/` — `ci.yml` (PRs), `import-wikidata.yml` (monthly re-import PR), `deploy.yml` (optional GitHub Pages, manual only)
 - Hosting: Render static site built from `main` (`npm ci && npm run build`, publish `dist`). Keep `base` at `/` for Render.
@@ -35,4 +37,4 @@ On Windows Git Bash, set `MSYS_NO_PATHCONV=1` when passing `BASE_PATH=/repo/` to
 2. Voting with separate agree / well-sourced signals.
 3. Edit history UI and "view as of date".
 4. OpenAlex importer (Wikidata WW2 importer done); topics/claims as data files so date disputes can be opened by PR.
-5. Zoom levels on the river — imported WW2 events crowd into ~3 river units at the current log scale.
+5. Level-of-detail *streaming* (load data per zoom window) once data outgrows one bundle; river zoom, clustering, importance and search are done.

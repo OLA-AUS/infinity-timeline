@@ -41,6 +41,12 @@ In the claim map, **drag** to move, **pinch or scroll** to zoom, and tap a bubbl
 
 **Uncertain dates** glow as a span on the river from the earliest to the latest possible moment, brightest at the best guess. **Disputed dates** glow amber, with a marker for each proposal still standing — try *"When did WW2 actually begin?"*.
 
+**Zooming time.** Pinch, **Ctrl + scroll** or the **+ / −** keys zoom the river's timescale through *all time → century → decade → year → month → day*. You can also click the water and choose **"Zoom into this period"**. The zoomed period gets an even, straight stretch of river; the rest of history stays visible but squeezed. A breadcrumb at the top (*All time › 1900s › 1930s › 1939 › Sep 1939*) zooms back out, and a bar above the slider shows where the zoomed period sits in all of history.
+
+**Crowded periods.** Events whose bubbles would overlap merge into a **cluster** showing how many events it holds and a ring coloured by field; click it to zoom into the period it covers. Each event has an explainable **importance** score (debates, links, cited sources, and for Wikidata imports how many Wikipedias cover it). Zoomed out, only important events get labelled bubbles; the rest are faint dots until you zoom in.
+
+**Search** (the 🔍 button on phones) matches events, people/organisations and claims as you type, with field filters. Picking a result flies there, zooms to a suitable level and highlights it. Everything you can tap on a phone is at least 44px.
+
 > ⚠️ All seed data in `src/data/seed.ts` is **demo data**. Sources, organisations, fines and poll numbers are fictional placeholders to show the mechanics — replace with real, cited data. Real data lives in `data/`.
 
 ## Data & editing

@@ -12,7 +12,7 @@ export const SOURCE_TYPES = ['meta_analysis', 'rct', 'peer_reviewed', 'book', 'p
 const EVENT_KEYS = ['$schema', 'id', 'title', 'summary', 'field', 'date', 'end', 'topicIds', 'provenance'];
 const ENTITY_KEYS = ['$schema', 'id', 'name', 'kind', 'field', 'founded', 'description'];
 const SOURCE_KEYS = ['$schema', 'id', 'title', 'type', 'publishedAt', 'authorIds', 'institutionId', 'funderIds', 'conflictOfInterest', 'retracted', 'url'];
-const PROVENANCE_KEYS = ['importedFrom', 'qid', 'retrievedAt', 'wikipedia', 'manualEdits', 'conflictingValues'];
+const PROVENANCE_KEYS = ['importedFrom', 'qid', 'retrievedAt', 'wikipedia', 'sitelinks', 'manualEdits', 'conflictingValues'];
 
 const isStr = (v) => typeof v === 'string' && v.trim().length > 0;
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -58,6 +58,7 @@ export function checkEvent(ev, fileBase) {
     if (!['wikidata', 'manual'].includes(p.importedFrom)) errs.push('provenance.importedFrom must be "wikidata" or "manual"');
     if (p.importedFrom === 'wikidata' && !/^Q\d+$/.test(p.qid ?? '')) errs.push('provenance.qid must look like Q12345');
     if (p.manualEdits !== undefined && typeof p.manualEdits !== 'boolean') errs.push('provenance.manualEdits must be true or false');
+    if (p.sitelinks !== undefined && !(Number.isInteger(p.sitelinks) && p.sitelinks >= 0)) errs.push('provenance.sitelinks must be a whole number');
     errs.push(...unknownKeys(p, PROVENANCE_KEYS, 'provenance'));
   }
   // The file name must match the id (or the Wikidata id for imports) so files are easy to find.

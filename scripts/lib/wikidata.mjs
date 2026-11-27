@@ -194,7 +194,7 @@ export function groupDetails(bindings) {
  * One grouped item → our event JSON (the shape documented in data/schema/event.schema.json),
  * or null if it can't be used (no English label, no usable date).
  */
-export function itemToEvent(item, { retrievedAt, field = 'politics' }) {
+export function itemToEvent(item, { retrievedAt, field = 'politics', sitelinks }) {
   if (!item.label || item.label === item.qid) return null; // no English name yet
   const points = [...item.point.values()].filter(Boolean);
   const starts = [...item.start.values()].filter(Boolean);
@@ -209,6 +209,7 @@ export function itemToEvent(item, { retrievedAt, field = 'politics' }) {
 
   const provenance = { importedFrom: 'wikidata', qid: item.qid, retrievedAt };
   if (item.wikipedia) provenance.wikipedia = item.wikipedia;
+  if (Number.isInteger(sitelinks)) provenance.sitelinks = sitelinks;
   if (main.conflicting) provenance.conflictingValues = main.conflicting;
   provenance.manualEdits = false;
 
