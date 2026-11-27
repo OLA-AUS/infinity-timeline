@@ -39,7 +39,7 @@
 - Correlation tooling (lagged correlation between opinion series and events) with explicit "correlation ≠ causation" framing and causal-claim templates
 
 ## Phase 4 — Scale
-- ✅ Expand time in place (normal → months → days) with the chosen moment anchored on screen; overlapping bubbles fan out; hover magnifier; importance-based level of detail; search
+- ✅ Scale bar (Full river · Period · Years · Months · Weeks · Days) with anchored, animated level changes; overlapping bubbles fan out by date and expand into nested periods with a breadcrumb, end caps and Continue; hover magnifier; importance-based level of detail; search
 - Level-of-detail *streaming* (load data per expanded period) and cosmic-time zoom
 - More fields, translations
 - Public data dumps, API for researchers

@@ -3,31 +3,33 @@
 // What's drawn:
 //   • Lanes      — one coloured line per field, following the river's meander
 //   • Events     — one glowing bubble per event; ringed ones have debates you can dive into.
-//                  On desktop, bubbles under the cursor swell up (a magnifier) so crowded
-//                  spots are easier to read.
-//   • Faint dots — events not important enough for the normal view (src/lib/importance.ts).
-//                  Expand time around them and they become bubbles.
+//                  On desktop, bubbles under the cursor swell up (a magnifier).
+//   • Faint dots — events not important enough for the full river (src/lib/importance.ts),
+//                  and everything outside an expanded window
 //   • Spans      — glowing ranges for uncertain and disputed dates (RiverSpans.tsx)
 //   • Entities   — small diamonds where people and organisations were born or founded
 //
-// Clicking a bubble selects it and opens a small menu: open its claim map, or expand time
-// around it. Clicking where several bubbles overlap fans them out in a labelled ring first
-// (like overlapping map pins), so you can pick any one; clicking elsewhere closes the ring.
+// Time scale (src/lib/timeScale.ts, src/lib/viewStack.ts): the scale bar in the header
+// picks Full river · Period · Years · Months · Weeks · Days. Any level other than the full
+// river shows a *window* of time stretched evenly along the river. Inside the window the
+// river is brighter and wider, with ticks; outside it everything is faded, unlabelled and
+// squeezed. Each edge has an end cap with "Continue" (slide the window along by its own
+// length) and "Collapse" (go back a step).
 //
-// Expand in place (src/lib/timeScale.ts + src/lib/cameraAnchor.ts): double-click (or
-// double-tap) the river, or use a bubble's menu, to expand time around that moment:
-// normal → months → days. The expanded period becomes a brighter, wider stretch of river
-// with month or day ticks. The change animates over half a second, and the moment you
-// chose stays exactly where it was on screen the whole time — the camera is recalculated
-// every frame so nothing scrolls away or jolts.
+// Clicking a bubble selects it (a small menu opens its claim map). Clicking where several
+// bubbles overlap dims the scene and fans them out in a ring, in date order clockwise from
+// the top, with a floating "Expand these N events" button: that expands exactly their span
+// into a period (and periods can be expanded again inside each other).
 //
-// Travel: scroll, drag, swipe or the arrow keys. + / − expand and collapse around the
-// moment in the middle of the screen.
+// Every change animates for about half a second with no jumps (src/lib/cameraAnchor.ts).
+// The big date in the header always shows the time at the camera.
+//
+// Travel: scroll, drag, swipe or the arrow keys. + / − step the scale bar.
 //
 // While a claim map is open, the main river is hidden and the canvas shows a single topic
 // river instead (TopicRiver.tsx), with only the events related to the map's subject.
 import { Html, Line, Stars } from '@react-three/drei';
-import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import * as THREE from 'three';
 import type { Dataset, TimelineEvent } from '../types';
@@ -36,82 +38,74 @@ import { FIELD_COLOR, laneOffset, riverX } from '../lib/time';
 import { formatShort, formatYear } from '../lib/dates';
 import { resolveEventDate, type ResolvedDate } from '../lib/dateDispute';
 import { importanceMap, LOD_THRESHOLD } from '../lib/importance';
-import { FAN_MAX, fanPositions, fanRadius, planKey, planScreen, type RiverPlan, type ScreenItem } from '../lib/cluster';
-import { anchorPose, cameraFrame, easeOut, EXPAND_MS, LATERAL_FADE, meander, RIG, type CameraPose } from '../lib/cameraAnchor';
-import {
-  blendScales,
-  deeper,
-  makeScale,
-  windowLabel,
-  windowTicks,
-  type ExpandLevel,
-  type TimeScale,
-  type TimeWindow,
-} from '../lib/timeScale';
+import { FAN_ROW, fanPositions, fanRadius, overlapping, planKey, planScreen, type RiverPlan, type ScreenItem } from '../lib/cluster';
+import { anchorMoments, cameraFrame, cameraTime, easeOut, EXPAND_MS, meander, RIG, transitionPose, type CameraPose } from '../lib/cameraAnchor';
+import { blendScales, formatAtUnit, makeScale, windowTicks, type ScaleLevel, type TimeScale, type TimeWindow } from '../lib/timeScale';
+import { currentWindow, type ViewChange } from '../lib/viewStack';
 import { place, spanVisible, UncertaintySpan } from './RiverSpans';
 import { HitArea, MIN_TAP_RADIUS } from './HitArea';
 import { TopicScene, type TopicProps } from './TopicRiver';
 
 /**
- * A request to change how far time is expanded. `seq` goes up by one for every request, so
- * the river knows to animate even when asked for the same period twice. `anchor` is the
- * moment that must stay still on screen; `flyTo` (optional) is where to travel afterwards.
+ * A request to change what the river shows (from App.tsx). `seq` goes up by one each time,
+ * so the river animates even when asked for the same thing twice.
  */
-export interface Expansion {
-  window: TimeWindow | null;
-  anchor: number;
-  flyTo?: number;
+export interface ViewRequest {
+  change: ViewChange;
   seq: number;
 }
 
 interface Props {
   data: Dataset;
-  expansion: Expansion;
-  level: ExpandLevel;
+  view: ViewRequest;
+  level: ScaleLevel;
   targetS: number;
   setTargetS: (s: number | ((s: number) => number)) => void;
-  onYear: (y: number) => void;
+  /** The time at the camera, for the big date readout. */
+  onCameraTime: (y: number) => void;
   onOpenEvent: (id: string) => void;
   onOpenEntity: (id: string) => void;
   highlightId?: string;
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
   mobile: boolean;
   showImported: boolean;
-  /** Expand time to `level` around `anchorYear` (keeping that moment still on screen). */
-  onExpand: (level: ExpandLevel, anchorYear: number) => void;
-  /** + / − keys: expand one level further, or collapse one level, around the middle of the screen. */
-  onExpandStep: (dir: 1 | -1) => void;
+  /** "Expand these N events": expand exactly their span into a period. */
+  onExpandCluster: (eventIds: string[]) => void;
+  /** End caps: slide the window along (+1 forwards, −1 back), or go back a step. */
+  onContinue: (dir: 1 | -1) => void;
+  onCollapse: () => void;
+  /** + / − keys: one step along the scale bar. */
+  onStep: (dir: 1 | -1) => void;
   /** When set, show this topic river instead of the main river (a claim map is open). */
   topic?: TopicProps;
 }
 
-/** Years that get a big faint label beside the river (outside any expanded period). */
+/** Years that get a big faint label beside the full river. */
 const TICKS = [-3000, -2000, -1000, 0, 500, 1000, 1500, 1700, 1800, 1900, 1950, 1980, 2000, 2010, 2020, 2025];
-
-/**
- * The "focus": how far ahead of the camera the moment you're looking at sits. The HUD date,
- * expanding with + / − and "fly to" all use this point, so what's in the middle of the screen
- * is the date shown. The phone camera looks down more steeply and its footer covers the bottom
- * of the screen, so its focus is further ahead.
- */
-export const FOCUS_AHEAD = { desktop: 2, mobile: 15 };
-
 /** How far ahead you can see (matches the fog). Events further away aren't planned. */
 const VIEW_DISTANCE = 95;
 /** Bubbles within this many pixels of the cursor swell up (desktop only). */
 const MAGNIFY_RADIUS = 90;
-/** Two clicks on the water within this long (ms) and this close (px) count as a double-click. */
-const DOUBLE_TAP = { ms: 350, px: 30 };
 
 /** The cursor's position over the canvas in pixels (null when it's not over it). Shared, not state. */
 type Cursor = MutableRefObject<{ x: number; y: number } | null>;
 
-/** The water and one coloured line per field lane. The expanded period gets a brighter, wider stretch. */
-function Lanes({ scale, onWaterClick }: { scale: TimeScale; onWaterClick: (e: ThreeEvent<MouseEvent>) => void }) {
+/** A fanned-out cluster: its events (sorted by date) and where in 3D the ring is centred. */
+type FanState = { ids: string[]; at: [number, number, number] } | null;
+
+/** Is a moment inside the window (or is there no window)? */
+const inside = (w: TimeWindow | null, t: number) => !w || (t >= w.start && t < w.end);
+
+/**
+ * The water and one coloured line per field lane. Inside a window: a brighter, wider stretch.
+ * Outside it: a dark veil over the water and lanes, so the squeezed rest of history fades back.
+ */
+function Lanes({ scale }: { scale: TimeScale }) {
   const from = scale.sMin - 10;
   const to = scale.sMax + 30;
-  // Points along the river, sideways position from the year (so expanding never shifts it).
-  const { lanes, water, bright } = useMemo(() => {
-    const xAt = (s: number) => meander(scale.toYear(s));
+  const { lanes, water, bright, veils } = useMemo(() => {
+    const xAt = (s: number) => meander(scale.toYear(s)); // sideways position comes from the year
     const lanes = FIELDS.map((f) => {
       const pts: [number, number, number][] = [];
       for (let s = from; s <= to; s += 2) pts.push([xAt(s) + laneOffset(f), 0, -s]);
@@ -135,31 +129,39 @@ function Lanes({ scale, onWaterClick }: { scale: TimeScale; onWaterClick: (e: Th
       return g;
     };
     const w = scale.window;
+    const a = w ? scale.toS(w.start) : 0;
+    const b = w ? scale.toS(w.end) : 0;
     return {
       lanes,
       water: ribbon(from, to, 8, -0.4, 1),
-      bright: w ? ribbon(scale.toS(w.start), scale.toS(w.end), 10.5, -0.38, 0.5) : null,
+      bright: w ? ribbon(a, b, 10.5, -0.38, 0.5) : null,
+      veils: w ? [ribbon(from, a, 9, 0.05, 1), ribbon(b, to, 9, 0.05, 1)] : [],
     };
   }, [scale, from, to]);
-  useEffect(() => () => { water.dispose(); bright?.dispose(); }, [water, bright]);
+  useEffect(() => () => { water.dispose(); bright?.dispose(); veils.forEach((v) => v.dispose()); }, [water, bright, veils]);
   return (
     <group>
-      <mesh geometry={water} onClick={onWaterClick}>
+      <mesh geometry={water}>
         <meshBasicMaterial color="#123063" transparent opacity={0.35} side={THREE.DoubleSide} />
       </mesh>
       {bright && (
-        <mesh geometry={bright} onClick={onWaterClick}>
+        <mesh geometry={bright}>
           <meshBasicMaterial color="#2f6bff" transparent opacity={0.32} side={THREE.DoubleSide} depthWrite={false} />
         </mesh>
       )}
       {lanes.map(({ f, pts }) => (
         <Line key={f} points={pts} color={FIELD_COLOR[f]} lineWidth={1.5} transparent opacity={0.55} />
       ))}
+      {veils.map((v, i) => (
+        <mesh key={i} geometry={v} renderOrder={2}>
+          <meshBasicMaterial color="#05070f" transparent opacity={0.6} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-/** Drifting specks of light, for a sense of flow. Purely decorative, so they ignore expansion. */
+/** Drifting specks of light, for a sense of flow. Purely decorative, so they ignore the scale. */
 function Particles() {
   const ref = useRef<THREE.Points>(null);
   const count = 1500;
@@ -188,27 +190,31 @@ function Particles() {
   );
 }
 
-/** Year labels beside the river; in an expanded period, month or day ticks across it and glowing edges. */
+/** Year labels beside the full river, or the window's ticks (years / months / weeks / days) across it. */
 function Ticks({ scale }: { scale: TimeScale }) {
   const w = scale.window;
-  const outside = TICKS.filter((y) => !w || y < w.start || y > w.end);
-  const inside = windowTicks(w);
   const at = (year: number) => ({ s: scale.toS(year), x: meander(year) });
+  if (!w) {
+    return (
+      <group>
+        {TICKS.map((y) => {
+          const { s, x } = at(y);
+          return (
+            <Html key={y} position={[x - 9, 0, -s]} center distanceFactor={18} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
+              <div className="tick">{formatYear(y)}</div>
+            </Html>
+          );
+        })}
+      </group>
+    );
+  }
   return (
     <group>
-      {outside.map((y) => {
-        const { s, x } = at(y);
-        return (
-          <Html key={y} position={[x - 9, 0, -s]} center distanceFactor={18} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
-            <div className="tick">{formatYear(y)}</div>
-          </Html>
-        );
-      })}
-      {inside.map((t) => {
+      {windowTicks(w).map((t) => {
         const { s, x } = at(t.year);
         return (
           <group key={`in-${t.year}`}>
-            {/* A line across the river: full width for months / every 5th day, short for other days. */}
+            {/* A line across the river for major ticks; a short notch for minor ones. */}
             <Line
               points={t.major ? [[x - 9, 0.01, -s], [x + 9, 0.01, -s]] : [[x - 9, 0.01, -s], [x - 6.8, 0.01, -s]]}
               color={t.major ? '#7aa2ff' : '#4d5875'}
@@ -222,13 +228,37 @@ function Ticks({ scale }: { scale: TimeScale }) {
           </group>
         );
       })}
-      {w && [w.start, w.end].map((year, i) => {
-        const { s, x } = at(year);
+    </group>
+  );
+}
+
+/**
+ * An end cap at each edge of the window: a bright line across the river and a small panel
+ * "End of period · Jun 1943" with Continue (slide the window along by its own length) and
+ * Collapse (go back a step).
+ */
+function EndCaps({ scale, mobile, onContinue, onCollapse }: { scale: TimeScale; mobile: boolean; onContinue: (dir: 1 | -1) => void; onCollapse: () => void }) {
+  const w = scale.window;
+  if (!w) return null;
+  const unit = w.tick === 'years' ? 'months' : 'days';
+  return (
+    <group>
+      {([['start', w.start, -1], ['end', w.end, 1]] as const).map(([edge, year, dir]) => {
+        const s = scale.toS(year);
+        const x = meander(year);
+        const when = formatAtUnit(edge === 'end' ? year - 1e-6 : year, unit);
         return (
-          <group key={`edge-${i}`}>
-            <Line points={[[x - 10.5, 0.02, -s], [x + 10.5, 0.02, -s]]} color="#7aa2ff" lineWidth={2.5} transparent opacity={0.9} />
-            <Html position={[x + 12, 0.2, -s]} center distanceFactor={18} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
-              <div className="gate-label">{i === 0 ? `▶ ${windowLabel(w)}` : `${windowLabel(w)} ◀`}</div>
+          <group key={edge}>
+            <Line points={[[x - 10.5, 0.03, -s], [x + 10.5, 0.03, -s]]} color="#7aa2ff" lineWidth={3} transparent opacity={0.95} />
+            {/* Beside the river on desktop; in the middle of it on phones, where the river is wider than the screen. Fixed size, so it stays readable from afar. */}
+            <Html position={[x + (mobile ? 0 : 13.5), 0.4, -s]} center zIndexRange={[8, 7]}>
+              <div className={`end-cap ${edge}`}>
+                <div className="ec-title">{edge === 'start' ? 'Start of period' : 'End of period'} · <b>{when}</b></div>
+                <div className="ec-buttons">
+                  <button onClick={() => onContinue(dir)}>{dir < 0 ? '← Continue' : 'Continue →'}</button>
+                  <button onClick={onCollapse}>Collapse</button>
+                </div>
+              </div>
             </Html>
           </group>
         );
@@ -238,9 +268,8 @@ function Ticks({ scale }: { scale: TimeScale }) {
 }
 
 /**
- * One event as its own bubble. On desktop it swells as the cursor comes near, and shows
- * its label then too. Clicking it goes to the scene, which decides between fanning out a
- * stack or opening the bubble's menu.
+ * One event as its own bubble. On desktop it swells as the cursor comes near, and shows its
+ * label then too. Outside the expanded window it's drawn faded, with no label.
  */
 function EventNode({ ev, resolved, scale, onClick, highlighted, selected, showLabel, mobile, cursor }: {
   ev: TimelineEvent;
@@ -318,15 +347,16 @@ function hash01(s: string, salt = 0): number {
 }
 
 /**
- * Every event that isn't important enough for this level, as one batch of small dots
- * (one draw call for hundreds). Dots not in the faint set are shrunk to nothing. The small
- * sideways/up offset only stops dots on the same day sitting on top of each other.
- * Hover shows a label on desktop. On phones the dots aren't tappable (they're far below
- * the 44px minimum) — expand time around them and they become proper bubbles.
+ * Small dots, all in one batch (one draw call for hundreds): events not important enough
+ * for a bubble at this level, and — darker, with no hover label — everything outside the
+ * expanded window. Other events are shrunk to nothing. The small sideways/up offset only
+ * stops dots on the same day sitting on top of each other. On phones the dots aren't
+ * tappable (far below 44px); choose a finer level and they become proper bubbles.
  */
-function FaintDots({ events, faint, resolved, scale, mobile, onSelect }: {
+function FaintDots({ events, faint, outside, resolved, scale, mobile, onSelect }: {
   events: TimelineEvent[];
   faint: Set<string>;
+  outside: Set<string>;
   resolved: Map<string, ResolvedDate>;
   scale: TimeScale;
   mobile: boolean;
@@ -349,17 +379,19 @@ function FaintDots({ events, faint, resolved, scale, mobile, onSelect }: {
     const m = new THREE.Matrix4();
     const color = new THREE.Color();
     events.forEach((ev, i) => {
-      const sc = faint.has(ev.id) ? 1 : 0;
+      const out = outside.has(ev.id);
+      const sc = out ? 0.7 : faint.has(ev.id) ? 1 : 0;
       mesh.setMatrixAt(i, m.makeScale(sc, sc, sc).setPosition(points[i]));
-      mesh.setColorAt(i, color.set(FIELD_COLOR[ev.field]));
+      mesh.setColorAt(i, color.set(FIELD_COLOR[ev.field]).multiplyScalar(out ? 0.3 : 1));
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere(); // needed so hover finds the instances
-  }, [events, points, faint]);
+  }, [events, points, faint, outside]);
 
   if (events.length === 0) return null;
-  const hovered = hover !== null && faint.has(events[hover]?.id) ? events[hover] : undefined;
+  const hoverable = (i: number | null) => i !== null && faint.has(events[i]?.id) && !outside.has(events[i]?.id);
+  const hovered = hoverable(hover) ? events[hover!] : undefined;
   return (
     <group>
       <instancedMesh
@@ -367,9 +399,9 @@ function FaintDots({ events, faint, resolved, scale, mobile, onSelect }: {
         ref={ref}
         args={[undefined, undefined, events.length]}
         {...(mobile ? { raycast: () => null } : {})}
-        onPointerMove={(e) => { e.stopPropagation(); setHover(e.instanceId ?? null); document.body.style.cursor = 'pointer'; }}
+        onPointerMove={(e) => { e.stopPropagation(); setHover(e.instanceId ?? null); document.body.style.cursor = hoverable(e.instanceId ?? null) ? 'pointer' : 'auto'; }}
         onPointerOut={() => { setHover(null); document.body.style.cursor = 'auto'; }}
-        onClick={(e) => { e.stopPropagation(); if (e.instanceId !== undefined && faint.has(events[e.instanceId].id)) onSelect(events[e.instanceId].id); }}
+        onClick={(e) => { e.stopPropagation(); if (e.instanceId !== undefined && hoverable(e.instanceId)) onSelect(events[e.instanceId].id); }}
       >
         <sphereGeometry args={[0.09, 8, 8]} />
         <meshBasicMaterial transparent opacity={0.45} />
@@ -385,23 +417,24 @@ function FaintDots({ events, faint, resolved, scale, mobile, onSelect }: {
   );
 }
 
-/** A person or organisation, at the date they were born or founded. */
-function EntityNode({ en, scale, onOpen, highlighted, mobile }: {
+/** A person or organisation, at the date they were born or founded. Faded outside the window. */
+function EntityNode({ en, scale, onOpen, highlighted, mobile, outside: out }: {
   en: Dataset['entities'][number];
   scale: TimeScale;
   onOpen: () => void;
   highlighted: boolean;
   mobile: boolean;
+  outside: boolean;
 }) {
   const [hover, setHover] = useState(false);
   return (
     <group position={place(scale, en.founded.best, en.field, -0.1)}>
       <mesh scale={highlighted ? 2.2 : hover ? 1.5 : 1}>
         <octahedronGeometry args={[0.22]} />
-        <meshStandardMaterial color="#ffffff" emissive={highlighted ? '#ffe066' : '#8899aa'} emissiveIntensity={highlighted ? 2 : 0.6} />
+        <meshStandardMaterial color="#ffffff" emissive={highlighted ? '#ffe066' : '#8899aa'} emissiveIntensity={highlighted ? 2 : 0.6} transparent opacity={out ? 0.2 : 1} />
       </mesh>
-      <HitArea radius={0.3} minPx={mobile ? MIN_TAP_RADIUS.mobile : MIN_TAP_RADIUS.desktop} onClick={onOpen} onOver={() => setHover(true)} onOut={() => setHover(false)} />
-      {(hover || highlighted) && (
+      {!out && <HitArea radius={0.3} minPx={mobile ? MIN_TAP_RADIUS.mobile : MIN_TAP_RADIUS.desktop} onClick={onOpen} onOver={() => setHover(true)} onOut={() => setHover(false)} />}
+      {!out && (hover || highlighted) && (
         <Html position={[0, 0.7, 0]} center distanceFactor={14} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
           <div className="en-label">{en.name} <span>· founded {formatShort(en.founded)}</span></div>
         </Html>
@@ -411,82 +444,84 @@ function EntityNode({ en, scale, onOpen, highlighted, mobile }: {
 }
 
 /**
- * Overlapping bubbles fanned out in a ring around where you clicked, each with its date and
- * title, like spreading out overlapping map pins. Pick one to open its menu. If there are
- * too many to fit, the last slot offers to expand time around them instead.
+ * Overlapping bubbles fanned out in a ring around where you clicked, in date order clockwise
+ * from the top, each labelled with its date and title. Above the ring floats a button to
+ * expand exactly their span. Picking one opens its menu.
  */
-function FanRing({ events, resolved, at, canExpand, onPick, onExpand }: {
-  events: TimelineEvent[];
+function FanRing({ events, resolved, at, onPick, onExpand }: {
+  events: TimelineEvent[]; // already sorted by date
   resolved: Map<string, ResolvedDate>;
   at: [number, number, number];
-  canExpand: boolean;
   onPick: (id: string) => void;
   onExpand: () => void;
 }) {
-  const overflow = events.length > FAN_MAX;
-  const shown = overflow ? events.slice(0, FAN_MAX - 1) : events;
-  const slots = shown.length + (overflow ? 1 : 0);
-  const R = fanRadius(slots);
   const { camera, size } = useThree();
-  const sx = ((new THREE.Vector3(...at).project(camera).x + 1) / 2) * size.width;
-  const reach = R + 200; // ring radius plus a label
+  const n = events.length;
+  const R = fanRadius(n);
+  const sp = new THREE.Vector3(...at).project(camera);
+  const sx = ((sp.x + 1) / 2) * size.width;
+  const sy = ((1 - sp.y) / 2) * size.height;
+  const LABEL = size.width < 760 ? 175 : 225; // how far a button reaches from its dot
   // A narrow screen has no room for labels on both sides: put them all on the roomier side.
-  const only = size.width < reach * 2 + 40 ? (sx < size.width / 2 ? 'right' : 'left') : undefined;
-  const pos = fanPositions(slots, R, only);
-  const box = Math.max(R, ...pos.map((p) => Math.abs(p.y))) * 2 + 60;
-  // Near a screen edge, slide the buttons (not the hub) sideways so their labels stay on screen.
-  // Each button reaches about LABEL px from its dot, away from the hub.
-  const LABEL = size.width < 760 ? 175 : 225;
+  const only = size.width < (R + LABEL) * 2 + 40 ? (sx < size.width / 2 ? 'right' : 'left') : undefined;
+  // Tighter rows when there are lots (still ≥ 44px on phones).
+  const row = size.width < 760 ? FAN_ROW : n > 16 ? 38 : FAN_ROW;
+  const pos = fanPositions(n, R, only, row);
+  const half = Math.max(R, ...pos.map((p) => Math.abs(p.y))) + 30;
+  const box = half * 2;
+  // Keep the buttons on screen: slide them (not the hub) sideways / up / down near an edge.
   const left = Math.min(...pos.map((p) => p.x - (p.side === 'left' ? LABEL : 13)));
   const right = Math.max(...pos.map((p) => p.x + (p.side === 'right' ? LABEL : 13)));
   const dx = Math.max(0, 8 - (sx + left)) - Math.max(0, sx + right - (size.width - 8));
+  const topY = -half - 50; // the expand button sits above the ring
+  const dy = Math.max(0, 8 - (sy + topY)) - Math.max(0, sy + half - (size.height - 8));
+  const years = events.map((e) => resolved.get(e.id)!.date);
+  const first = events[0];
+  const last = events[n - 1];
+  // The expand button sits over the middle of the labels (not the hub, which may be near an
+  // edge), slid inwards so its whole width stays on screen. Width is estimated from its text.
+  const expandText = `Expand these ${n} events · ${formatShort(years[0])} – ${formatShort(years[n - 1])}`;
+  const btnHalf = Math.min(size.width - 32, size.width < 760 ? 320 : 9999, expandText.length * 7.4 + 34) / 2;
+  const centre = sx + dx + (left + right) / 2;
+  const btnX = Math.min(Math.max(centre, btnHalf + 8), size.width - btnHalf - 8) - sx + half;
+
   return (
-    <Html position={at} center zIndexRange={[30, 0]} style={{ pointerEvents: 'none' }}>
-      <div className="fan" style={{ width: box, height: box }} role="menu" aria-label={`${events.length} overlapping events`}>
+    <Html position={at} center zIndexRange={[1000, 999]} style={{ pointerEvents: 'none' }}>
+      <div className="fan" style={{ width: box, height: box }} role="menu" aria-label={`${n} overlapping events`}>
         <svg className="fan-lines" width={box} height={box} aria-hidden>
-          {pos.map((p, i) => <line key={i} x1={box / 2} y1={box / 2} x2={box / 2 + p.x + dx} y2={box / 2 + p.y} />)}
+          {pos.map((p, i) => <line key={i} x1={half} y1={half} x2={half + p.x + dx} y2={half + p.y + dy} />)}
         </svg>
-        <div className="fan-hub" style={{ left: box / 2, top: box / 2 }}>{events.length}</div>
-        {shown.map((ev, i) => {
+        <div className="fan-hub" style={{ left: half, top: half }}>{n}</div>
+        <button className="fan-expand" style={{ left: btnX, top: half + topY + dy, maxWidth: btnHalf * 2 }} onClick={onExpand}>
+          {expandText}
+        </button>
+        {events.map((ev, i) => {
           const p = pos[i];
           return (
             <button
               key={ev.id}
               role="menuitem"
-              className={`fan-item ${p.side}`} /* labels point away from the centre */
-              style={{ left: box / 2 + p.x + dx, top: box / 2 + p.y }}
+              className={`fan-item ${p.side}` /* labels point away from the centre */}
+              style={{ left: half + p.x + dx, top: half + p.y + dy }}
               onClick={() => onPick(ev.id)}
+              title={ev === first ? 'Earliest' : ev === last ? 'Latest' : undefined}
             >
               <i style={{ background: FIELD_COLOR[ev.field] }} />
               <span><small>{formatShort(resolved.get(ev.id)!.date)}</small> {ev.title}</span>
             </button>
           );
         })}
-        {overflow && (
-          <button
-            role="menuitem"
-            className={`fan-item more ${pos[slots - 1].side}`}
-            style={{ left: box / 2 + pos[slots - 1].x + dx, top: box / 2 + pos[slots - 1].y }}
-            onClick={onExpand}
-            disabled={!canExpand}
-          >
-            <i />
-            <span>+{events.length - shown.length} more{canExpand ? ' · expand time' : ''}</span>
-          </button>
-        )}
       </div>
     </Html>
   );
 }
 
-/** The menu for a selected bubble: open it, or expand time around it. */
-function BubbleMenu({ ev, resolved, at, level, onOpen, onExpand, onClose }: {
+/** The menu for a selected bubble. The scale bar then expands time around it. */
+function BubbleMenu({ ev, resolved, at, onOpen, onClose }: {
   ev: TimelineEvent;
   resolved: ResolvedDate;
   at: [number, number, number];
-  level: ExpandLevel;
   onOpen: () => void;
-  onExpand: (level: ExpandLevel) => void;
   onClose: () => void;
 }) {
   // Keep the menu on screen when its bubble is near an edge.
@@ -502,62 +537,60 @@ function BubbleMenu({ ev, resolved, at, level, onOpen, onExpand, onClose }: {
           <button className="x" onClick={onClose} aria-label="Close">✕</button>
         </div>
         <button className="primary" onClick={onOpen}>{ev.topicIds.length ? `Open debates (${ev.topicIds.length})` : 'Open details & links'}</button>
-        {level === 'normal' && <button onClick={() => onExpand('months')}>Expand to months</button>}
-        {level !== 'days' && <button onClick={() => onExpand('days')}>Expand to days</button>}
+        <small className="bm-hint">Pick Years, Months, Weeks or Days on the scale bar to expand time around this event.</small>
       </div>
     </Html>
   );
 }
 
-/** Everything inside the 3D canvas: camera, expand animation, level-of-detail planner and the river. */
-function Scene(props: Props) {
-  const { data, expansion, level, highlightId, mobile, showImported, onOpenEvent, onOpenEntity, onExpand } = props;
+/** Everything inside the 3D canvas: camera, animations, level-of-detail planner and the river. */
+function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) {
+  const { fan, setFan } = props;
+  const { data, view, level, highlightId, selectedId, onSelect, mobile, showImported, onOpenEvent, onOpenEntity } = props;
   const { camera, size, gl } = useThree();
   const rig = mobile ? RIG.mobile : RIG.desktop;
-  const ahead = mobile ? FOCUS_AHEAD.mobile : FOCUS_AHEAD.desktop;
 
-  // ---- The scale being drawn, and the expand / collapse animation ----
-  const target = useMemo(() => makeScale(expansion.window), [expansion.window]);
+  // ---- The scale being drawn, and the animation between scales ----
+  const target = useMemo(() => makeScale(currentWindow(view.change.stack)), [view.change.stack]);
   const [display, setDisplay] = useState<TimeScale>(target); // what's on screen right now
   const displayRef = useRef(display);
   const pose = useRef<CameraPose>({ s: props.targetS, latC: 0, latL: 0 });
-  const trans = useRef<{ from: TimeScale; to: TimeScale; start: CameraPose; anchor: number; flyTo?: number; t0: number } | null>(null);
-  const lastSeq = useRef(expansion.seq);
+  const trans = useRef<{ from: TimeScale; to: TimeScale; start: CameraPose; aFrom: number; aTo: number; t0: number } | null>(null);
+  const lastSeq = useRef(view.seq);
   const lastReported = useRef(Number.NaN);
   const sideways = useRef(0);
   const targetRef = useRef(props.targetS);
   targetRef.current = props.targetS;
 
-  // A new expansion request starts an animation from whatever is on screen now (even if
-  // another animation is half-way), anchored on the requested moment.
+  // A new request starts an animation from whatever is on screen now (even mid-animation).
   useLayoutEffect(() => {
-    if (expansion.seq === lastSeq.current) return;
-    lastSeq.current = expansion.seq;
-    trans.current = { from: displayRef.current, to: target, start: { ...pose.current }, anchor: expansion.anchor, flyTo: expansion.flyTo, t0: performance.now() };
-  }, [expansion.seq, expansion.anchor, expansion.flyTo, target]);
+    if (view.seq === lastSeq.current) return;
+    lastSeq.current = view.seq;
+    const { aFrom, aTo } = anchorMoments(view.change.anchor, pose.current, displayRef.current);
+    trans.current = { from: displayRef.current, to: target, start: { ...pose.current }, aFrom, aTo, t0: performance.now() };
+  }, [view.seq, view.change.anchor, target]);
 
   // Slide the camera towards the highlighted item's lane: most of the way on phones, a little on desktop.
   const byId = useMemo(() => new Map(data.events.map((e) => [e.id, e])), [data.events]);
   const focusField = highlightId ? (byId.get(highlightId)?.field ?? data.entities.find((e) => e.id === highlightId)?.field) : undefined;
   const sidewaysTarget = focusField ? laneOffset(focusField) * (mobile ? 0.8 : 0.3) : 0;
 
-  /** Put the camera where `pose` says, for the scale currently drawn. */
+  /** Put the camera where `pose` says, for the scale currently drawn, and report the time there. */
   const applyCamera = () => {
     const f = cameraFrame(pose.current, displayRef.current, rig, sideways.current);
     camera.position.set(...f.position);
     camera.lookAt(...f.look);
     camera.updateMatrixWorld(); // so labels placed this frame use the new camera too
     const s = pose.current.s;
-    if (!(Math.abs(s - lastReported.current) < 0.05)) {
+    if (!(Math.abs(s - lastReported.current) < 0.02)) {
       lastReported.current = s;
-      props.onYear(displayRef.current.toYear(s + ahead));
+      props.onCameraTime(cameraTime(pose.current, displayRef.current));
     }
   };
 
   // During an animation each new scale is drawn by React a moment after we choose it. The
   // matching camera pose waits here (`pending`) and is applied in the same update that moves
-  // the bubbles (the layout effect below). If the camera moved first, everything would be
-  // drawn one frame out of step — a visible jitter.
+  // the bubbles, so the camera and the river never get out of step (that would jitter).
   const pending = useRef<{ scale: TimeScale; pose: CameraPose } | null>(null);
   useLayoutEffect(() => {
     if (pending.current?.scale === display) {
@@ -572,29 +605,21 @@ function Scene(props: Props) {
     sideways.current += (sidewaysTarget - sideways.current) * Math.min(1, dt * 2);
     const t = trans.current;
     if (t) {
-      // Animating: a blended scale, and the camera pose that keeps the anchor exactly still.
       const u = (performance.now() - t.t0) / EXPAND_MS;
-      const scaleNow = u >= 1 ? t.to : blendScales(t.from, t.to, easeOut(u));
-      const poseNow = anchorPose(t.start, t.from, scaleNow, t.anchor, rig);
+      const e = easeOut(u);
+      const scaleNow = u >= 1 ? t.to : blendScales(t.from, t.to, e);
+      const poseNow = transitionPose(t.start, t.from, scaleNow, t.aFrom, t.aTo, u >= 1 ? 1 : e, rig);
       pending.current = { scale: scaleNow, pose: poseNow };
       setDisplay(scaleNow); // the camera follows in the layout effect, together with the bubbles
       if (u >= 1) {
         trans.current = null;
-        const end = t.flyTo !== undefined ? Math.max(t.to.sMin, Math.min(t.to.sMax, t.to.toS(t.flyTo) - ahead)) : poseNow.s;
-        props.setTargetS(end); // stay exactly here (or travel on, for "fly to")
-        targetRef.current = end;
+        props.setTargetS(poseNow.s); // stay exactly here afterwards
+        targetRef.current = poseNow.s;
       }
       return;
     }
-    // Normal travel: ease towards the target, and let any sideways correction fade as you move.
-    const before = pose.current.s;
-    pose.current.s += (targetRef.current - before) * Math.min(1, dt * 3);
-    const moved = Math.abs(pose.current.s - before);
-    if (moved > 1e-6) {
-      const fade = Math.exp(-moved / LATERAL_FADE);
-      pose.current.latC *= fade;
-      pose.current.latL *= fade;
-    }
+    // Normal travel: ease towards the target.
+    pose.current.s += (targetRef.current - pose.current.s) * Math.min(1, dt * 3);
     applyCamera();
   });
 
@@ -602,6 +627,8 @@ function Scene(props: Props) {
   const resolved = useMemo(() => new Map(data.events.map((e) => [e.id, resolveEventDate(e, data)])), [data]);
   const importance = useMemo(() => importanceMap(data), [data]);
   const events = useMemo(() => (showImported ? data.events : data.events.filter((e) => e.provenance?.importedFrom !== 'wikidata')), [data.events, showImported]);
+  const win = display.window;
+  const outside = useMemo(() => new Set(events.filter((e) => !inside(win, resolved.get(e.id)!.date.best)).map((e) => e.id)), [events, resolved, win]);
 
   // ---- Level of detail: a few times a second, project events to the screen and plan them. ----
   const [plan, setPlan] = useState<RiverPlan>({ bubbles: [], faint: [], stacks: [] });
@@ -622,6 +649,7 @@ function Scene(props: Props) {
     const items: ScreenItem[] = [];
     const offscreen: string[] = [];
     for (const ev of events) {
+      if (outside.has(ev.id)) continue; // drawn as dim dots, never bubbles
       tmp.set(...place(scale, resolved.get(ev.id)!.date.best, ev.field, 0.6));
       up.copy(tmp).setY(tmp.y + 1);
       const dist = camera.position.distanceTo(tmp);
@@ -659,45 +687,41 @@ function Scene(props: Props) {
     }
   });
 
-  // ---- Selection, fan-out rings and the bubble menu ----
-  const [selected, setSelected] = useState<string | null>(null);
-  const [fan, setFan] = useState<{ ids: string[]; at: [number, number, number] } | null>(null);
+  // ---- Fan-out rings and the bubble menu ----
   const cursor = useRef<{ x: number; y: number } | null>(null);
+  const posOf = (id: string) => place(display, resolved.get(id)!.date.best, byId.get(id)!.field, 0.6);
 
-  const posOf = (id: string) => {
-    const ev = byId.get(id)!;
-    return place(display, resolved.get(id)!.date.best, ev.field, 0.6);
-  };
   const bubbleClick = (id: string) => {
-    const stack = planRef.current.stacks.find((s) => s.includes(id));
-    setSelected(null);
-    if (stack && !fan) setFan({ ids: stack, at: posOf(id) }); // overlapping: fan them out first
-    else {
+    const stack = overlapping(planRef.current, id);
+    onSelect(null);
+    if (stack.length) {
+      // Overlapping: fan them out, earliest first (they go round clockwise from the top).
+      const sorted = [...stack].sort((a, b) => resolved.get(a)!.date.best - resolved.get(b)!.date.best);
+      setFan({ ids: sorted, at: posOf(id) });
+    } else {
       setFan(null);
-      setSelected(id);
+      onSelect(id);
     }
   };
 
-  // Clicking anywhere outside the ring or menu closes them; so does Escape, travelling, or a new level.
+  // The menu closes on a click elsewhere, Escape, or scrolling. (The ring's dim backdrop closes the ring.)
   useEffect(() => {
-    if (!fan && !selected) return;
-    const outside = (e: Event) => {
-      if (!(e.target instanceof Element) || !e.target.closest('.fan, .bubble-menu')) {
-        setFan(null);
-        setSelected(null);
-      }
+    if (!selectedId && !fan) return;
+    const outsideClick = (e: Event) => {
+      if (e.type === 'wheel') setFan(null); // travelling closes the ring too
+      if (!(e.target instanceof Element) || !e.target.closest('.fan, .bubble-menu, .scene-dim')) onSelect(null);
     };
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFan(null); setSelected(null); } };
-    window.addEventListener('pointerdown', outside, true);
-    window.addEventListener('wheel', outside, true);
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFan(null); onSelect(null); } };
+    window.addEventListener('pointerdown', outsideClick, true);
+    window.addEventListener('wheel', outsideClick, true);
     window.addEventListener('keydown', esc);
     return () => {
-      window.removeEventListener('pointerdown', outside, true);
-      window.removeEventListener('wheel', outside, true);
+      window.removeEventListener('pointerdown', outsideClick, true);
+      window.removeEventListener('wheel', outsideClick, true);
       window.removeEventListener('keydown', esc);
     };
-  }, [fan, selected]);
-  useEffect(() => { setFan(null); }, [expansion.seq]);
+  }, [selectedId, fan, onSelect, setFan]);
+  useEffect(() => { setFan(null); }, [view.seq, setFan]);
 
   // The cursor, for the hover magnifier (desktop only).
   useEffect(() => {
@@ -716,26 +740,9 @@ function Scene(props: Props) {
     };
   }, [gl, mobile]);
 
-  // Double-click (or double-tap) the water: expand one level around that moment.
-  const lastWaterTap = useRef<{ t: number; x: number; y: number } | null>(null);
-  const next = deeper(level);
-  const onWaterClick = (e: ThreeEvent<MouseEvent>) => {
-    if (e.delta > 6) return; // that was a drag
-    const now = performance.now();
-    const prev = lastWaterTap.current;
-    const { clientX: x, clientY: y } = e.nativeEvent;
-    if (prev && now - prev.t < DOUBLE_TAP.ms && Math.hypot(prev.x - x, prev.y - y) < DOUBLE_TAP.px) {
-      lastWaterTap.current = null;
-      if (next) onExpand(next, displayRef.current.toYear(-e.point.z));
-    } else {
-      lastWaterTap.current = { t: now, x, y };
-    }
-  };
-
   const faint = useMemo(() => new Set(plan.faint), [plan]);
-  const selectedEv = selected ? byId.get(selected) : undefined;
+  const selectedEv = selectedId ? byId.get(selectedId) : undefined;
   const fanEvents = fan ? fan.ids.map((id) => byId.get(id)!).filter(Boolean) : [];
-  const fanMid = fanEvents.length ? fanEvents.map((e) => resolved.get(e.id)!.date.best).sort((a, b) => a - b)[Math.floor(fanEvents.length / 2)] : 0;
 
   return (
     <>
@@ -744,26 +751,27 @@ function Scene(props: Props) {
       <ambientLight intensity={0.4} />
       <pointLight position={[0, 10, 0]} intensity={1} />
       <Stars radius={150} depth={60} count={3000} factor={4} fade speed={0.5} />
-      <Lanes scale={display} onWaterClick={onWaterClick} />
+      <Lanes scale={display} />
       <Particles />
       <Ticks scale={display} />
+      <EndCaps scale={display} mobile={mobile} onContinue={props.onContinue} onCollapse={props.onCollapse} />
 
       {plan.bubbles.map(({ id, showLabel }) => {
         const ev = byId.get(id);
-        if (!ev) return null;
+        if (!ev || outside.has(id)) return null;
         const r = resolved.get(id)!;
         return (
           <group key={id}>
-            <EventNode ev={ev} resolved={r} scale={display} onClick={() => bubbleClick(id)} highlighted={highlightId === id} selected={selected === id} showLabel={showLabel} mobile={mobile} cursor={cursor} />
+            <EventNode ev={ev} resolved={r} scale={display} onClick={() => bubbleClick(id)} highlighted={highlightId === id} selected={selectedId === id} showLabel={showLabel} mobile={mobile} cursor={cursor} />
             {spanVisible(r.date, display) && <UncertaintySpan resolved={r} field={ev.field} y={0.6} scale={display} dim={!!ev.provenance} />}
           </group>
         );
       })}
 
-      <FaintDots events={events} faint={faint} resolved={resolved} scale={display} mobile={mobile} onSelect={(id) => { setFan(null); setSelected(id); }} />
+      <FaintDots events={events} faint={faint} outside={outside} resolved={resolved} scale={display} mobile={mobile} onSelect={(id) => { setFan(null); onSelect(id); }} />
 
       {data.entities.map((en) => (
-        <EntityNode key={en.id} en={en} scale={display} onOpen={() => onOpenEntity(en.id)} highlighted={highlightId === en.id} mobile={mobile} />
+        <EntityNode key={en.id} en={en} scale={display} onOpen={() => onOpenEntity(en.id)} highlighted={highlightId === en.id} mobile={mobile} outside={!inside(win, en.founded.best)} />
       ))}
 
       {fan && (
@@ -771,20 +779,17 @@ function Scene(props: Props) {
           events={fanEvents}
           resolved={resolved}
           at={fan.at}
-          canExpand={!!next}
-          onPick={(id) => { setFan(null); setSelected(id); }}
-          onExpand={() => { setFan(null); if (next) onExpand(next, fanMid); }}
+          onPick={(id) => { setFan(null); onSelect(id); }}
+          onExpand={() => { setFan(null); props.onExpandCluster(fan.ids); }}
         />
       )}
-      {selectedEv && (
+      {selectedEv && !fan && (
         <BubbleMenu
           ev={selectedEv}
           resolved={resolved.get(selectedEv.id)!}
           at={posOf(selectedEv.id)}
-          level={level}
-          onOpen={() => { setSelected(null); onOpenEvent(selectedEv.id); }}
-          onExpand={(l) => { setSelected(null); onExpand(l, resolved.get(selectedEv.id)!.date.best); }}
-          onClose={() => setSelected(null)}
+          onOpen={() => { onSelect(null); onOpenEvent(selectedEv.id); }}
+          onClose={() => onSelect(null)}
         />
       )}
     </>
@@ -792,15 +797,17 @@ function Scene(props: Props) {
 }
 
 export function River(props: Props) {
-  const { setTargetS, mobile, expansion, onExpandStep } = props;
+  const { setTargetS, mobile, view, onStep } = props;
   const wrap = useRef<HTMLDivElement>(null);
-  const stepRef = useRef(onExpandStep);
-  stepRef.current = onExpandStep;
+  const stepRef = useRef(onStep);
+  stepRef.current = onStep;
   const topicOpen = useRef(false);
   topicOpen.current = !!props.topic;
-  const scale = useMemo(() => makeScale(expansion.window), [expansion.window]);
+  const scale = useMemo(() => makeScale(currentWindow(view.change.stack)), [view.change.stack]);
+  // The fanned-out cluster lives here (not in the 3D scene) so the page-level dim layer can see it.
+  const [fan, setFan] = useState<FanState>(null);
 
-  // Scroll / drag / swipe / arrow keys travel through time; + / − expand and collapse.
+  // Scroll / drag / swipe / arrow keys travel through time; + / − step the scale bar.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
@@ -845,8 +852,10 @@ export function River(props: Props) {
   return (
     <div ref={wrap} className="river" style={{ touchAction: 'none' }}>
       <Canvas camera={{ fov: mobile ? 70 : 60, near: 0.1, far: 400 }} dpr={[1, 2]}>
-        {props.topic ? <TopicScene {...props.topic} /> : <Scene {...props} />}
+        {props.topic ? <TopicScene {...props.topic} /> : <Scene {...props} fan={fan} setFan={setFan} />}
       </Canvas>
+      {/* While a cluster is fanned out, dim everything else; a click on the dim closes the ring. */}
+      {fan && !props.topic && <div className="scene-dim" onPointerDown={() => setFan(null)} />}
     </div>
   );
 }

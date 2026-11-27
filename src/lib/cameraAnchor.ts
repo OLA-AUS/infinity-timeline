@@ -1,22 +1,21 @@
-// Keeping the camera steady while the river's timescale changes ("expand in place").
+// Moving the camera smoothly while the river's timescale changes.
 //
-// When you expand time around a moment, every year moves along the river. If the camera
-// stayed at the same distance along the river it would suddenly be looking at a different
-// time — a jolt. Instead we keep the chosen moment (the "anchor") exactly where it was on
-// screen: before, during and after the change.
+// Every change of level or expansion (src/lib/viewStack.ts) names an *anchor*: the moment
+// the camera should end up at. Over about half a second we blend the old scale into the
+// new one (blendScales) and, on every frame, place the camera with transitionPose:
 //
-// What fixes a point's place on screen is where it is *relative to the camera*. So:
-//   • depth:    keep the anchor the same distance ahead of the camera. If the anchor moves
-//               from distance A to distance B along the river, the camera moves by B − A too.
-//   • sideways: the river wiggles left and right (its "meander"). We make the wiggle a
-//               property of the moment in time, not of the distance along the river, so the
-//               anchor itself never moves sideways. The camera's own sideways position (and
-//               the point it looks at) would change, though, because it now sits over a
-//               different moment — so we add a correction ("lateral offset") that keeps
-//               them exactly where they were. The correction fades out once you travel.
+//   • the anchor glides from where it is on screen to the camera's own spot, so the camera
+//     arrives at it exactly when the animation ends
+//   • for "stay where you are" changes (going back, collapsing) the anchor *is* the moment
+//     at the camera, so the camera simply keeps showing that moment while the river around
+//     it stretches or squeezes
+//   • for Continue, the anchor slides by the window's length, so the river slides past
+//   • sideways, the camera starts exactly where it was and eases over to the middle of the
+//     river by the end — no sudden sideways hop
 //
-// All of this is plain maths with no 3D library, so it's tested directly
-// (cameraAnchor.test.ts): expanding and then collapsing returns the exact same camera.
+// At the very first frame the camera is exactly where it was, and at the last it's exactly
+// on the anchor, so nothing ever jumps. All of this is plain maths, tested directly in
+// cameraAnchor.test.ts.
 import type { Year } from '../types';
 import { riverX, yearToS } from './time';
 import type { TimeScale } from './timeScale';
@@ -28,13 +27,17 @@ export interface Rig {
   ahead: number; // how far ahead of the followed point it looks
 }
 
-/** Desktop flies low along the river; phones look down more steeply (the "dive"). */
+/**
+ * Desktop flies low along the river, looking ahead. Phones look steeply down at the point
+ * they follow (the "dive"), so that point sits in the middle of the screen, clear of the
+ * footer. The big date readout always shows the time at that followed point.
+ */
 export const RIG: Record<'desktop' | 'mobile', Rig> = {
   desktop: { back: 14, height: 5, ahead: 12 },
-  mobile: { back: 6, height: 16, ahead: 12 },
+  mobile: { back: 10, height: 14, ahead: 0 },
 };
 
-/** How long an expand / collapse animation takes, in milliseconds. */
+/** How long a level change or expansion animates, in milliseconds. */
 export const EXPAND_MS = 500;
 
 /** Ease-out: starts quickly and settles gently (u from 0 to 1). */
@@ -42,15 +45,14 @@ export const easeOut = (u: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, u
 
 /**
  * The river's sideways wiggle at a moment in time. It depends only on the year (via the
- * normal log scale), so expanding time never moves an event sideways. At normal zoom it's
- * exactly the old wiggle, riverX(s).
+ * full-river scale), so expanding time never moves an event sideways.
  */
 export const meander = (year: Year) => riverX(yearToS(year));
 
 /**
  * Where the camera is: `s` is the distance along the river it follows (in the current
- * scale's units). `latC` and `latL` are the sideways corrections for the camera position
- * and the point it looks at (0 when nothing has been expanded or collapsed recently).
+ * scale's units). `latC` and `latL` are small sideways offsets for the camera and the
+ * point it looks at, used only while a transition eases sideways (0 the rest of the time).
  */
 export interface CameraPose {
   s: number;
@@ -73,38 +75,31 @@ export function cameraFrame(pose: CameraPose, scale: TimeScale, rig: Rig, sidewa
   };
 }
 
-/** Where a moment sits on the river (its centre line), for a given scale. */
-export function riverPoint(year: Year, scale: TimeScale): [number, number, number] {
-  return [meander(year), 0, -scale.toS(year)];
-}
+/** The time at the camera — what the big date readout shows. */
+export const cameraTime = (pose: CameraPose, scale: TimeScale) => scale.toYear(pose.s);
 
 /**
- * The camera pose for scale `to` that keeps `anchorYear` exactly where it was on screen
- * with scale `from`. Use it for every frame of an animation (with a blended `to`) as well
- * as for the end result.
+ * The camera pose part-way through a transition.
+ *   start    — the pose when the transition began (with scale `from`)
+ *   now      — the scale for this frame (a blend of `from` and the target)
+ *   aFrom    — the anchor moment at the start; aTo — at the end (they differ only for Continue)
+ *   e        — eased progress, 0 → 1
  */
-export function anchorPose(pose: CameraPose, from: TimeScale, to: TimeScale, anchorYear: Year, rig: Rig): CameraPose {
-  // Depth: keep the anchor the same distance ahead of the camera.
-  const depth = from.toS(anchorYear) - pose.s;
-  const s = to.toS(anchorYear) - depth;
-  // Sideways: keep the camera and its look-at point at the same x as before.
-  const before = cameraFrame(pose, from, rig);
-  return {
-    s,
-    latC: before.position[0] - meander(to.toYear(s - rig.back)),
-    latL: before.look[0] - meander(to.toYear(s + rig.ahead)),
-  };
+export function transitionPose(start: CameraPose, from: TimeScale, now: TimeScale, aFrom: Year, aTo: Year, e: number, rig: Rig): CameraPose {
+  // How far ahead of the camera the anchor was at the start; this shrinks to 0.
+  const depth0 = from.toS(aFrom) - start.s;
+  const anchor = aFrom + (aTo - aFrom) * e;
+  const s = now.toS(anchor) - depth0 * (1 - e);
+  // Sideways: start exactly where we were, ease to the river's middle by the end.
+  const before = cameraFrame(start, from, rig);
+  const camMid = meander(now.toYear(s - rig.back));
+  const lookMid = meander(now.toYear(s + rig.ahead));
+  return { s, latC: (before.position[0] - camMid) * (1 - e), latL: (before.look[0] - lookMid) * (1 - e) };
 }
 
-/** The anchor's position relative to the camera — identical before and after anchoring. */
-export function relativeToCamera(year: Year, pose: CameraPose, scale: TimeScale, rig: Rig): { fromCamera: number[]; lookDir: number[] } {
-  const f = cameraFrame(pose, scale, rig);
-  const p = riverPoint(year, scale);
-  return {
-    fromCamera: [p[0] - f.position[0], p[1] - f.position[1], p[2] - f.position[2]],
-    lookDir: [f.look[0] - f.position[0], f.look[1] - f.position[1], f.look[2] - f.position[2]],
-  };
+/** Resolve a view change's anchor into start and end moments for transitionPose. */
+export function anchorMoments(anchor: { at: Year } | { camera: true; shift?: number }, pose: CameraPose, from: TimeScale): { aFrom: Year; aTo: Year } {
+  if ('at' in anchor) return { aFrom: anchor.at, aTo: anchor.at };
+  const here = cameraTime(pose, from);
+  return { aFrom: here, aTo: here + (anchor.shift ?? 0) };
 }
-
-/** Once you travel, the sideways corrections fade out over roughly this much river. */
-export const LATERAL_FADE = 30;

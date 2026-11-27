@@ -274,14 +274,12 @@ ul.plain li { margin-bottom: 4px; }
   .strip-head { font-size: 13px; }
 }
 
-/* "1939 › Sep 1939 › Collapse" while time is expanded; a one-line hint otherwise. */
-.expand-nav ol { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0; pointer-events: auto; }
-.expand-nav li { display: flex; align-items: center; white-space: nowrap; }
-.expand-nav .sep { color: var(--muted); margin: 0 3px; }
-.expand-nav button { font-size: 13px; padding: 4px 10px; background: #1a2238dd; }
-.expand-nav button.active { border-color: var(--accent); font-weight: 600; cursor: default; }
-.expand-nav button.collapse { border-color: #7aa2ff88; color: #cfe0ff; }
-.expand-hint { margin: 0; font-size: 12px; color: var(--muted); }
+/* Breadcrumb of expanded periods: Full river › May 1939 – Jun 1943 › … */
+.view-crumbs ol { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0; pointer-events: auto; }
+.view-crumbs li { display: flex; align-items: center; white-space: nowrap; }
+.view-crumbs .sep { color: var(--muted); margin: 0 3px; }
+.view-crumbs button { font-size: 13px; padding: 4px 10px; background: #1a2238dd; }
+.view-crumbs button.active { border-color: var(--accent); font-weight: 600; cursor: default; }
 .tick.small.minor { font-size: 11px; color: #4d5875; }
 
 /* Overlapping bubbles fanned out in a ring (like spreading overlapping map pins). */
@@ -298,7 +296,6 @@ ul.plain li { margin-bottom: 4px; }
 .fan-item span { overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; }
 .fan-item small { color: var(--muted); margin-right: 3px; }
 .fan-item:hover { background: #24304d; border-color: var(--accent); }
-.fan-item.more i { background: #24304d; }
 @keyframes fanin { from { opacity: 0; } to { opacity: 1; } }
 
 /* The menu for a selected bubble. */
@@ -312,9 +309,46 @@ ul.plain li { margin-bottom: 4px; }
 .bubble-menu button.primary { background: #2a2410; border-color: #ffe06688; color: #ffe066; font-weight: 600; }
 
 @media (max-width: 760px) {
-  .expand-nav button { min-height: 44px; min-width: 44px; font-size: 14px; }
+  .view-crumbs button { min-height: 44px; min-width: 44px; font-size: 14px; }
   .fan-item { min-height: 44px; max-width: 170px; }
   .fan-item span { font-size: 13px; }
   .bubble-menu { width: 250px; }
   .bubble-menu button { min-height: 44px; font-size: 14px; }
+}
+
+/* ---- Scale bar, dimming, cluster expansion and end caps ----------------------------- */
+/* The big date (the time at the camera) with the scale bar right under it. */
+.hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.scale-bar { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #0b1020cc; border: 1px solid var(--line); pointer-events: auto; }
+.scale-bar button { border: 0; background: transparent; border-radius: 999px; padding: 4px 10px; font-size: 12.5px; color: #c9d2e6; white-space: nowrap; }
+.scale-bar button:hover:not(:disabled) { background: #1a2238; }
+.scale-bar button.on { background: var(--accent); color: #05070f; font-weight: 700; }
+.scale-bar button:disabled { opacity: 0.35; cursor: not-allowed; }
+.view-crumbs button { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+
+/* While a cluster is fanned out, everything else dims; a click on the dim closes the ring. */
+.scene-dim { position: absolute; inset: 0; z-index: 998; background: #05070fb3; backdrop-filter: blur(1px); animation: fanin 0.18s ease-out; }
+
+/* "Expand these N events · May 1939 – Jun 1943" — floats above the ring, on top of everything. */
+.fan-expand { position: absolute; transform: translate(-50%, -50%); pointer-events: auto; white-space: nowrap; font-weight: 700; font-size: 13.5px;
+  padding: 9px 16px; border-radius: 999px; background: #ffe066; border-color: #ffe066; color: #1a1400; box-shadow: 0 8px 28px #000c, 0 0 18px #ffe06655;
+  animation: fanin 0.18s ease-out; }
+.fan-expand:hover { background: #fff0a8; }
+
+/* End caps at each edge of an expanded window. */
+.end-cap { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 10px; background: #0b1020ee; border: 1px solid #7aa2ff; box-shadow: 0 6px 20px #0009; white-space: nowrap; font-size: 13px; }
+.ec-title { color: #c9d2e6; }
+.ec-title b { color: var(--text); }
+.ec-buttons { display: flex; gap: 6px; }
+.ec-buttons button { padding: 4px 10px; font-size: 12.5px; }
+.bm-hint { color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+
+@media (max-width: 760px) {
+  .hud-right { width: 100%; align-items: stretch; }
+  .hud-right .year { text-align: right; }
+  .scale-bar { overflow-x: auto; scrollbar-width: none; border-radius: 12px; }
+  .scale-bar button { min-height: 44px; min-width: 44px; padding: 4px 6px; font-size: 13px; flex: 1 0 auto; }
+  .fan-expand { font-size: 14px; min-height: 44px; white-space: normal; width: max-content; text-align: center; }
+  .ec-buttons button { min-height: 44px; min-width: 44px; font-size: 14px; }
+  .end-cap { font-size: 14px; }
 }

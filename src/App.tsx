@@ -1,12 +1,13 @@
 // The top-level screen. Holds the app's state and wires the pieces together:
 //   River (3D timeline)  →  click an event  →  ClaimMap (mind map)  →  SourcePanel (provenance)
-// plus the expand-in-place controls (ExpandNav, OverviewBar) and search (SearchBar).
+// plus the time-scale controls (ScaleBar, Breadcrumb, OverviewBar) and search (SearchBar).
 //
-// Expanding time: `expansion` says which period is expanded (a year shown month by month,
-// or a month shown day by day, or none) and which moment must stay still on screen while
-// it changes. The river does the animation and the camera maths (src/lib/cameraAnchor.ts),
-// and when it's done it sets `targetS` — the camera's distance along the river in the new
-// scale — so nothing moves afterwards.
+// Time scale: `view` holds the stack of steps the river is showing (full river, expanded
+// periods, a Years/Months/Weeks/Days window — src/lib/viewStack.ts) and where the camera
+// should end up after the latest change. The river does the animation and camera maths
+// (src/lib/cameraAnchor.ts); when it's done it sets `targetS` — the camera's distance along
+// the river in the new scale — so nothing moves afterwards. `cameraYear` is the time at the
+// camera, shown in the big date readout.
 //
 // Topic rivers: while a claim map is open, the 3D view shows the topic river of an
 // "anchor" event (src/lib/related.ts). `topicPos` is where you are along it, in stops;
@@ -18,25 +19,29 @@ import { seed } from './data/seed';
 import { loadRepoData, mergeDatasets } from './data/repoData';
 import type { Dataset, FuzzyDate } from './types';
 import { FIELDS } from './types';
-import { FOCUS_AHEAD, River, type Expansion } from './components/River';
+import { River, type ViewRequest } from './components/River';
 import { ClaimMap, type Focus, type TrailStep } from './components/ClaimMap';
 import { buildGraph, topicRiver, type TopicRiver } from './lib/related';
 import { SourcePanel, type PanelTarget } from './components/SourcePanel';
-import { ExpandNav, OverviewBar } from './components/TimeNav';
+import { Breadcrumb, OverviewBar, ScaleBar } from './components/TimeNav';
 import { SearchBar } from './components/SearchBar';
 import { FIELD_COLOR } from './lib/time';
 import { resolveEventDate } from './lib/dateDispute';
+import { formatForWindow, makeScale, SCALE_LEVELS, type ScaleLevel } from './lib/timeScale';
 import {
-  deeper,
-  formatForLevel,
+  chooseLevel,
+  collapse,
+  continueWindow,
+  crumbs,
+  currentLevel,
+  currentWindow,
+  expandCluster,
+  FULL_RIVER,
+  goToStep,
   levelForPrecision,
-  levelOf,
-  makeScale,
-  shallower,
-  windowFor,
-  type ExpandLevel,
-  type TimeWindow,
-} from './lib/timeScale';
+  periodAvailable,
+  type ViewChange,
+} from './lib/viewStack';
 import type { SearchResult } from './lib/search';
 
 /** Screens narrower than this get the mobile "dive" layout and bigger tap targets. */
@@ -57,13 +62,16 @@ export default function App() {
   // Demo seed + real data files from data/, merged once at start-up.
   const initial = useMemo(() => mergeDatasets(seed, loadRepoData()), []);
   const [data, setData] = useState<Dataset>(initial);
-  const [expansion, setExpansion] = useState<Expansion>({ window: null, anchor: 1900, seq: 0 }); // window null = not expanded
-  const scale = useMemo(() => makeScale(expansion.window), [expansion.window]);
-  const level = levelOf(expansion.window);
-  const [targetS, setTargetS] = useState(() => makeScale(null).toS(1900) - 2); // where the camera is heading
-  const [year, setYear] = useState(1900); // the moment currently in view (for the HUD)
+  const [view, setView] = useState<ViewRequest>({ change: { stack: FULL_RIVER, anchor: { camera: true } }, seq: 0 });
+  const stack = view.change.stack;
+  const window_ = currentWindow(stack);
+  const scale = useMemo(() => makeScale(window_), [window_]);
+  const level = currentLevel(stack);
+  const [targetS, setTargetS] = useState(() => makeScale(null).toS(1900)); // where the camera is heading
+  const [year, setYear] = useState(1900); // the time at the camera (for the big date readout)
   const yearRef = useRef(year);
   yearRef.current = year;
+  const [selected, setSelected] = useState<string | null>(null); // the selected bubble on the main river
   const [path, setPath] = useState<Focus[] | null>(null); // open claim map breadcrumb, or null = river
   const [panel, setPanel] = useState<PanelTarget | null>(null); // open source/entity panel
   const [highlight, setHighlight] = useState<string>(); // event/entity to make glow after a jump
@@ -91,41 +99,49 @@ export default function App() {
     return () => window.removeEventListener('resize', r);
   }, []);
 
-  /** River distance that puts `y` at the focus point (mid-screen) with scale `sc`. */
-  const focusS = useCallback((sc: ReturnType<typeof makeScale>, y: number) => {
-    const ahead = mobile ? FOCUS_AHEAD.mobile : FOCUS_AHEAD.desktop;
-    return Math.max(sc.sMin - ahead, Math.min(sc.sMax, sc.toS(y) - ahead));
-  }, [mobile]);
+  /** River distance for a moment with scale `sc` (clamped to the river). */
+  const sFor = useCallback((sc: ReturnType<typeof makeScale>, y: number) => Math.max(sc.sMin, Math.min(sc.sMax, sc.toS(y))), []);
 
   /**
-   * Expand (or collapse) to `w`, keeping `anchor` still on screen. With `flyTo`, travel to
-   * that moment afterwards. The target is also set here, so it still works if the 3D river
-   * is being re-created (e.g. straight after closing a claim map).
+   * Apply a change to what the river shows. The river animates it; the target is also set
+   * here, so it still lands in the right place if the 3D river is being re-created (e.g.
+   * straight after closing a claim map).
    */
-  const expandTo = useCallback((w: TimeWindow | null, anchor: number, flyTo?: number) => {
-    setExpansion((e) => ({ window: w, anchor, flyTo, seq: e.seq + 1 }));
-    if (flyTo !== undefined) setTargetS(focusS(makeScale(w), flyTo));
-  }, [focusS]);
+  const apply = useCallback((change: ViewChange | null) => {
+    if (!change) return;
+    setView((v) => ({ change, seq: v.seq + 1 }));
+    const next = makeScale(currentWindow(change.stack));
+    const a = change.anchor;
+    setTargetS(sFor(next, 'at' in a ? a.at : yearRef.current + (a.shift ?? 0)));
+  }, [sFor]);
 
-  /** Double-click / a bubble's menu: expand to `lvl` around `anchorYear`. */
-  const expandAround = useCallback((lvl: ExpandLevel, anchorYear: number) => {
-    expandTo(windowFor(lvl, anchorYear), anchorYear);
-  }, [expandTo]);
+  const selectedYear = () => {
+    const ev = selected ? data.events.find((e) => e.id === selected) : undefined;
+    return ev ? resolveEventDate(ev, data).date.best : undefined;
+  };
 
-  /** + / − keys and the Collapse control: one level in or out, around the middle of the screen. */
-  const expandStep = useCallback((dir: 1 | -1) => {
-    const y = yearRef.current;
-    const nextLevel = dir > 0 ? deeper(level) : shallower(level);
-    if (!nextLevel) return;
-    expandTo(windowFor(nextLevel, y), y);
-  }, [level, expandTo]);
+  /** A level on the scale bar. */
+  const chooseScale = (l: ScaleLevel) => apply(chooseLevel(stack, l, yearRef.current, selectedYear()));
 
-  /** Fly to a date, expanded just enough to see it clearly, and highlight `id`. */
+  /** + / − keys: one step along the scale bar (skipping Period unless one is expanded). */
+  const stepScale = (dir: 1 | -1) => {
+    const usable = SCALE_LEVELS.filter((l) => l !== 'period' || periodAvailable(stack));
+    const next = usable[usable.indexOf(level) + dir];
+    if (next) chooseScale(next);
+  };
+
+  /** "Expand these N events" on a fanned-out cluster. */
+  const onExpandCluster = (ids: string[]) => {
+    const years = ids.map((id) => data.events.find((e) => e.id === id)).filter(Boolean).map((e) => resolveEventDate(e!, data).date.best);
+    if (years.length) apply(expandCluster(stack, years));
+  };
+
+  /** Fly to a date, with the scale its precision deserves, and highlight `id`. */
   const flyTo = useCallback((date: FuzzyDate, id: string) => {
     setHighlight(id);
     const lvl = levelForPrecision(date.precision);
-    expandTo(windowFor(lvl, date.best), yearRef.current, date.best); // the view stays still, then flies
-  }, [expandTo]);
+    apply(lvl === 'full' ? { stack: FULL_RIVER, anchor: { at: date.best } } : chooseLevel(FULL_RIVER, lvl, date.best, date.best));
+  }, [apply]);
 
   /** Fly to where an entity was born/founded (the "rabbit hole" jump). */
   const jumpToEntity = useCallback((id: string) => {
@@ -287,18 +303,22 @@ export default function App() {
     <div className="app">
       <River
         data={data}
-        expansion={expansion}
+        view={view}
         level={level}
         targetS={targetS}
         setTargetS={setTargetS}
-        onYear={setYear}
+        onCameraTime={setYear}
         onOpenEvent={(id) => openMap(id)}
         onOpenEntity={(id) => setPanel({ kind: 'entity', id })}
         highlightId={highlight}
+        selectedId={selected}
+        onSelect={setSelected}
         mobile={mobile}
         showImported={showImported}
-        onExpand={expandAround}
-        onExpandStep={expandStep}
+        onExpandCluster={onExpandCluster}
+        onContinue={(dir) => apply(continueWindow(stack, dir))}
+        onCollapse={() => apply(collapse(stack))}
+        onStep={stepScale}
         topic={path && river ? { data, river, pos: topicPos, mobile, onPick: goToStop, onBranch: (id) => switchTo(id, 'branch') } : undefined}
       />
 
@@ -308,10 +328,14 @@ export default function App() {
         <header className="hud">
           <div className="hud-left">
             <div className="brand">∞ Infinity Timeline <span className="demo-tag">prototype · demo data</span></div>
-            <ExpandNav window={expansion.window} mobile={mobile} onGoTo={(w) => expandTo(w, yearRef.current)} onCollapse={() => expandStep(-1)} />
+            <Breadcrumb labels={crumbs(stack)} onGoTo={(i) => apply(goToStep(stack, i))} />
           </div>
           <SearchBar data={data} mobile={mobile} onPick={onPick} />
-          <div className="year">{formatForLevel(year, level)}</div>
+          <div className="hud-right">
+            {/* The time at the camera, and the scale bar right under it. */}
+            <div className="year" aria-live="polite">{formatForWindow(year, window_)}</div>
+            <ScaleBar level={level} periodAvailable={periodAvailable(stack)} onChoose={chooseScale} />
+          </div>
         </header>
       )}
 
@@ -328,7 +352,7 @@ export default function App() {
               </label>
             )}
           </div>
-          <OverviewBar window={expansion.window} year={year} onTravel={(y) => setTargetS(focusS(scale, y))} />
+          <OverviewBar window={window_} year={year} onTravel={(y) => setTargetS(sFor(scale, y))} />
           <input
             className="scrubber"
             type="range"
@@ -347,8 +371,8 @@ export default function App() {
           </div>
           <p className="help">
             {mobile
-              ? 'Swipe to travel · double-tap the river to expand time · tap a bubble (overlapping ones fan out)'
-              : 'Scroll or drag to travel · double-click the river or press + / − to expand time · click a bubble (overlapping ones fan out) · ◆ = people & organisations'}
+              ? 'Swipe to travel · pick a scale at the top · tap overlapping bubbles to fan them out and expand them'
+              : 'Scroll or drag to travel · pick a scale under the date (or + / −) · click overlapping bubbles to fan them out and expand them · ◆ = people & organisations'}
           </p>
         </footer>
       )}

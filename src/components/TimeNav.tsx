@@ -1,47 +1,64 @@
 // Controls on top of the main river:
-//   • ExpandNav   — shown while time is expanded: "1939 › Sep 1939 › Collapse". Tap the year
-//                   to step back out to months, or Collapse to step out one level. Both keep
-//                   the moment in the middle of the screen still (same anchoring as expanding).
-//                   When not expanded it shows a one-line hint instead.
-//   • OverviewBar — a thin bar showing all of history, with the expanded period highlighted
+//   • ScaleBar    — "Full river · Period · Years · Months · Weeks · Days" under the big date,
+//                   with the current level as a highlighted pill. Click a level to jump there
+//                   (rules in src/lib/viewStack.ts). "Period" is greyed out until a period
+//                   has been expanded from a cluster of events.
+//   • Breadcrumb  — the trail of expansions: "Full river › May 1939 – Jun 1943 › …".
+//                   Click a step to go back to it.
+//   • OverviewBar — a thin bar showing all of history, with the expanded window highlighted
 //                   and a marker for where you are. Tap it to travel there.
-import type { TimeWindow } from '../lib/timeScale';
-import { expandCrumbs, windowLabel, YEAR_MAX, YEAR_MIN } from '../lib/timeScale';
+import type { ScaleLevel, TimeWindow } from '../lib/timeScale';
+import { LEVEL_LABEL, SCALE_LEVELS, windowLabel, YEAR_MAX, YEAR_MIN } from '../lib/timeScale';
 import { yearToS } from '../lib/time';
 import { formatYear } from '../lib/dates';
 
-interface NavProps {
-  window: TimeWindow | null;
-  mobile: boolean;
-  onGoTo: (w: TimeWindow | null) => void; // step out to this period (or null = normal)
-  onCollapse: () => void; // step out one level
+interface ScaleBarProps {
+  level: ScaleLevel;
+  periodAvailable: boolean;
+  onChoose: (level: ScaleLevel) => void;
 }
 
-export function ExpandNav({ window, mobile, onGoTo, onCollapse }: NavProps) {
-  if (!window) {
-    return <p className="expand-hint">{mobile ? 'Double-tap the river to expand time' : 'Double-click the river (or press +) to expand time'}</p>;
-  }
-  const crumbs = expandCrumbs(window);
+export function ScaleBar({ level, periodAvailable, onChoose }: ScaleBarProps) {
   return (
-    <nav className="expand-nav" aria-label="Expanded time">
+    <div className="scale-bar" role="radiogroup" aria-label="Time scale">
+      {SCALE_LEVELS.map((l) => {
+        const disabled = l === 'period' && !periodAvailable;
+        return (
+          <button
+            key={l}
+            role="radio"
+            aria-checked={l === level}
+            className={l === level ? 'on' : ''}
+            disabled={disabled}
+            title={disabled ? 'Expand a cluster of events first: click overlapping bubbles, then "Expand these events"' : undefined}
+            onClick={() => l !== level && onChoose(l)}
+          >
+            {LEVEL_LABEL[l]}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+interface CrumbProps {
+  labels: string[];
+  onGoTo: (index: number) => void;
+}
+
+export function Breadcrumb({ labels, onGoTo }: CrumbProps) {
+  if (labels.length < 2) return null; // just "Full river": nothing to go back to
+  return (
+    <nav className="view-crumbs" aria-label="Expanded periods">
       <ol>
-        {crumbs.map((c, i) => (
-          <li key={c.label}>
+        {labels.map((label, i) => (
+          <li key={i}>
             {i > 0 && <span className="sep" aria-hidden>›</span>}
-            <button
-              className={i === crumbs.length - 1 ? 'active' : ''}
-              aria-current={i === crumbs.length - 1 ? 'true' : undefined}
-              onClick={() => i < crumbs.length - 1 && onGoTo(c.window)}
-              title={i < crumbs.length - 1 ? `Step back out to ${c.label}, month by month` : `Expanded: ${c.label}`}
-            >
-              {c.label}
+            <button className={i === labels.length - 1 ? 'active' : ''} aria-current={i === labels.length - 1 ? 'true' : undefined} onClick={() => i < labels.length - 1 && onGoTo(i)}>
+              {label}
             </button>
           </li>
         ))}
-        <li>
-          <span className="sep" aria-hidden>›</span>
-          <button className="collapse" onClick={onCollapse}>Collapse</button>
-        </li>
       </ol>
     </nav>
   );
