@@ -6,12 +6,13 @@
 // It's brightest at the best guess. Disputed dates glow amber with slowly moving stripes,
 // and get a marker for each proposed date that is still standing.
 //
-// Spans are drawn with the current zoom scale, so zooming into a period stretches them out.
+// Spans are drawn with the current scale, so expanding a period stretches them out.
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import type { Field, FuzzyDate } from '../types';
-import { FIELD_COLOR, laneOffset, riverX } from '../lib/time';
+import { FIELD_COLOR, laneOffset } from '../lib/time';
+import { meander } from '../lib/cameraAnchor';
 import type { TimeScale } from '../lib/timeScale';
 import type { ResolvedDate } from '../lib/dateDispute';
 import { STATUS_COLOR } from '../lib/status';
@@ -20,10 +21,12 @@ import { STATUS_COLOR } from '../lib/status';
 const MIN_SPAN_S = 0.06;
 export const DISPUTED_COLOR = '#f5b83d';
 
-/** 3D point for a year in a lane, using the current zoom scale. */
+/**
+ * 3D point for a year in a lane, using the current scale. The sideways wiggle depends only
+ * on the year (see cameraAnchor.ts), so expanding time never moves anything sideways.
+ */
 export function place(scale: TimeScale, year: number, field: Field, y = 0): [number, number, number] {
-  const s = scale.toS(year);
-  return [riverX(s) + laneOffset(field), y, -s];
+  return [meander(year) + laneOffset(field), y, -scale.toS(year)];
 }
 
 /** True if a date's range is long enough, at this zoom, to draw as a span. */

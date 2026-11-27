@@ -1,36 +1,48 @@
-// Time-zoom controls on top of the river:
-//   • TimeNav     — the breadcrumb (All time › 1900s › 1930s › 1939 › Sep 1939) plus − / + buttons.
-//                   Tap any crumb to zoom back out to it.
-//   • OverviewBar — a thin bar showing all of history, with the zoomed window highlighted
+// Controls on top of the main river:
+//   • ExpandNav   — shown while time is expanded: "1939 › Sep 1939 › Collapse". Tap the year
+//                   to step back out to months, or Collapse to step out one level. Both keep
+//                   the moment in the middle of the screen still (same anchoring as expanding).
+//                   When not expanded it shows a one-line hint instead.
+//   • OverviewBar — a thin bar showing all of history, with the expanded period highlighted
 //                   and a marker for where you are. Tap it to travel there.
-import type { ZoomLevel, TimeWindow } from '../lib/timeScale';
-import { breadcrumb, deeper, shallower, windowLabel, YEAR_MAX, YEAR_MIN } from '../lib/timeScale';
+import type { TimeWindow } from '../lib/timeScale';
+import { expandCrumbs, windowLabel, YEAR_MAX, YEAR_MIN } from '../lib/timeScale';
 import { yearToS } from '../lib/time';
 import { formatYear } from '../lib/dates';
 
 interface NavProps {
   window: TimeWindow | null;
-  level: ZoomLevel;
-  onZoomTo: (w: TimeWindow | null) => void;
-  onZoomStep: (dir: 1 | -1) => void;
+  mobile: boolean;
+  onGoTo: (w: TimeWindow | null) => void; // step out to this period (or null = normal)
+  onCollapse: () => void; // step out one level
 }
 
-export function TimeNav({ window, level, onZoomTo, onZoomStep }: NavProps) {
-  const crumbs = breadcrumb(window);
+export function ExpandNav({ window, mobile, onGoTo, onCollapse }: NavProps) {
+  if (!window) {
+    return <p className="expand-hint">{mobile ? 'Double-tap the river to expand time' : 'Double-click the river (or press +) to expand time'}</p>;
+  }
+  const crumbs = expandCrumbs(window);
   return (
-    <nav className="time-nav" aria-label="Time zoom">
-      <button className="zoom-btn" onClick={() => onZoomStep(-1)} disabled={!shallower(level)} aria-label="Zoom out in time">−</button>
-      <ol className="time-crumbs">
+    <nav className="expand-nav" aria-label="Expanded time">
+      <ol>
         {crumbs.map((c, i) => (
           <li key={c.label}>
             {i > 0 && <span className="sep" aria-hidden>›</span>}
-            <button className={i === crumbs.length - 1 ? 'active' : ''} aria-current={i === crumbs.length - 1 ? 'true' : undefined} onClick={() => onZoomTo(c.window)}>
+            <button
+              className={i === crumbs.length - 1 ? 'active' : ''}
+              aria-current={i === crumbs.length - 1 ? 'true' : undefined}
+              onClick={() => i < crumbs.length - 1 && onGoTo(c.window)}
+              title={i < crumbs.length - 1 ? `Step back out to ${c.label}, month by month` : `Expanded: ${c.label}`}
+            >
               {c.label}
             </button>
           </li>
         ))}
+        <li>
+          <span className="sep" aria-hidden>›</span>
+          <button className="collapse" onClick={onCollapse}>Collapse</button>
+        </li>
       </ol>
-      <button className="zoom-btn" onClick={() => onZoomStep(1)} disabled={!deeper(level)} aria-label="Zoom in on time">+</button>
     </nav>
   );
 }
@@ -46,7 +58,7 @@ const OVERVIEW_TICKS = [-3000, -1000, 0, 1000, 1500, 1800, 1900, 1950, 2000];
 const MINOR_TICKS = new Set([-1000, 0, 1000, 1800, 1950]);
 
 export function OverviewBar({ window, year, onTravel }: OverviewProps) {
-  // Positions use the plain "all time" log scale, so the bar never changes shape when you zoom.
+  // Positions use the plain log scale, so the bar never changes shape when you expand time.
   const s0 = yearToS(YEAR_MIN);
   const s1 = yearToS(YEAR_MAX);
   const pct = (y: number) => ((Math.min(Math.max(yearToS(y), s0), s1) - s0) / (s1 - s0)) * 100;
@@ -72,7 +84,7 @@ export function OverviewBar({ window, year, onTravel }: OverviewProps) {
       {OVERVIEW_TICKS.map((t) => (
         <span key={t} className={`ov-tick ${MINOR_TICKS.has(t) ? 'minor' : ''}`} style={{ left: `${pct(t)}%` }}>{formatYear(t)}</span>
       ))}
-      {w && <div className="ov-window" style={{ left: `${w.left}%`, width: `${w.width}%` }} title={`Zoomed into ${windowLabel(window)}`} />}
+      {w && <div className="ov-window" style={{ left: `${w.left}%`, width: `${w.width}%` }} title={`Expanded: ${windowLabel(window)}`} />}
       <div className="ov-here" style={{ left: `${pct(year)}%` }} />
     </div>
   );

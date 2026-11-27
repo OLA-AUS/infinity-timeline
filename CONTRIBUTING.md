@@ -173,8 +173,8 @@ Where things live:
 | Path | What |
 |---|---|
 | `src/types.ts` | Every data shape. Start here. |
-| `src/lib/` | Pure logic with tests: `trust.ts` (trust scores), `status.ts` (claim status), `dates.ts` + `dateDispute.ts` (uncertain and disputed dates), `forceLayout.ts` (claim map layout), `time.ts` + `timeScale.ts` (where things sit on the river, and time zoom), `importance.ts` + `cluster.ts` (what to show when crowded), `related.ts` (links, relatedness, topic rivers), `search.ts`, `usePanZoom.ts` (drag / pinch / zoom). |
-| `src/components/` | React components: `River.tsx` (3D) + `RiverSpans.tsx`, `TimeNav.tsx` (zoom breadcrumb, overview bar), `SearchBar.tsx`, `TopicRiver.tsx` + `TopicStrip.tsx` + `EventLinks.tsx` (topic rivers), `ClaimMap.tsx`, `ClaimDetail.tsx`, `SourcePanel.tsx`, `DateExplain.tsx`, charts. |
+| `src/lib/` | Pure logic with tests: `trust.ts` (trust scores), `status.ts` (claim status), `dates.ts` + `dateDispute.ts` (uncertain and disputed dates), `forceLayout.ts` (claim map layout), `time.ts` + `timeScale.ts` + `cameraAnchor.ts` (where things sit on the river, expanding time, keeping the camera steady), `importance.ts` + `cluster.ts` (what to show when crowded, fan-out rings), `related.ts` (links, relatedness, topic rivers), `search.ts`, `usePanZoom.ts` (drag / pinch / zoom). |
+| `src/components/` | React components: `River.tsx` (3D) + `RiverSpans.tsx`, `TimeNav.tsx` (Collapse control, overview bar), `SearchBar.tsx`, `TopicRiver.tsx` + `TopicStrip.tsx` + `EventLinks.tsx` (topic rivers), `ClaimMap.tsx`, `ClaimDetail.tsx`, `SourcePanel.tsx`, `DateExplain.tsx`, charts. |
 | `src/data/seed.ts` | **Demo** data. Fictional except event dates. |
 | `src/data/repoData.ts` | Loads the real data in `data/`. |
 | `scripts/` | Importers, the data validator, the date helper. Plain Node.js, no build step. |

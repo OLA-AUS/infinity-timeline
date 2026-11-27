@@ -22,8 +22,9 @@ A 3D community-edited timeline of human history. Every claim shows who made it, 
 - `src/lib/trust.ts` — trust scoring + funding propagation; `src/lib/status.ts` — claim status
 - `src/lib/dates.ts` — FuzzyDate helpers/formatting; `src/lib/dateDispute.ts` — resolve disputed dates
 - `src/lib/forceLayout.ts` — claim map layout (labels off lines); `src/lib/usePanZoom.ts` — drag/pinch/wheel
-- `src/lib/timeScale.ts` — river time zoom (windows, linear-inside/squeezed-outside scale, breadcrumbs); `src/lib/importance.ts` — event importance + LOD thresholds; `src/lib/cluster.ts` — screen-space clustering / label planning; `src/lib/search.ts`; `src/lib/related.ts` — link strength, relatedness graph, topic rivers + branch points
-- `src/components/River.tsx` — 3D timeline (LOD planner, clusters, faint dots, zoom gestures, ≥44px hit areas on mobile); `RiverSpans.tsx` — uncertainty spans; `TimeNav.tsx` — breadcrumb + overview bar; `SearchBar.tsx`; `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
+- `src/lib/timeScale.ts` — expand in place (normal → months → days; linear-inside/squeezed-outside scale, blended scales for animation, Collapse crumbs); `src/lib/cameraAnchor.ts` — camera pose + anchoring maths (keeps the chosen moment still on screen; tested round trip); `src/lib/importance.ts` — event importance + LOD thresholds; `src/lib/cluster.ts` — label planning, overlap stacks, fan-ring positions (no merging on the main river); `src/lib/search.ts`; `src/lib/related.ts` — link strength, relatedness graph, topic rivers + branch points
+- `src/components/River.tsx` — 3D timeline (individual bubbles, hover magnifier, fan-out ring, bubble menu, double-click to expand, animated anchored expand/collapse, LOD planner, faint dots, ≥44px hit areas); `RiverSpans.tsx` — uncertainty spans + `place()`; `HitArea.tsx`; `TimeNav.tsx` — ExpandNav (1939 › Sep 1939 › Collapse) + overview bar;
+- Camera during expand/collapse is applied in a layout effect in the same React update that moves the meshes (see `pending` in River.tsx) — moving it in useFrame first causes one-frame jitter. `SearchBar.tsx`; `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
 - Topic rivers: `TopicRiver.tsx` (3D, shown instead of the main river while a claim map is open), `TopicStrip.tsx` (glide strip + relevance slider), `EventLinks.tsx` (link list + votes). State (anchor, topicPos, trail) lives in App.tsx.
 - Every 3D position goes through the current `TimeScale` (`place()` in RiverSpans.tsx) — never call `yearToS` directly in the scene.
 - `scripts/` — `import-wikidata-ww2.mjs` (+ `lib/wikidata.mjs`), `validate-data.mjs` (+ `lib/validate.mjs`), `make-date.mjs`
@@ -39,4 +40,4 @@ On Windows Git Bash, set `MSYS_NO_PATHCONV=1` when passing `BASE_PATH=/repo/` to
 2. Voting with separate agree / well-sourced signals.
 3. Edit history UI and "view as of date".
 4. OpenAlex importer (Wikidata WW2 importer done); topics/claims as data files so date disputes can be opened by PR.
-5. Level-of-detail *streaming* (load data per zoom window) once data outgrows one bundle; river zoom, clustering, importance and search are done.
+5. Level-of-detail *streaming* (load data per expanded period) once data outgrows one bundle; expand in place, fan-out rings, importance and search are done.

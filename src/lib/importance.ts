@@ -1,7 +1,7 @@
 // How important an event is — used to decide what to show when the river is crowded.
 //
-// When you're zoomed far out, only the most important events get a labelled bubble;
-// the rest are drawn as faint dots until you zoom in. Like every score on this site,
+// On the normal (unexpanded) river, only the more important events get a bubble; the rest
+// are drawn as faint dots until you expand time around them. Like every score on this site,
 // importance comes with its reasons ("factors"), so the UI can explain it.
 //
 //   importance = 10 × debates              (topics people are arguing about)
@@ -14,7 +14,7 @@
 // history. Changing these weights is a governance decision, like the trust weights.
 import type { Dataset, TimelineEvent } from '../types';
 import type { Factor } from './trust';
-import type { ZoomLevel } from './timeScale';
+import type { ExpandLevel } from './timeScale';
 
 export interface ImportanceResult {
   score: number;
@@ -24,11 +24,11 @@ export interface ImportanceResult {
 export const IMPORTANCE_WEIGHTS = { debate: 10, link: 3, source: 2, sitelinks: 4, curated: 25 };
 
 /**
- * The minimum importance for an event to get a labelled bubble at each zoom level.
- * Below it, the event is a faint dot. At year level and closer, everything gets a bubble.
+ * The minimum importance for an event to get its own bubble at each level of expansion.
+ * Below it, the event is a faint dot. Expanded to months or days, everything gets a bubble.
+ * Tuned on the WW2 import: the normal river keeps the ~17 most-covered WW2 events.
  */
-// Tuned on the WW2 import: "all time" keeps the ~17 most-covered events, a century ~95.
-export const LOD_THRESHOLD: Record<ZoomLevel, number> = { all: 25, century: 22, decade: 8, year: 0, month: 0, day: 0 };
+export const LOD_THRESHOLD: Record<ExpandLevel, number> = { normal: 25, months: 0, days: 0 };
 
 export function eventImportance(ev: TimelineEvent, data: Dataset): ImportanceResult {
   const w = IMPORTANCE_WEIGHTS;
