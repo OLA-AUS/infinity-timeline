@@ -1,0 +1,30 @@
+{
+  "name": "infinity-timeline",
+  "version": "0.1.0",
+  "description": "3D community-edited timeline of human history with source, author and funding transparency",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.32",
+    "@types/react-dom": "^18.3.7",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^7.0.2",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9"
+  },
+  "private": true,
+  "type": "module"
+}
