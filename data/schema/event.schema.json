@@ -24,6 +24,7 @@
         "qid": { "type": "string", "pattern": "^Q[0-9]+$" },
         "retrievedAt": { "type": "string", "format": "date" },
         "wikipedia": { "type": "string", "format": "uri" },
+        "sitelinks": { "type": "integer", "minimum": 0, "description": "How many Wikipedia language editions cover it (from Wikidata). Feeds the importance score." },
         "manualEdits": { "type": "boolean", "description": "Set to true when you edit an imported file by hand, so the importer never overwrites your change." },
         "conflictingValues": { "type": "array", "items": { "type": "string" }, "description": "Wikidata listed more than one value for this date." }
       }

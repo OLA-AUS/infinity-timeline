@@ -106,10 +106,11 @@ async function main() {
 
   // 3. Details, in batches.
   const out = [];
+  const sitelinksOf = new Map(events.map((e) => [e.qid, e.sitelinks])); // feeds the importance score
   for (const batch of chunk(events.map((e) => e.qid), 80)) {
     const grouped = groupDetails(await sparql(detailsQuery(batch), 'details'));
     for (const qid of batch) {
-      const ev = grouped.has(qid) ? itemToEvent(grouped.get(qid), { retrievedAt }) : null;
+      const ev = grouped.has(qid) ? itemToEvent(grouped.get(qid), { retrievedAt, sitelinks: sitelinksOf.get(qid) }) : null;
       if (ev) out.push(ev);
     }
     process.stdout.write(`  fetched ${out.length}/${events.length}\r`);

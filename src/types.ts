@@ -94,6 +94,8 @@ export interface EventProvenance {
   qid?: string; // Wikidata item id, e.g. "Q8641370"
   retrievedAt?: string; // ISO date the importer ran
   wikipedia?: string; // English Wikipedia article, if any
+  /** How many Wikipedia language editions cover it — one input to its importance score. */
+  sitelinks?: number;
   /** Set to true when a person edits the file by hand, so the importer won't overwrite it. */
   manualEdits?: boolean;
   /** Wikidata itself listed more than one value for this date. The span covers all of them. */

@@ -31,6 +31,16 @@ Each result includes a plain-English `reason`, shown in the event's "Explain thi
 - **Penalty** — fine, settlement, sanction, retraction against an Entity: amount, date, type, regulator, link.
 - **FundingEdge** — funder → recipient, amount/share if known, date range, disclosed or discovered.
 
+## Event importance (what shows when the river is crowded)
+Computed, never stored: `src/lib/importance.ts → eventImportance()` returns a score plus its factors, shown under "River importance" beside each event.
+
+`importance = 10 × debates + 3 × opinion charts linking to it + 2 × distinct date sources + 4 × log2(1 + sitelinks) + 25 if hand-picked`
+
+`provenance.sitelinks` (how many Wikipedia language editions cover an item) is written by the Wikidata importer. `LOD_THRESHOLD` sets the minimum importance for a labelled bubble at each zoom level (all time 25, century 22, decade 8, year and closer: everything); below it an event is a faint dot. Like trust weights, changing these is a governance decision.
+
+## Time zoom
+`src/lib/timeScale.ts`. The river's zoom is a calendar **window** (`{ level, start, end }`, or `null` for all time) at one of `century | decade | year | month | day`. Inside the window time is linear over `WINDOW_LENGTH` river units; outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`. `makeScale(window)` gives `toS(year)` / `toYear(s)` for placing everything in 3D.
+
 ## Signals
 - **Vote** — `{ userId, targetId, kind: 'agree' | 'well_sourced', value: +1 | -1, at }`
 - **ExternalPoll** — results imported from other platforms/pollsters, with link, method, sample size.

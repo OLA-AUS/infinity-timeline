@@ -38,7 +38,8 @@
 - Correlation tooling (lagged correlation between opinion series and events) with explicit "correlation ≠ causation" framing and causal-claim templates
 
 ## Phase 4 — Scale
-- Zoom levels from cosmic time to single days, level-of-detail streaming
+- ✅ Zoom levels from all time down to single days, clustering, importance-based level of detail, search
+- Level-of-detail *streaming* (load data per zoom window) and cosmic-time zoom
 - More fields, translations
 - Public data dumps, API for researchers
 - Governance votes on model weights

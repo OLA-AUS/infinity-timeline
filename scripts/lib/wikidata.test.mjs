@@ -63,6 +63,13 @@ describe('Wikidata rows → event file', () => {
     expect(ev.provenance).toMatchObject({ importedFrom: 'wikidata', qid: 'Q154720', manualEdits: false });
   });
 
+  it('records how many Wikipedias cover it (for the importance score)', () => {
+    const ev = itemToEvent(groupDetails(rows).get('Q154720'), { retrievedAt: '2026-11-27', sitelinks: 77 });
+    expect(ev.provenance.sitelinks).toBe(77);
+    expect(checkEvent(ev, 'Q154720')).toEqual([]);
+    expect(checkEvent({ ...ev, provenance: { ...ev.provenance, sitelinks: -1 } }, 'Q154720')[0]).toContain('sitelinks');
+  });
+
   it('produces files that pass the data validator', () => {
     const ev = itemToEvent(groupDetails(rows).get('Q154720'), { retrievedAt: '2026-11-27' });
     expect(checkEvent(ev, 'Q154720')).toEqual([]);

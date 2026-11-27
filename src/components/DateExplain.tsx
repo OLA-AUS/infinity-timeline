@@ -1,11 +1,14 @@
 // The "Explain this date" box shown beside an event.
 // It says what the date is, how sure we are, how it was worked out, which sources back it,
-// and — if the date is disputed — which proposals are still standing and why.
+// and — if the date is disputed — which proposals are still standing and why. It also
+// explains the event's "river importance" (what decides if it's shown when zoomed out).
 import type { Dataset, FuzzyDate, TimelineEvent } from '../types';
 import { formatAt, formatDate, hasWideRange, METHOD_LABEL, PRECISION_LABEL } from '../lib/dates';
 import { resolveEventDate } from '../lib/dateDispute';
 import { STATUS_COLOR } from '../lib/status';
 import { editFileUrl, newIssueUrl, viewFileUrl } from '../config';
+import { eventImportance, LOD_THRESHOLD } from '../lib/importance';
+import { ZOOM_LEVELS } from '../lib/timeScale';
 
 interface Props {
   data: Dataset;
@@ -62,7 +65,27 @@ export function DateExplain({ data, event, onOpenSource, onOpenTopic }: Props) {
         </p>
       )}
       {event.end && <p className="small muted">Ended: {formatDate(event.end)}</p>}
+      <ImportanceExplain data={data} event={event} />
     </section>
+  );
+}
+
+/** Why this event gets a labelled bubble (or only a faint dot) when you zoom out. */
+function ImportanceExplain({ data, event }: { data: Dataset; event: TimelineEvent }) {
+  const imp = eventImportance(event, data);
+  const shownFrom = ZOOM_LEVELS.find((l) => imp.score >= LOD_THRESHOLD[l]) ?? 'year';
+  return (
+    <details className="importance">
+      <summary>River importance: {imp.score}</summary>
+      <p className="small muted">
+        Decides what's shown when the river is crowded. This event gets its own bubble from the <b>{shownFrom === 'all' ? 'all-time' : shownFrom}</b> zoom level inwards; further out it's a faint dot.
+      </p>
+      <ul className="factors">
+        {imp.factors.map((f, i) => (
+          <li key={i}><span>{f.label}</span><b className="pos">+{f.delta}</b></li>
+        ))}
+      </ul>
+    </details>
   );
 }
 
