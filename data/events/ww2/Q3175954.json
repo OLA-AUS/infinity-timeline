@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q3175954",
+  "title": "Japanese occupation of the Philippines",
+  "summary": "1942–1945 Japanese occupation of the Philippines during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.347945,
+    "latest": 1942.350685,
+    "best": 1942.349315,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q3175954"
+    ]
+  },
+  "end": {
+    "earliest": 1945.506849,
+    "latest": 1945.509589,
+    "best": 1945.508219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q3175954"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q3175954",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Japanese_occupation_of_the_Philippines",
+    "manualEdits": false
+  }
+}

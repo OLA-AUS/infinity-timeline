@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q6165880",
+  "title": "Soviet invasion of Manchuria",
+  "summary": "1945 invasion; part of the Soviet–Japanese War of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.60274,
+    "latest": 1945.605479,
+    "best": 1945.60411,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q6165880"
+    ]
+  },
+  "end": {
+    "earliest": 1945.632877,
+    "latest": 1945.635616,
+    "best": 1945.634247,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q6165880"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q6165880",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet_invasion_of_Manchuria",
+    "manualEdits": false
+  }
+}

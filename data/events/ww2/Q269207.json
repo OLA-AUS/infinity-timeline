@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q269207",
+  "title": "Battle of Sedan",
+  "summary": "battle which took place in the Second World War during the Battle of France in 1940.",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.363388,
+    "latest": 1940.36612,
+    "best": 1940.364754,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q269207"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q269207",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Sedan_(1940)",
+    "manualEdits": false
+  }
+}

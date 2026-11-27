@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2050460",
+  "title": "Allied occupation of Iceland",
+  "summary": "1941 World War II Allied occupation",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.454795,
+    "latest": 1941.457534,
+    "best": 1941.456164,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2050460"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2050460",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Allied_occupation_of_Iceland",
+    "manualEdits": false
+  }
+}

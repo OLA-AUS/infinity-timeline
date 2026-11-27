@@ -1,0 +1,8 @@
+# Wikidata items the WW2 importer must never (re-)import.
+#
+# To remove an imported event: in one pull request, delete its file from data/events/ww2/
+# AND add its Q-id here with the reason after a "#". Git history keeps the old file, so
+# nothing is truly lost, and reviewers can see why it went.
+#
+# Format: one Q-id per line, then "# reason". Example:
+# Q123456  # not an event: this item describes a weapon, not something that happened

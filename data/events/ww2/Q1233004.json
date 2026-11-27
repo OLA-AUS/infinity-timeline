@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1233004",
+  "title": "Operation Claymore",
+  "summary": "raid by British and Norwegian forces in the Lofoten Islands in 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.169863,
+    "latest": 1941.172603,
+    "best": 1941.171233,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1233004"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1233004",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Claymore",
+    "manualEdits": false
+  }
+}

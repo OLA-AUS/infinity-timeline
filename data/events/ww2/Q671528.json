@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q671528",
+  "title": "Battle of Königsberg",
+  "summary": "1945 battle of the East Prussian Offensive in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.260274,
+    "latest": 1945.263014,
+    "best": 1945.261644,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q671528"
+    ]
+  },
+  "end": {
+    "earliest": 1945.268493,
+    "latest": 1945.271233,
+    "best": 1945.269863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q671528"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q671528",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_K%C3%B6nigsberg",
+    "manualEdits": false
+  }
+}

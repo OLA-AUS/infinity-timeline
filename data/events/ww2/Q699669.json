@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q699669",
+  "title": "Battle of the Santa Cruz Islands",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.813699,
+    "latest": 1942.816438,
+    "best": 1942.815068,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699669"
+    ]
+  },
+  "end": {
+    "earliest": 1942.819178,
+    "latest": 1942.821918,
+    "best": 1942.820548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699669"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q699669",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Santa_Cruz_Islands",
+    "manualEdits": false
+  }
+}

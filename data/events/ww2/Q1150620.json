@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1150620",
+  "title": "Slovak invasion of Poland",
+  "summary": "event during Nazi Germany's invasion of Poland in September 1939",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.706849,
+    "latest": 1939.709589,
+    "best": 1939.708219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1150620"
+    ]
+  },
+  "end": {
+    "earliest": 1939.706849,
+    "latest": 1939.709589,
+    "best": 1939.708219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1150620"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1150620",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Slovak_invasion_of_Poland",
+    "manualEdits": false
+  }
+}

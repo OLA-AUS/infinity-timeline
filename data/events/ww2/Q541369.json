@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q541369",
+  "title": "Anglo-Soviet invasion of Iran",
+  "summary": "1941 invasion during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.646575,
+    "latest": 1941.649315,
+    "best": 1941.647945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q541369"
+    ]
+  },
+  "end": {
+    "earliest": 1941.709589,
+    "latest": 1941.712329,
+    "best": 1941.710959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q541369"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q541369",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Anglo-Soviet_invasion_of_Iran",
+    "manualEdits": false
+  }
+}

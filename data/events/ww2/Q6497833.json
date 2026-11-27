@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q6497833",
+  "title": "Last battle of the battleship Bismarck",
+  "summary": "sinking of the battleship Bismarck",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.4,
+    "latest": 1941.40274,
+    "best": 1941.40137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q6497833"
+    ]
+  },
+  "end": {
+    "earliest": 1941.4,
+    "latest": 1941.40274,
+    "best": 1941.40137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q6497833"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q6497833",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Last_battle_of_Bismarck",
+    "manualEdits": false
+  }
+}

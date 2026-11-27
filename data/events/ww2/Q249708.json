@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q249708",
+  "title": "Aleutian Islands Campaign",
+  "summary": "1942 military campaign",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.419178,
+    "latest": 1942.421918,
+    "best": 1942.420548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q249708"
+    ]
+  },
+  "end": {
+    "earliest": 1943.619178,
+    "latest": 1943.621918,
+    "best": 1943.620548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q249708"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q249708",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Aleutian_Islands_campaign",
+    "manualEdits": false
+  }
+}

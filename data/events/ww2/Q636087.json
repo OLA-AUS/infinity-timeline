@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q636087",
+  "title": "East Prussian Offensive",
+  "summary": "1945 Soviet offensive on the Eastern Front in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.032877,
+    "latest": 1945.035616,
+    "best": 1945.034247,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q636087"
+    ]
+  },
+  "end": {
+    "earliest": 1945.312329,
+    "latest": 1945.315068,
+    "best": 1945.313699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q636087"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q636087",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/East_Prussian_offensive",
+    "manualEdits": false
+  }
+}

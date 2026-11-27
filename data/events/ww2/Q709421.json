@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709421",
+  "title": "Battle of Xuzhou",
+  "summary": "1938 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1938.224658,
+    "latest": 1938.227397,
+    "best": 1938.226027,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709421"
+    ]
+  },
+  "end": {
+    "earliest": 1938.328767,
+    "latest": 1938.331507,
+    "best": 1938.330137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709421"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709421",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Xuzhou",
+    "manualEdits": false
+  }
+}

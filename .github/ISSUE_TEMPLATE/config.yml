@@ -1,0 +1,6 @@
+# Shown when someone clicks "New issue". Pick a template so the right details get asked for.
+blank_issues_enabled: true
+contact_links:
+  - name: How to contribute (read first)
+    url: https://github.com/OLA-AUS/infinity-timeline/blob/main/CONTRIBUTING.md
+    about: Code style, how data edits work, and how to suggest ideas.

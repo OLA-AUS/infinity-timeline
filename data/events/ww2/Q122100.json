@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q122100",
+  "title": "Continuation War",
+  "summary": "1941–1944 war between Finland and the Soviet Union",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.479452,
+    "latest": 1941.482192,
+    "best": 1941.480822,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q122100"
+    ]
+  },
+  "end": {
+    "earliest": 1944.715847,
+    "latest": 1944.718579,
+    "best": 1944.717213,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q122100"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q122100",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Continuation_War",
+    "manualEdits": false
+  }
+}

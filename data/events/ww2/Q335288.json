@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q335288",
+  "title": "Battle of Monte Cassino",
+  "summary": "1944 assaults by the Allies against the Winter Line in Italy held by Axis forces during the Italian Campaign of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.043716,
+    "latest": 1944.046448,
+    "best": 1944.045082,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q335288"
+    ]
+  },
+  "end": {
+    "earliest": 1944.377049,
+    "latest": 1944.379781,
+    "best": 1944.378415,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q335288"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q335288",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Monte_Cassino",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q702142",
+  "title": "Battle of Vella Gulf",
+  "summary": "1943 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.594521,
+    "latest": 1943.59726,
+    "best": 1943.59589,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702142"
+    ]
+  },
+  "end": {
+    "earliest": 1943.59726,
+    "latest": 1943.6,
+    "best": 1943.59863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702142"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q702142",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Vella_Gulf",
+    "manualEdits": false
+  }
+}

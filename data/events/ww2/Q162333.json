@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q162333",
+  "title": "Italian Campaign",
+  "summary": "1943–1945 military campaign of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.520548,
+    "latest": 1943.523288,
+    "best": 1943.521918,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162333"
+    ]
+  },
+  "end": {
+    "earliest": 1945.331507,
+    "latest": 1945.334247,
+    "best": 1945.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162333"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q162333",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Italian_campaign_(World_War_II)",
+    "manualEdits": false
+  }
+}

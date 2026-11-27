@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q208529",
+  "title": "Battle of Dunkirk",
+  "summary": "1940 battle in the Second World War between the Allies and Germany",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.398907,
+    "latest": 1940.401639,
+    "best": 1940.400273,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q208529"
+    ]
+  },
+  "end": {
+    "earliest": 1940.423497,
+    "latest": 1940.42623,
+    "best": 1940.424863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q208529"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q208529",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Dunkirk",
+    "manualEdits": false
+  }
+}

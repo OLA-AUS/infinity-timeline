@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q162362",
+  "title": "World War II in the Balkans",
+  "summary": "1940–45 conflict of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.822404,
+    "latest": 1940.825137,
+    "best": 1940.82377,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162362"
+    ]
+  },
+  "end": {
+    "earliest": 1941.413699,
+    "latest": 1941.416438,
+    "best": 1941.415068,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162362"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q162362",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Balkans_campaign_(World_War_II)",
+    "manualEdits": false
+  }
+}

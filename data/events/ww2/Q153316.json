@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q153316",
+  "title": "Battle of Crete",
+  "summary": "1941 battle during WWII on the Greek island of Crete",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.380822,
+    "latest": 1941.383562,
+    "best": 1941.382192,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q153316"
+    ]
+  },
+  "end": {
+    "earliest": 1941.413699,
+    "latest": 1941.416438,
+    "best": 1941.415068,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q153316"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q153316",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Crete",
+    "manualEdits": false
+  }
+}

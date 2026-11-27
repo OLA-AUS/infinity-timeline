@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1440764",
+  "title": "Battle of Timor",
+  "summary": "1942 WWII battle in the Pacific Theatre",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.134247,
+    "latest": 1942.136986,
+    "best": 1942.135616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1440764"
+    ]
+  },
+  "end": {
+    "earliest": 1943.109589,
+    "latest": 1943.112329,
+    "best": 1943.110959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1440764"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1440764",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Timor",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q697842",
+  "title": "Invasion of Yugoslavia",
+  "summary": "1941 German-led attack on the Kingdom of Yugoslavia by the Axis powers during the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.293151,
+    "latest": 1941.29589,
+    "best": 1941.294521,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697842"
+    ]
+  },
+  "end": {
+    "earliest": 1941.293151,
+    "latest": 1941.29589,
+    "best": 1941.294521,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697842"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q697842",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Invasion_of_Yugoslavia",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696848",
+  "title": "Anglo-Iraqi War",
+  "summary": "British-led Allied military campaign against Iraq under Rashid Ali during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.331507,
+    "latest": 1941.334247,
+    "best": 1941.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696848"
+    ]
+  },
+  "end": {
+    "earliest": 1941.410959,
+    "latest": 1941.413699,
+    "best": 1941.412329,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696848"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696848",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Anglo-Iraqi_War",
+    "manualEdits": false
+  }
+}

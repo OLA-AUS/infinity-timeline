@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q23965844",
+  "title": "Toropets–Kholm Offensive",
+  "summary": "1942 world War II Red Army military operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.09863,
+    "latest": 1942.10137,
+    "best": 1942.1,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q23965844"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q23965844",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Toropets%E2%80%93Kholm_offensive",
+    "manualEdits": false
+  }
+}

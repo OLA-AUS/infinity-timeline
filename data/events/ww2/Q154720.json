@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q154720",
+  "title": "Battle of Britain",
+  "summary": "air battle waged between German and British air forces in 1940",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.521858,
+    "latest": 1940.52459,
+    "best": 1940.523224,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q154720"
+    ]
+  },
+  "end": {
+    "earliest": 1940.830601,
+    "latest": 1940.833333,
+    "best": 1940.831967,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q154720"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q154720",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Britain",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2026138",
+  "title": "Operation Hailstone",
+  "summary": "1944 United States naval operation during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.128415,
+    "latest": 1944.131148,
+    "best": 1944.129781,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2026138"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2026138",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Hailstone",
+    "manualEdits": false
+  }
+}

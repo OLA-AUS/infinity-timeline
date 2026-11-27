@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709370",
+  "title": "Kuril Islands landing operation",
+  "summary": "part of the 1945 Soviet–Japanese War",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.665753,
+    "latest": 1945.668493,
+    "best": 1945.667123,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709370"
+    ]
+  },
+  "end": {
+    "earliest": 1945.665753,
+    "latest": 1945.668493,
+    "best": 1945.667123,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709370"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709370",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet_invasion_of_the_Kuril_Islands",
+    "manualEdits": false
+  }
+}

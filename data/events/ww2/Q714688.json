@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714688",
+  "title": "Khabarovsk War Crime Trials",
+  "summary": "war crimes trial held in December 1949",
+  "field": "politics",
+  "date": {
+    "earliest": 1949.915068,
+    "latest": 1950,
+    "best": 1949.957534,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714688"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714688",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Khabarovsk_war_crimes_trials",
+    "manualEdits": false
+  }
+}

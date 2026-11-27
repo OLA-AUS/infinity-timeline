@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q170314",
+  "title": "Second Sino-Japanese War",
+  "summary": "Japanese invasion of China (1937–1945)",
+  "field": "politics",
+  "date": {
+    "earliest": 1937.512329,
+    "latest": 1937.515068,
+    "best": 1937.513699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q170314"
+    ]
+  },
+  "end": {
+    "earliest": 1945.687671,
+    "latest": 1945.690411,
+    "best": 1945.689041,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q170314"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q170314",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Second_Sino-Japanese_War",
+    "manualEdits": false
+  }
+}

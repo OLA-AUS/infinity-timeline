@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696479",
+  "title": "Battle of the Eastern Solomons",
+  "summary": "1942 WWII carrier battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.643836,
+    "latest": 1942.646575,
+    "best": 1942.645205,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696479"
+    ]
+  },
+  "end": {
+    "earliest": 1942.646575,
+    "latest": 1942.649315,
+    "best": 1942.647945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696479"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696479",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Eastern_Solomons",
+    "manualEdits": false
+  }
+}

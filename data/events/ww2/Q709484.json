@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709484",
+  "title": "Belgorod–Kharkov offensive operation",
+  "summary": "August 1943 Soviet strategic summer offensive",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.586301,
+    "latest": 1943.589041,
+    "best": 1943.587671,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709484"
+    ]
+  },
+  "end": {
+    "earliest": 1943.641096,
+    "latest": 1943.643836,
+    "best": 1943.642466,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709484"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709484",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Belgorod%E2%80%93Kharkov_offensive_operation",
+    "manualEdits": false
+  }
+}

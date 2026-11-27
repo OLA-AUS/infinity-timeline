@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q296754",
+  "title": "Battle of Singapore",
+  "summary": "1942 World War II battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.10411,
+    "latest": 1942.106849,
+    "best": 1942.105479,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q296754"
+    ]
+  },
+  "end": {
+    "earliest": 1942.123288,
+    "latest": 1942.126027,
+    "best": 1942.124658,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q296754"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q296754",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Fall_of_Singapore",
+    "manualEdits": false
+  }
+}

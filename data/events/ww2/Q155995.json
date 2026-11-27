@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q155995",
+  "title": "Operation Spring Awakening",
+  "summary": "last major German offensive of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.284932,
+    "latest": 1945.287671,
+    "best": 1945.286301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q155995"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q155995",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Spring_Awakening",
+    "manualEdits": false
+  }
+}

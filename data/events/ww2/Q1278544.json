@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1278544",
+  "title": "World War II persecution of Serbs",
+  "summary": "Genocide by the Ustashe during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1941,
+    "latest": 1942,
+    "best": 1941.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1278544"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1278544",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Genocide_of_Serbs_in_the_Independent_State_of_Croatia",
+    "manualEdits": false
+  }
+}

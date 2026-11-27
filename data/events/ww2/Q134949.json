@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q134949",
+  "title": "Winter War",
+  "summary": "1939–1940 war between the Soviet Union and Finland",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.912329,
+    "latest": 1939.915068,
+    "best": 1939.913699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q134949"
+    ]
+  },
+  "end": {
+    "earliest": 1940.196721,
+    "latest": 1940.199454,
+    "best": 1940.198087,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q134949"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q134949",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Winter_War",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q836124",
+  "title": "Soviet evacuation of Tallinn",
+  "summary": "evacuation of the Baltic Fleet and pro-Soviet citizens from Tallinn",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.663014,
+    "latest": 1941.665753,
+    "best": 1941.664384,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q836124"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q836124",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet_evacuation_of_Tallinn",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696817",
+  "title": "Mediterranean and Middle East Theater of World War II",
+  "summary": "major theatre of operations during the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.439891,
+    "latest": 1940.442623,
+    "best": 1940.441257,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696817"
+    ]
+  },
+  "end": {
+    "earliest": 1945.331507,
+    "latest": 1945.334247,
+    "best": 1945.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696817"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696817",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Mediterranean_and_Middle_East_theatre_of_World_War_II",
+    "manualEdits": false
+  }
+}

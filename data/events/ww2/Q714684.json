@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714684",
+  "title": "Battle of Gabon",
+  "summary": "1940 battle of WW2",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.849727,
+    "latest": 1940.852459,
+    "best": 1940.851093,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714684"
+    ]
+  },
+  "end": {
+    "earliest": 1940.863388,
+    "latest": 1940.86612,
+    "best": 1940.864754,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714684"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714684",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Gabon",
+    "manualEdits": false
+  }
+}

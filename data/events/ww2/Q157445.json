@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q157445",
+  "title": "Prague offensive",
+  "summary": "last major military operation on the Eastern Front (6–11 May 1945)",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.342466,
+    "latest": 1945.345205,
+    "best": 1945.343836,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q157445"
+    ]
+  },
+  "end": {
+    "earliest": 1945.356164,
+    "latest": 1945.358904,
+    "best": 1945.357534,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q157445"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q157445",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Prague_offensive",
+    "manualEdits": false
+  }
+}

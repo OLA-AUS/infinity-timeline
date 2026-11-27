@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1558441",
+  "title": "Operation Corkscrew",
+  "summary": "1943 military operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.441096,
+    "latest": 1943.443836,
+    "best": 1943.442466,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1558441"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1558441",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Corkscrew",
+    "manualEdits": false
+  }
+}

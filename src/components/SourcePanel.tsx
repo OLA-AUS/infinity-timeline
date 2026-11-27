@@ -1,6 +1,9 @@
+// The slide-in panel for a source or an entity: who wrote/paid for it, its penalties,
+// and its trust score with the full "Explain this score" breakdown. Funding is always
+// shown as context next to the evidence — never as a verdict on its own.
 import type { Dataset } from '../types';
 import { effectiveTrust, formatMoney, sourceTrust, type TrustResult } from '../lib/trust';
-import { formatYear } from '../lib/time';
+import { formatShort, formatYear } from '../lib/dates';
 
 export type PanelTarget = { kind: 'source' | 'entity'; id: string };
 
@@ -12,7 +15,9 @@ interface Props {
   onClose: () => void;
 }
 
+/** Big score number plus the list of factors that produced it. */
 function TrustBreakdown({ r }: { r: TrustResult }) {
+  // Green / amber / red bands are only a reading aid; the factors below are the real answer.
   const color = r.score >= 45 ? '#3ddc97' : r.score >= 30 ? '#f5b83d' : '#ff5c6c';
   return (
     <section>
@@ -33,6 +38,7 @@ export function SourcePanel({ data, target, onOpen, onJump, onClose }: Props) {
   const name = (id: string) => data.entities.find((e) => e.id === id)?.name ?? id;
   const link = (id: string) => <a key={id} onClick={() => onOpen({ kind: 'entity', id })}>{name(id)}</a>;
 
+  // ---- A source: paper, book, document, post ----
   if (target.kind === 'source') {
     const s = data.sources.find((x) => x.id === target.id)!;
     return (
@@ -47,10 +53,12 @@ export function SourcePanel({ data, target, onOpen, onJump, onClose }: Props) {
         <section><h4>Authors</h4>{s.authorIds.length ? s.authorIds.map(link) : <span className="muted">Institutional / unattributed</span>}</section>
         {s.institutionId && <section><h4>Institution</h4>{link(s.institutionId)}</section>}
         <section><h4>Funded by</h4>{s.funderIds.length ? s.funderIds.map(link) : <span className="muted">Unknown — flagged</span>}</section>
+        {s.url && <section><h4>Link</h4><a href={s.url} target="_blank" rel="noreferrer">{s.url}</a></section>}
       </div>
     );
   }
 
+  // ---- An entity: person, institution, company, funder ----
   const e = data.entities.find((x) => x.id === target.id)!;
   const penalties = data.penalties.filter((p) => p.entityId === e.id);
   const fundedBy = data.funding.filter((f) => f.recipientId === e.id);
@@ -61,11 +69,11 @@ export function SourcePanel({ data, target, onOpen, onJump, onClose }: Props) {
   return (
     <div className="panel">
       <button className="close" onClick={onClose}>✕</button>
-      <div className="kicker">{e.kind} · {e.field} · founded {formatYear(e.foundedAt)}</div>
+      <div className="kicker">{e.kind} · {e.field} · founded {formatShort(e.founded)}</div>
       <h3>{e.name}</h3>
       <p className="muted">{e.description}</p>
       {e.demo && <div className="demo-flag">Demo placeholder entity</div>}
-      <button className="jump" onClick={() => onJump(e.id)}>⤳ Jump on timeline to {formatYear(e.foundedAt)}</button>
+      <button className="jump" onClick={() => onJump(e.id)}>⤳ Jump on timeline to {formatYear(e.founded.best)}</button>
       <TrustBreakdown r={effectiveTrust(e.id, data)} />
 
       {penalties.length > 0 && (

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q697625",
+  "title": "German invasion of Belgium",
+  "summary": "1940 German conquest of Belgium during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.355191,
+    "latest": 1940.357923,
+    "best": 1940.356557,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697625"
+    ]
+  },
+  "end": {
+    "earliest": 1940.404372,
+    "latest": 1940.407104,
+    "best": 1940.405738,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697625"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q697625",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_invasion_of_Belgium_(1940)",
+    "manualEdits": false
+  }
+}

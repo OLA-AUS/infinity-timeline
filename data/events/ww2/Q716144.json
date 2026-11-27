@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q716144",
+  "title": "Sook Ching",
+  "summary": "systematic purge",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.131507,
+    "latest": 1942.134247,
+    "best": 1942.132877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q716144"
+    ]
+  },
+  "end": {
+    "earliest": 1942.169863,
+    "latest": 1942.172603,
+    "best": 1942.171233,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q716144"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q716144",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Sook_Ching",
+    "manualEdits": false
+  }
+}

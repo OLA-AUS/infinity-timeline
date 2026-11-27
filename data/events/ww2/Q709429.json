@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709429",
+  "title": "Battle of Beiping–Tianjin",
+  "summary": "1937 battle of the Second Sino-Japanese War",
+  "field": "politics",
+  "date": {
+    "earliest": 1937.580822,
+    "latest": 1937.665753,
+    "best": 1937.623288,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709429"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709429",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Beiping%E2%80%93Tianjin",
+    "manualEdits": false
+  }
+}

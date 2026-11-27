@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700530",
+  "title": "Battle of Cape St. George",
+  "summary": "1943 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.89863,
+    "latest": 1943.90137,
+    "best": 1943.9,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700530"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700530",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Cape_St._George",
+    "manualEdits": false
+  }
+}

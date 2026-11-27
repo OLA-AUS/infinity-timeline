@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2446643",
+  "title": "Battle of Raate Road",
+  "summary": "1940 battle during the Winter War between Soviet Union and Finland",
+  "field": "politics",
+  "date": {
+    "earliest": 1940,
+    "latest": 1940.002732,
+    "best": 1940.001366,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2446643"
+    ]
+  },
+  "end": {
+    "earliest": 1940.016393,
+    "latest": 1940.019126,
+    "best": 1940.01776,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2446643"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2446643",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Raate_Road",
+    "manualEdits": false
+  }
+}

@@ -1,3 +1,6 @@
+// "What does AI think?" — saved, timestamped AI answers about a claim: which model,
+// the exact prompts, the output, and whether other people got the same answer.
+// Over time this becomes a record of how AI answers drift.
 import type { Dataset } from '../types';
 
 export function AISnapshots({ data, claimId }: { data: Dataset; claimId: string }) {
@@ -7,6 +10,7 @@ export function AISnapshots({ data, claimId }: { data: Dataset; claimId: string 
       <h4>What does AI think? <small className="muted">(timestamped)</small></h4>
       {snaps.length === 0 && <p className="muted">No AI snapshots yet. Ask a model, paste the full thread, and others can reproduce it.</p>}
       {snaps.map((s) => {
+        // Tally how other users' attempts to reproduce this answer went.
         const counts = { match: 0, partial: 0, differs: 0 };
         s.reproductions.forEach((r) => counts[r.result]++);
         return (

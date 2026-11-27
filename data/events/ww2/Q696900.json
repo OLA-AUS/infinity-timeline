@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696900",
+  "title": "Battle of Guam",
+  "summary": "1944 World War II battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.606557,
+    "latest": 1944.60929,
+    "best": 1944.607923,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696900"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696900",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Guam_(1944)",
+    "manualEdits": false
+  }
+}

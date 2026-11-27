@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q154164",
+  "title": "Operation Rheinübung",
+  "summary": "1941 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.375342,
+    "latest": 1941.378082,
+    "best": 1941.376712,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q154164"
+    ]
+  },
+  "end": {
+    "earliest": 1941.4,
+    "latest": 1941.40274,
+    "best": 1941.40137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q154164"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q154164",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Rhein%C3%BCbung",
+    "manualEdits": false
+  }
+}

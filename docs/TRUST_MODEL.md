@@ -35,7 +35,7 @@ A source (paper, article, dataset, video) combines:
 - Author(s) effective trust
 - Institution effective trust
 - Funder(s) effective trust
-- Source type quality (peer-reviewed RCT > observational > preprint > op-ed > social post)
+- Source type quality (peer-reviewed RCT > observational > preprint > op-ed > social post). Reference works such as encyclopedias and Wikidata score 0.6 — useful pointers, but a primary source should back anything contested
 - **Conflict of interest flag**: if the funder benefits from the conclusion, apply a penalty and highlight it
 - Retracted → score capped at 5
 

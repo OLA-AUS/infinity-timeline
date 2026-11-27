@@ -10,6 +10,14 @@
 - AI snapshot viewer
 - Demo seed data only
 
+## Phase 0.5 — Open data workflow ✅
+- Uncertain dates (`FuzzyDate`) with glowing spans on the river; dates disputable like claims
+- Claim map: force layout (labels never on lines), drag / pinch / scroll zoom, large mobile sizing
+- Real data as JSON files in `data/`, edited through pull requests, validated in CI
+- Wikidata importer: 250 WW2 events; monthly re-import opens a pull request
+- Static deploy to GitHub Pages
+- CONTRIBUTING.md, issue templates (bug, idea, data correction, date dispute), PR template
+
 ## Phase 1 — Real data, one field
 - Pick a launch field (suggestion: WW2 & its aftermath, or history of medicine)
 - Backend: Postgres + append-only edit log + REST/GraphQL API

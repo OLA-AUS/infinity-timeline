@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q177283",
+  "title": "Altmark Incident",
+  "summary": "1940 WW II naval incident between British and German ships",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.125683,
+    "latest": 1940.128415,
+    "best": 1940.127049,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q177283"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q177283",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Altmark_incident",
+    "manualEdits": false
+  }
+}

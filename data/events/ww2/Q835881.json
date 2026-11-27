@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q835881",
+  "title": "Operation Bodenplatte",
+  "summary": "1945 Nazi air force offensive",
+  "field": "politics",
+  "date": {
+    "earliest": 1945,
+    "latest": 1945.00274,
+    "best": 1945.00137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q835881"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q835881",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Bodenplatte",
+    "manualEdits": false
+  }
+}

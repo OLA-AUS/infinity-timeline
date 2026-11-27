@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2638412",
+  "title": "Italian bombing of Mandatory Palestine in World War II",
+  "summary": "1940 bombing campaign on British-controlled mandatory Palestine in World War Two by Fascist Italy",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.688525,
+    "latest": 1940.691257,
+    "best": 1940.689891,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2638412"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2638412",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Italian_bombing_of_Mandatory_Palestine_in_World_War_II",
+    "manualEdits": false
+  }
+}

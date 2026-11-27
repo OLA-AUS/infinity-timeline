@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q780845",
+  "title": "Franco-Thai War",
+  "summary": "war between Thailand and Vichy France (1940-1941)",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.748634,
+    "latest": 1940.833333,
+    "best": 1940.790984,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q780845"
+    ]
+  },
+  "end": {
+    "earliest": 1941.350685,
+    "latest": 1941.353425,
+    "best": 1941.352055,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q780845"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q780845",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Franco-Thai_War",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2308186",
+  "title": "German invasion of Denmark",
+  "summary": "German attack on Denmark on 9 April 1940",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.270492,
+    "latest": 1940.273224,
+    "best": 1940.271858,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2308186"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2308186",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_invasion_of_Denmark_(1940)",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q701542",
+  "title": "Operation Felix",
+  "summary": "German military operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1940,
+    "latest": 1941,
+    "best": 1940.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q701542"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q701542",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Felix",
+    "manualEdits": false
+  }
+}

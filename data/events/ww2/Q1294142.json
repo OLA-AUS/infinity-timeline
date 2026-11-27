@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1294142",
+  "title": "Foibe massacres",
+  "summary": "extrajudicial mass killings of Italian and other local populations in Istria and Dalmatia during and after the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.665753,
+    "latest": 1943.747945,
+    "best": 1943.706849,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1294142"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1294142",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Foibe_massacres",
+    "manualEdits": false
+  }
+}

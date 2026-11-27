@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2632857",
+  "title": "American Theater",
+  "summary": "World War II area of operations including North and South America",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.931507,
+    "latest": 1941.934247,
+    "best": 1941.932877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2632857"
+    ]
+  },
+  "end": {
+    "earliest": 1946.164384,
+    "latest": 1946.167123,
+    "best": 1946.165753,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2632857"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2632857",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/American_theater_of_World_War_II",
+    "manualEdits": false
+  }
+}

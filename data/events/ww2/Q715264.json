@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q715264",
+  "title": "Operation Anthropoid",
+  "summary": "1942 military operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.4,
+    "latest": 1942.40274,
+    "best": 1942.40137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q715264"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q715264",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Anthropoid",
+    "manualEdits": false
+  }
+}

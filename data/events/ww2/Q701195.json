@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q701195",
+  "title": "Battle for Velikiye Luki",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.882192,
+    "latest": 1942.884932,
+    "best": 1942.883562,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q701195"
+    ]
+  },
+  "end": {
+    "earliest": 1943.041096,
+    "latest": 1943.043836,
+    "best": 1943.042466,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q701195"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q701195",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Velikiye_Luki",
+    "manualEdits": false
+  }
+}

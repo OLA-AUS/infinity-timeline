@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696607",
+  "title": "Battle of the Denmark Strait",
+  "summary": "1941 naval battle between ships of the Royal Navy and the German Kriegsmarine",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.391781,
+    "latest": 1941.394521,
+    "best": 1941.393151,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696607"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696607",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Denmark_Strait",
+    "manualEdits": false
+  }
+}

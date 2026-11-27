@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714288",
+  "title": "Battle of Fort Eben-Emael",
+  "summary": "1940 battle (World War II)",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.355191,
+    "latest": 1940.357923,
+    "best": 1940.356557,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714288"
+    ]
+  },
+  "end": {
+    "earliest": 1940.357923,
+    "latest": 1940.360656,
+    "best": 1940.35929,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714288"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714288",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Fort_%C3%89ben-%C3%89mael",
+    "manualEdits": false
+  }
+}

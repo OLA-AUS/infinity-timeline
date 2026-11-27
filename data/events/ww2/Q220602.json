@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q220602",
+  "title": "Soviet–Japanese War",
+  "summary": "invasion of the Japanese puppet state of Manchukuo by the Soviet Union near the end of WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.60274,
+    "latest": 1945.605479,
+    "best": 1945.60411,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q220602"
+    ]
+  },
+  "end": {
+    "earliest": 1945.668493,
+    "latest": 1945.671233,
+    "best": 1945.669863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q220602"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q220602",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet%E2%80%93Japanese_War",
+    "manualEdits": false
+  }
+}

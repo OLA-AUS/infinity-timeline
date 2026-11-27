@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q929437",
+  "title": "British occupation of the Faroe Islands",
+  "summary": "1940–1945 occupation during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.281421,
+    "latest": 1940.284153,
+    "best": 1940.282787,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q929437"
+    ]
+  },
+  "end": {
+    "earliest": 1945.361644,
+    "latest": 1945.364384,
+    "best": 1945.363014,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q929437"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q929437",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/British_occupation_of_the_Faroe_Islands",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fuzzy-date.schema.json",
+  "title": "FuzzyDate",
+  "description": "A date that admits how sure we are. Years are decimal (1944.43 ≈ 6 June 1944); negative = BCE. Rule: earliest ≤ best ≤ latest.",
+  "type": "object",
+  "required": ["earliest", "latest", "best", "precision", "method", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "earliest": { "type": "number", "description": "The earliest moment it could have happened (decimal year)." },
+    "latest": { "type": "number", "description": "The latest moment it could have happened (decimal year)." },
+    "best": { "type": "number", "description": "The single most likely moment. This is where it sits on the river." },
+    "precision": { "enum": ["day", "month", "year", "decade", "century", "millennium"], "description": "How finely the date is actually known." },
+    "method": {
+      "enum": ["documented", "contemporary_accounts", "archaeological", "radiocarbon", "scholarly_estimate", "wikidata", "community"],
+      "description": "How the date was worked out."
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Source ids backing this date: a file in data/sources/ (without .json), or \"wikidata:Q123\". Empty = not cited yet."
+    }
+  }
+}

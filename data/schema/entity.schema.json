@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "entity.schema.json",
+  "title": "Entity",
+  "description": "A person or organisation. File name must be <id>.json.",
+  "type": "object",
+  "required": ["id", "name", "kind", "field", "founded", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["person", "institution", "company", "government", "funder", "publication"] },
+    "field": { "enum": ["politics", "science", "medicine", "economics", "technology", "culture"] },
+    "founded": { "$ref": "fuzzy-date.schema.json", "description": "Born or founded — its position on the river." },
+    "description": { "type": "string" }
+  }
+}

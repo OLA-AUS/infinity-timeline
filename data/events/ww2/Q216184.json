@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q216184",
+  "title": "Western Front",
+  "summary": "military theatre of World War II encompassing Denmark, Norway, Luxembourg, Belgium, the Netherlands, the United Kingdom, France, Italy, and Germany",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.671233,
+    "latest": 1939.673973,
+    "best": 1939.672603,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q216184"
+    ]
+  },
+  "end": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q216184"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q216184",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Western_Front_(World_War_II)",
+    "manualEdits": false
+  }
+}

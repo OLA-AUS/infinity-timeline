@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q548819",
+  "title": "Battle of the Komandorski Islands",
+  "summary": "1943 naval battle between American and Japanese forces in the North Pacific area",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.232877,
+    "latest": 1943.235616,
+    "best": 1943.234247,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q548819"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q548819",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Komandorski_Islands",
+    "manualEdits": false
+  }
+}

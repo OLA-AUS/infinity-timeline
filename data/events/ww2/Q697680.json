@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q697680",
+  "title": "Battle of Tali-Ihantala",
+  "summary": "1944 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.480874,
+    "latest": 1944.483607,
+    "best": 1944.48224,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697680"
+    ]
+  },
+  "end": {
+    "earliest": 1944.519126,
+    "latest": 1944.521858,
+    "best": 1944.520492,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q697680"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q697680",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Tali%E2%80%93Ihantala",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q635150",
+  "title": "Action off Calabria",
+  "summary": "1940 naval battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.519126,
+    "latest": 1940.521858,
+    "best": 1940.520492,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q635150"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q635150",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Calabria",
+    "manualEdits": false
+  }
+}

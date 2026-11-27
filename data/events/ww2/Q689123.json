@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q689123",
+  "title": "Convoy PQ 17",
+  "summary": "code name for an Allied World War II convoy in the Arctic Ocean",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.484932,
+    "latest": 1942.487671,
+    "best": 1942.486301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q689123"
+    ]
+  },
+  "end": {
+    "earliest": 1942.520548,
+    "latest": 1942.523288,
+    "best": 1942.521918,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q689123"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q689123",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Convoy_PQ_17",
+    "manualEdits": false
+  }
+}

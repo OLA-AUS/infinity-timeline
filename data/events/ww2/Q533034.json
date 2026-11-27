@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q533034",
+  "title": "Battle of Westerplatte",
+  "summary": "first battle in the invasion of Poland, the beginning of the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.665753,
+    "latest": 1939.668493,
+    "best": 1939.667123,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q533034"
+    ]
+  },
+  "end": {
+    "earliest": 1939.682192,
+    "latest": 1939.684932,
+    "best": 1939.683562,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q533034"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q533034",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Westerplatte",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q703550",
+  "title": "Axis occupation of Greece",
+  "summary": "1941 military occupation of the Kingdom of Greece by the Axis Powers during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.246575,
+    "latest": 1941.328767,
+    "best": 1941.287671,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q703550"
+    ]
+  },
+  "end": {
+    "earliest": 1944.748634,
+    "latest": 1944.833333,
+    "best": 1944.790984,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q703550"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q703550",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Axis_occupation_of_Greece",
+    "manualEdits": false
+  }
+}

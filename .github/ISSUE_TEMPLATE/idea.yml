@@ -1,0 +1,52 @@
+name: 💡 Suggest an idea
+description: A new feature, a better way to show something, or a change to how trust and status work.
+title: "Idea: "
+labels: [idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Big or small, all ideas are welcome. Have a quick look at `docs/IDEAS.md` and the open issues first in case it's already there.
+        Changes to trust weights or status thresholds go through governance (`docs/GOVERNANCE.md`) — this is a good place to start that conversation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: Who is it for, and what can't they do (or understand) today?
+      placeholder: "When I open a claim map on my phone, I can't tell which bubbles are…"
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Describe it in plain words. Sketches, screenshots and links to examples help a lot.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the site?
+      multiple: true
+      options:
+        - 3D river
+        - Claim map
+        - Sources, funding & trust scores
+        - Dates & date disputes
+        - Voting & opinion
+        - AI snapshots
+        - Data & importers
+        - Mobile
+        - Governance / rules
+        - Something else
+  - type: textarea
+    id: principles
+    attributes:
+      label: Does it fit the project's principles?
+      description: "Transparency (every score explainable), evidence is not opinion, nothing is deleted, funding is context not proof. Any tension is fine to flag — just say so."
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Want to help build it?
+      options:
+        - label: I'd like to work on this myself

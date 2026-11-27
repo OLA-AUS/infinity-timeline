@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q699897",
+  "title": "Battle of Guam",
+  "summary": "1941 World War II battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.934247,
+    "latest": 1941.936986,
+    "best": 1941.935616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699897"
+    ]
+  },
+  "end": {
+    "earliest": 1941.939726,
+    "latest": 1941.942466,
+    "best": 1941.941096,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699897"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q699897",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Guam_(1941)",
+    "manualEdits": false
+  }
+}

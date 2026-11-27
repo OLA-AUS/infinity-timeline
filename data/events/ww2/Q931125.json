@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q931125",
+  "title": "Raid on Drvar",
+  "summary": "1944 military operation against Yugoslav Partisans",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.396175,
+    "latest": 1944.398907,
+    "best": 1944.397541,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q931125"
+    ]
+  },
+  "end": {
+    "earliest": 1944.428962,
+    "latest": 1944.431694,
+    "best": 1944.430328,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q931125"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q931125",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_R%C3%B6sselsprung_(1944)",
+    "manualEdits": false
+  }
+}

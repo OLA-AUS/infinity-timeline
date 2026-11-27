@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1551794",
+  "title": "Japanese invasion of Manchuria",
+  "summary": "1931 part of the Second Sino-Japanese War",
+  "field": "politics",
+  "date": {
+    "earliest": 1931.712329,
+    "latest": 1931.715068,
+    "best": 1931.713699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1551794"
+    ]
+  },
+  "end": {
+    "earliest": 1932.155738,
+    "latest": 1932.15847,
+    "best": 1932.157104,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1551794"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1551794",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Japanese_invasion_of_Manchuria",
+    "manualEdits": false
+  }
+}

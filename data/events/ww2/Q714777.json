@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714777",
+  "title": "Allied invasion of Italy",
+  "summary": "1943 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.709589,
+    "latest": 1943.712329,
+    "best": 1943.710959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714777"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714777",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Allied_invasion_of_Italy",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2888837",
+  "title": "Battle of Greece",
+  "summary": "WWII German invasion of Greece and Allied resistance, April 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.260274,
+    "latest": 1941.263014,
+    "best": 1941.261644,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2888837"
+    ]
+  },
+  "end": {
+    "earliest": 1941.326027,
+    "latest": 1941.328767,
+    "best": 1941.327397,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2888837"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2888837",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_invasion_of_Greece",
+    "manualEdits": false
+  }
+}

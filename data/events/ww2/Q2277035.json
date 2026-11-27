@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2277035",
+  "title": "Battle for Henderson Field",
+  "summary": "1942 World War II battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.808219,
+    "latest": 1942.810959,
+    "best": 1942.809589,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2277035"
+    ]
+  },
+  "end": {
+    "earliest": 1942.816438,
+    "latest": 1942.819178,
+    "best": 1942.817808,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2277035"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2277035",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_for_Henderson_Field",
+    "manualEdits": false
+  }
+}

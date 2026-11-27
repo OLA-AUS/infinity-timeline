@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q311787",
+  "title": "Operation Mars",
+  "summary": "offensive operation part of the Battles of Rzhev, during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.967123,
+    "latest": 1942.969863,
+    "best": 1942.968493,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q311787"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q311787",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Mars",
+    "manualEdits": false
+  }
+}

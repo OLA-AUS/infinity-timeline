@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q626006",
+  "title": "World War II in Yugoslavia",
+  "summary": "part of the European theater of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.260274,
+    "latest": 1941.263014,
+    "best": 1941.261644,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q626006"
+    ]
+  },
+  "end": {
+    "earliest": 1945.367123,
+    "latest": 1945.369863,
+    "best": 1945.368493,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q626006"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q626006",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/World_War_II_in_Yugoslavia",
+    "manualEdits": false
+  }
+}

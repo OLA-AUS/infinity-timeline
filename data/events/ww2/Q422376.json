@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q422376",
+  "title": "Operation Tempest",
+  "summary": "1944 series of anti-German uprisings conducted during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.008197,
+    "latest": 1944.010929,
+    "best": 1944.009563,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q422376"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q422376",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Tempest",
+    "manualEdits": false
+  }
+}

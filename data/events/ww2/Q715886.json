@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q715886",
+  "title": "Battle of the North Cape",
+  "summary": "1943 arctic naval battle of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.983562,
+    "latest": 1943.986301,
+    "best": 1943.984932,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q715886"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q715886",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_North_Cape",
+    "manualEdits": false
+  }
+}

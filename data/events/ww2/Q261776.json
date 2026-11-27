@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q261776",
+  "title": "Battles of Rzhev",
+  "summary": "1942 series of Soviet Operations in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.019178,
+    "latest": 1942.021918,
+    "best": 1942.020548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q261776"
+    ]
+  },
+  "end": {
+    "earliest": 1943.216438,
+    "latest": 1943.219178,
+    "best": 1943.217808,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q261776"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q261776",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battles_of_Rzhev",
+    "manualEdits": false
+  }
+}

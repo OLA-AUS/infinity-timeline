@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q173034",
+  "title": "Battle of Midway",
+  "summary": "1942 World War II naval battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.421918,
+    "latest": 1942.424658,
+    "best": 1942.423288,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q173034"
+    ]
+  },
+  "end": {
+    "earliest": 1942.430137,
+    "latest": 1942.432877,
+    "best": 1942.431507,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q173034"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q173034",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Midway",
+    "manualEdits": false
+  }
+}

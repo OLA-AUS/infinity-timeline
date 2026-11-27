@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700572",
+  "title": "Battle of Attu",
+  "summary": "1943 battle in the Pacific theatre of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.356164,
+    "latest": 1943.358904,
+    "best": 1943.357534,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700572"
+    ]
+  },
+  "end": {
+    "earliest": 1943.408219,
+    "latest": 1943.410959,
+    "best": 1943.409589,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700572"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700572",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Attu",
+    "manualEdits": false
+  }
+}

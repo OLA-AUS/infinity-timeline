@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2038907",
+  "title": "Battle of Wuhan",
+  "summary": "large-scale battle of the Second Sino-Japanese War over 4 months in 1938",
+  "field": "politics",
+  "date": {
+    "earliest": 1938.819178,
+    "latest": 1938.821918,
+    "best": 1938.820548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2038907"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2038907",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Wuhan",
+    "manualEdits": false
+  }
+}

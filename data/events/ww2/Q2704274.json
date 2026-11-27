@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2704274",
+  "title": "Defence of the Reich",
+  "summary": "1939 strategic defensive aerial campaign fought by the Luftwaffe over German-occupied Europe and Germany itself during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.673973,
+    "latest": 1939.676712,
+    "best": 1939.675342,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2704274"
+    ]
+  },
+  "end": {
+    "earliest": 1945.347945,
+    "latest": 1945.350685,
+    "best": 1945.349315,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2704274"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2704274",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Defence_of_the_Reich",
+    "manualEdits": false
+  }
+}

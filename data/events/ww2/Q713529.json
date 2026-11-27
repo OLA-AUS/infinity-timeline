@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q713529",
+  "title": "Battle of the River Plate",
+  "summary": "1939 first naval battle of the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.947945,
+    "latest": 1939.950685,
+    "best": 1939.949315,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q713529"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q713529",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_River_Plate",
+    "manualEdits": false
+  }
+}

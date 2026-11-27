@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1810832",
+  "title": "Operation Carthage",
+  "summary": "air raid on Gestapo Copenhagen 1945",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.216438,
+    "latest": 1945.219178,
+    "best": 1945.217808,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1810832"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1810832",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Carthage",
+    "manualEdits": false
+  }
+}

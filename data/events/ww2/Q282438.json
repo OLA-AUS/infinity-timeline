@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q282438",
+  "title": "Battle of Halbe",
+  "summary": "1945 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.309589,
+    "latest": 1945.312329,
+    "best": 1945.310959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q282438"
+    ]
+  },
+  "end": {
+    "earliest": 1945.328767,
+    "latest": 1945.331507,
+    "best": 1945.330137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q282438"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q282438",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Halbe",
+    "manualEdits": false
+  }
+}

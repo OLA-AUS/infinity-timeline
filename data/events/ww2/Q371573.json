@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q371573",
+  "title": "Philippines campaign of 1944–1945",
+  "summary": "campaign which started on October 20, 1944 during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.668493,
+    "latest": 1945.671233,
+    "best": 1945.669863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q371573"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q371573",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Philippines_campaign_(1944%E2%80%931945)",
+    "manualEdits": false
+  }
+}

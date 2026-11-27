@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q708217",
+  "title": "Battles of Narvik",
+  "summary": "battles fought from 9 April to 8 June 1940",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.270492,
+    "latest": 1940.273224,
+    "best": 1940.271858,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708217"
+    ]
+  },
+  "end": {
+    "earliest": 1940.434426,
+    "latest": 1940.437158,
+    "best": 1940.435792,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708217"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q708217",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battles_of_Narvik",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q327048",
+  "title": "Norwegian heavy water sabotage",
+  "summary": "1940-1944 sabotage operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1940,
+    "latest": 1941,
+    "best": 1940.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q327048"
+    ]
+  },
+  "end": {
+    "earliest": 1944,
+    "latest": 1945,
+    "best": 1944.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q327048"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q327048",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Norwegian_heavy_water_sabotage",
+    "manualEdits": false
+  }
+}

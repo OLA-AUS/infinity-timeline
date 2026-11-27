@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714349",
+  "title": "Rotterdam Blitz",
+  "summary": "aerial bombardment of Rotterdam by the Luftwaffe (German air force) on 14 May 1940, during the German invasion of the Netherlands in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.36612,
+    "latest": 1940.368852,
+    "best": 1940.367486,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714349"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714349",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_bombing_of_Rotterdam",
+    "manualEdits": false
+  }
+}

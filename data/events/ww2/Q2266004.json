@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2266004",
+  "title": "Soviet occupation of Bessarabia and Northern Bukovina",
+  "summary": "1940 Soviet annexation of territory in eastern Romania; Moldavian SSR established",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.489071,
+    "latest": 1940.491803,
+    "best": 1940.490437,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2266004"
+    ]
+  },
+  "end": {
+    "earliest": 1940.502732,
+    "latest": 1940.505464,
+    "best": 1940.504098,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2266004"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2266004",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet_occupation_of_Bessarabia_and_Northern_Bukovina",
+    "manualEdits": false
+  }
+}

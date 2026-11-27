@@ -1,0 +1,40 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q162287",
+  "title": "Battle of Hürtgen Forest",
+  "summary": "1944 series of battles fought between US and German forces during World War II in the Hürtgen Forest of Germany",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.702186,
+    "latest": 1944.765027,
+    "best": 1944.703552,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162287"
+    ]
+  },
+  "end": {
+    "earliest": 1944.956284,
+    "latest": 1945.112329,
+    "best": 1944.95765,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q162287"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q162287",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_H%C3%BCrtgen_Forest",
+    "conflictingValues": [
+      "1944-09-14",
+      "1944-09-19",
+      "1944-10-06"
+    ],
+    "manualEdits": false
+  }
+}

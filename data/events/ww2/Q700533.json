@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700533",
+  "title": "Vyborg–Petrozavodsk Offensive",
+  "summary": "1944 military operation",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.439891,
+    "latest": 1944.442623,
+    "best": 1944.441257,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700533"
+    ]
+  },
+  "end": {
+    "earliest": 1944.603825,
+    "latest": 1944.606557,
+    "best": 1944.605191,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700533"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700533",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Vyborg%E2%80%93Petrozavodsk_offensive",
+    "manualEdits": false
+  }
+}

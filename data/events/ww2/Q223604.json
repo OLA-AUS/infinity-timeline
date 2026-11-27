@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q223604",
+  "title": "Greco-Italian War",
+  "summary": "conflict between Italy and Greece, which lasted from 28 October 1940 to 23 April 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.822404,
+    "latest": 1940.825137,
+    "best": 1940.82377,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q223604"
+    ]
+  },
+  "end": {
+    "earliest": 1941.306849,
+    "latest": 1941.309589,
+    "best": 1941.308219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q223604"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q223604",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Greco-Italian_War",
+    "manualEdits": false
+  }
+}

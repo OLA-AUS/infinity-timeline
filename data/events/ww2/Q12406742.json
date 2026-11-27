@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q12406742",
+  "title": "New Britain campaign",
+  "summary": "World War II campaign between Allied and Imperial Japanese forces",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.953425,
+    "latest": 1943.956164,
+    "best": 1943.954795,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q12406742"
+    ]
+  },
+  "end": {
+    "earliest": 1945.635616,
+    "latest": 1945.638356,
+    "best": 1945.636986,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q12406742"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q12406742",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/New_Britain_campaign",
+    "manualEdits": false
+  }
+}

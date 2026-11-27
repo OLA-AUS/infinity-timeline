@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q5084679",
+  "title": "Norwegian Campaign",
+  "summary": "1940 Second World War campaign fought in Norway",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.270492,
+    "latest": 1940.273224,
+    "best": 1940.271858,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q5084679"
+    ]
+  },
+  "end": {
+    "earliest": 1940.439891,
+    "latest": 1940.442623,
+    "best": 1940.441257,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q5084679"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q5084679",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Norwegian_campaign",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q666778",
+  "title": "Prague Uprising",
+  "summary": "uprising attempting to liberate the city of Prague from German occupation during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.339726,
+    "latest": 1945.342466,
+    "best": 1945.341096,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q666778"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q666778",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Prague_uprising",
+    "manualEdits": false
+  }
+}

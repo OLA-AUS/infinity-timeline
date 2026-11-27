@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q707508",
+  "title": "1941 Odessa massacre",
+  "summary": "massacre of Jews in Odessa during the Holocaust",
+  "field": "politics",
+  "date": {
+    "earliest": 1941,
+    "latest": 1942,
+    "best": 1941.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q707508"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q707508",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/1941_Odessa_massacre",
+    "manualEdits": false
+  }
+}

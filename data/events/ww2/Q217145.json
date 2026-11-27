@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q217145",
+  "title": "Guadalcanal campaign",
+  "summary": "1942-1943 series of battles fought on and around Guadalcanal as part of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.59726,
+    "latest": 1942.6,
+    "best": 1942.59863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q217145"
+    ]
+  },
+  "end": {
+    "earliest": 1943.106849,
+    "latest": 1943.109589,
+    "best": 1943.108219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q217145"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q217145",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Guadalcanal_campaign",
+    "manualEdits": false
+  }
+}

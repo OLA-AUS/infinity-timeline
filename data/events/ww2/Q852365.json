@@ -1,0 +1,39 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q852365",
+  "title": "Tunisia campaign",
+  "summary": "1942–43 series of battles in Tunisia during the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.863014,
+    "latest": 1942.879452,
+    "best": 1942.864384,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q852365"
+    ]
+  },
+  "end": {
+    "earliest": 1943.350685,
+    "latest": 1943.364384,
+    "best": 1943.352055,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q852365"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q852365",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Tunisian_campaign",
+    "conflictingValues": [
+      "1942-11-12",
+      "1942-11-17"
+    ],
+    "manualEdits": false
+  }
+}

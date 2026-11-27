@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696931",
+  "title": "Battle of Manila",
+  "summary": "battle in 1945 during World War II fought between Japan and the United States with the Commonwealth of the Philippines",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.090411,
+    "latest": 1945.093151,
+    "best": 1945.091781,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696931"
+    ]
+  },
+  "end": {
+    "earliest": 1945.167123,
+    "latest": 1945.169863,
+    "best": 1945.168493,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696931"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696931",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Manila_(1945)",
+    "manualEdits": false
+  }
+}

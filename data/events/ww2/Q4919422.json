@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q4919422",
+  "title": "Japanese occupation of Cambodia",
+  "summary": "military occupation by the Empire of Japan",
+  "field": "politics",
+  "date": {
+    "earliest": 1941,
+    "latest": 1942,
+    "best": 1941.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q4919422"
+    ]
+  },
+  "end": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q4919422"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q4919422",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Japanese_occupation_of_Cambodia",
+    "manualEdits": false
+  }
+}

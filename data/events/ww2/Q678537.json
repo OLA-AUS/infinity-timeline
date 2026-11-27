@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q678537",
+  "title": "Upper Silesian Offensive",
+  "summary": "1945 military offensive",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.243836,
+    "latest": 1945.246575,
+    "best": 1945.245205,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q678537"
+    ]
+  },
+  "end": {
+    "earliest": 1945.243836,
+    "latest": 1945.246575,
+    "best": 1945.245205,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q678537"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q678537",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Upper_Silesian_offensive",
+    "manualEdits": false
+  }
+}

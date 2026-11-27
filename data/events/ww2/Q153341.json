@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q153341",
+  "title": "Operation Sea Lion",
+  "summary": "cancelled Nazi German plan for invading Britain",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.666667,
+    "latest": 1940.748634,
+    "best": 1940.70765,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q153341"
+    ]
+  },
+  "end": {
+    "earliest": 1940.710383,
+    "latest": 1940.713115,
+    "best": 1940.711749,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q153341"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q153341",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Sea_Lion",
+    "manualEdits": false
+  }
+}

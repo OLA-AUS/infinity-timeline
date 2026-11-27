@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q704785",
+  "title": "Bougainville Campaign",
+  "summary": "allied reconquest of the island of Bougainville in the South Pacific from the Japanese forces who occupied it in 1942",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.832877,
+    "latest": 1943.835616,
+    "best": 1943.834247,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q704785"
+    ]
+  },
+  "end": {
+    "earliest": 1945.635616,
+    "latest": 1945.638356,
+    "best": 1945.636986,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q704785"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q704785",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Bougainville_campaign",
+    "manualEdits": false
+  }
+}

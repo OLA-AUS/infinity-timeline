@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q192660",
+  "title": "Battle of Okinawa",
+  "summary": "1945 major battle of the Pacific War",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.246575,
+    "latest": 1945.249315,
+    "best": 1945.247945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q192660"
+    ]
+  },
+  "end": {
+    "earliest": 1945.473973,
+    "latest": 1945.476712,
+    "best": 1945.475342,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q192660"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q192660",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Okinawa",
+    "manualEdits": false
+  }
+}

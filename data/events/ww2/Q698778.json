@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q698778",
+  "title": "Gran Sasso raid",
+  "summary": "1943 rescue of Benito Mussolini by German forces",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.69589,
+    "latest": 1943.69863,
+    "best": 1943.69726,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q698778"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q698778",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Gran_Sasso_raid",
+    "manualEdits": false
+  }
+}

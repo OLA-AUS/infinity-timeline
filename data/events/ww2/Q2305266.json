@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2305266",
+  "title": "Soviet invasion of Poland",
+  "summary": "large-scale military attack performed by the USSR on the Second Polish Republic year 1939",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.709589,
+    "latest": 1939.712329,
+    "best": 1939.710959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2305266"
+    ]
+  },
+  "end": {
+    "earliest": 1939.761644,
+    "latest": 1939.764384,
+    "best": 1939.763014,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2305266"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2305266",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Soviet_invasion_of_Poland",
+    "manualEdits": false
+  }
+}

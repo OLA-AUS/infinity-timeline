@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q705394",
+  "title": "White Buses",
+  "summary": "1945 Scandinavian rescue operation of concentration camp inmates from Germany",
+  "field": "politics",
+  "date": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q705394"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q705394",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/White_Buses",
+    "manualEdits": false
+  }
+}

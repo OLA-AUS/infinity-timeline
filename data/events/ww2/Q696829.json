@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696829",
+  "title": "Battle of Dakar",
+  "summary": "1940 WWII battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.726776,
+    "latest": 1940.729508,
+    "best": 1940.728142,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696829"
+    ]
+  },
+  "end": {
+    "earliest": 1940.73224,
+    "latest": 1940.734973,
+    "best": 1940.733607,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696829"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696829",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Dakar",
+    "manualEdits": false
+  }
+}

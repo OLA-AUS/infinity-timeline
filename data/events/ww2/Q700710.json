@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700710",
+  "title": "Battle of Villers-Bocage",
+  "summary": "1944 battle in occupied France",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.448087,
+    "latest": 1944.45082,
+    "best": 1944.449454,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700710"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700710",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Villers-Bocage",
+    "manualEdits": false
+  }
+}

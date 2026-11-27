@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696839",
+  "title": "Battle of Arras",
+  "summary": "1940 World War II event",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.385246,
+    "latest": 1940.387978,
+    "best": 1940.386612,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696839"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696839",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Arras_(1940)",
+    "manualEdits": false
+  }
+}

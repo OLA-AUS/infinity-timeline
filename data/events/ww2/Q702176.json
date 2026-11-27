@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q702176",
+  "title": "Battle of the Mediterranean",
+  "summary": "1940 naval campaign fought in the Mediterranean Sea during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.439891,
+    "latest": 1940.442623,
+    "best": 1940.441257,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702176"
+    ]
+  },
+  "end": {
+    "earliest": 1945.331507,
+    "latest": 1945.334247,
+    "best": 1945.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702176"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q702176",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Mediterranean",
+    "manualEdits": false
+  }
+}

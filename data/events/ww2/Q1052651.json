@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1052651",
+  "title": "Battle of Madagascar",
+  "summary": "1942 battle during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.339726,
+    "latest": 1942.342466,
+    "best": 1942.341096,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1052651"
+    ]
+  },
+  "end": {
+    "earliest": 1942.846575,
+    "latest": 1942.849315,
+    "best": 1942.847945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1052651"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1052651",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Madagascar",
+    "manualEdits": false
+  }
+}

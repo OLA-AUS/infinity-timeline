@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q169436",
+  "title": "Battle of Rostov",
+  "summary": "1941 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.876712,
+    "latest": 1941.879452,
+    "best": 1941.878082,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q169436"
+    ]
+  },
+  "end": {
+    "earliest": 1941.917808,
+    "latest": 1941.920548,
+    "best": 1941.919178,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q169436"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q169436",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Rostov_(1941)",
+    "manualEdits": false
+  }
+}

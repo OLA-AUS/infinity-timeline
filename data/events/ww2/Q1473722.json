@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1473722",
+  "title": "Dekemvriana",
+  "summary": "1944 Greek Civil War clashes",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.920765,
+    "latest": 1944.923497,
+    "best": 1944.922131,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1473722"
+    ]
+  },
+  "end": {
+    "earliest": 1945.027397,
+    "latest": 1945.030137,
+    "best": 1945.028767,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1473722"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1473722",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Dekemvriana",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q504347",
+  "title": "Battle of the Philippine Sea",
+  "summary": "1944 World War II Pacific naval battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.464481,
+    "latest": 1944.467213,
+    "best": 1944.465847,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q504347"
+    ]
+  },
+  "end": {
+    "earliest": 1944.467213,
+    "latest": 1944.469945,
+    "best": 1944.468579,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q504347"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q504347",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Philippine_Sea",
+    "manualEdits": false
+  }
+}

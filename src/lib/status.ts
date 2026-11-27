@@ -1,11 +1,17 @@
-// Earned claim status. "Well sourced" votes move status; "agree" votes never do.
+// Earned claim status: Established / Contested / Fringe / Disproven / Later confirmed.
+//
+// A claim's status comes ONLY from its evidence: each piece of evidence is weighted by
+// how trustworthy its source is, how relevant it is, and whether people rate it
+// "well sourced". "Agree" votes are public opinion and are never read here.
+// See docs/TRUST_MODEL.md §4–5.
 import type { Claim, ClaimStatus, Dataset, Evidence } from '../types';
 import { DEFAULT_TRUST, sourceTrust, type TrustOptions } from './trust';
 
+/** The thresholds for each status. Tunable, but only through governance (docs/GOVERNANCE.md). */
 export interface StatusOptions {
-  minTotalWeight: number;
-  establishedRatio: number;
-  disprovenRatio: number;
+  minTotalWeight: number; // below this much evidence in total, a claim is "Fringe" (not enough to judge)
+  establishedRatio: number; // at least this share of the weight must support it to be "Established"
+  disprovenRatio: number; // at most this share supporting it means "Disproven"
 }
 
 export const DEFAULT_STATUS: StatusOptions = {
@@ -14,6 +20,7 @@ export const DEFAULT_STATUS: StatusOptions = {
   disprovenRatio: 0.2,
 };
 
+/** How much one piece of evidence counts, and why. */
 export interface EvidenceWeight {
   evidence: Evidence;
   sourceTrust: number;
@@ -30,6 +37,7 @@ export function wellSourcedFactor(up: number, down: number): number {
   return 1 + 0.5 * net * confidence;
 }
 
+/** weight = (source trust / 100) × relevance × well-sourced vote factor. */
 export function evidenceWeight(ev: Evidence, data: Dataset, opts: TrustOptions = DEFAULT_TRUST): EvidenceWeight {
   const src = data.sources.find((s) => s.id === ev.sourceId);
   const st = src ? sourceTrust(src, data, opts).score : 0;
@@ -46,6 +54,7 @@ export interface StatusResult {
   reason: string;
 }
 
+/** Work out a claim's status from its evidence, with a plain-English reason. */
 export function claimStatus(
   claim: Claim,
   data: Dataset,
@@ -82,6 +91,7 @@ export function claimStatus(
   return { status, support, oppose, ratio, weights, reason };
 }
 
+/** One colour per status, used everywhere a status is shown. */
 export const STATUS_COLOR: Record<ClaimStatus, string> = {
   Established: '#3ddc97',
   Contested: '#f5b83d',

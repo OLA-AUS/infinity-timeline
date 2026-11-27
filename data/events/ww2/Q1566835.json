@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1566835",
+  "title": "Uprising in Montenegro",
+  "summary": "conflict",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.528767,
+    "latest": 1941.531507,
+    "best": 1941.530137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1566835"
+    ]
+  },
+  "end": {
+    "earliest": 1941.915068,
+    "latest": 1942,
+    "best": 1941.957534,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1566835"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1566835",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Uprising_in_Montenegro_(1941)",
+    "manualEdits": false
+  }
+}

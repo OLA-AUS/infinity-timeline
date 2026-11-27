@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q308999",
+  "title": "Battle of Leyte Gulf",
+  "summary": "1944 the largest naval battle of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.808743,
+    "latest": 1944.811475,
+    "best": 1944.810109,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q308999"
+    ]
+  },
+  "end": {
+    "earliest": 1944.81694,
+    "latest": 1944.819672,
+    "best": 1944.818306,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q308999"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q308999",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Leyte_Gulf",
+    "manualEdits": false
+  }
+}
