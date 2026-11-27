@@ -36,10 +36,18 @@ Computed, never stored: `src/lib/importance.ts → eventImportance()` returns a 
 
 `importance = 10 × debates + 3 × opinion charts linking to it + 2 × distinct date sources + 4 × log2(1 + sitelinks) + 25 if hand-picked`
 
-`provenance.sitelinks` (how many Wikipedia language editions cover an item) is written by the Wikidata importer. `LOD_THRESHOLD` sets the minimum importance for a labelled bubble at each zoom level (all time 25, century 22, decade 8, year and closer: everything); below it an event is a faint dot. Like trust weights, changing these is a governance decision.
+`provenance.sitelinks` (how many Wikipedia language editions cover an item) is written by the Wikidata importer. `LOD_THRESHOLD` sets the minimum importance for a bubble at each level of expansion: 25 on the normal river; when expanded to months or days, everything gets one. Below it an event is a faint dot. Like trust weights, changing these is a governance decision.
 
-## Time zoom
-`src/lib/timeScale.ts`. The river's zoom is a calendar **window** (`{ level, start, end }`, or `null` for all time) at one of `century | decade | year | month | day`. Inside the window time is linear over `WINDOW_LENGTH` river units; outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`. `makeScale(window)` gives `toS(year)` / `toYear(s)` for placing everything in 3D.
+## Expanding time in place
+`src/lib/timeScale.ts` defines the expansion and its scale.
+- **Expansion:** an **expanded period** (`{ level, start, end }`, or `null` for none). `months` is a calendar year shown month by month; `days` is a calendar month shown day by day.
+- **Scale:** inside the period, time is linear over `WINDOW_LENGTH` river units. Outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`.
+- **Placing things:** `makeScale(period)` gives `toS(year)` / `toYear(s)` for placing everything in 3D. `blendScales(a, b, u)` gives the in-between scales for the 500ms ease-out animation.
+
+`src/lib/cameraAnchor.ts` keeps the chosen moment still on screen:
+- **Depth:** the camera moves along the river by exactly as much as the anchor does, so the anchor stays the same distance ahead.
+- **Sideways:** the river's wiggle depends only on the year, so the anchor never moves sideways. The camera and the point it looks at get small sideways corrections (`latC`, `latL`) that keep them exactly where they were, and these fade out once you travel.
+- **Tested:** expanding then collapsing returns the identical camera position.
 
 ## Links between events
 **EventLink** — `{ id, from, to, type, note?, sources[], origin, claimantId?, wellSourced, agree, demo? }` in `Dataset.links`. Read it as *FROM type TO*:

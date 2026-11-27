@@ -1,10 +1,12 @@
 // The top-level screen. Holds the app's state and wires the pieces together:
 //   River (3D timeline)  →  click an event  →  ClaimMap (mind map)  →  SourcePanel (provenance)
-// plus the time-zoom controls (TimeNav, OverviewBar) and search (SearchBar).
+// plus the expand-in-place controls (ExpandNav, OverviewBar) and search (SearchBar).
 //
-// Zoom state lives here as a "window" (the calendar period zoomed into, or null for all
-// time). The river's camera position (`targetS`) is a distance along the river *for the
-// current zoom*, so whenever the zoom changes we convert it with the new scale.
+// Expanding time: `expansion` says which period is expanded (a year shown month by month,
+// or a month shown day by day, or none) and which moment must stay still on screen while
+// it changes. The river does the animation and the camera maths (src/lib/cameraAnchor.ts),
+// and when it's done it sets `targetS` — the camera's distance along the river in the new
+// scale — so nothing moves afterwards.
 //
 // Topic rivers: while a claim map is open, the 3D view shows the topic river of an
 // "anchor" event (src/lib/related.ts). `topicPos` is where you are along it, in stops;
@@ -16,11 +18,11 @@ import { seed } from './data/seed';
 import { loadRepoData, mergeDatasets } from './data/repoData';
 import type { Dataset, FuzzyDate } from './types';
 import { FIELDS } from './types';
-import { FOCUS_AHEAD, River } from './components/River';
+import { FOCUS_AHEAD, River, type Expansion } from './components/River';
 import { ClaimMap, type Focus, type TrailStep } from './components/ClaimMap';
 import { buildGraph, topicRiver, type TopicRiver } from './lib/related';
 import { SourcePanel, type PanelTarget } from './components/SourcePanel';
-import { OverviewBar, TimeNav } from './components/TimeNav';
+import { ExpandNav, OverviewBar } from './components/TimeNav';
 import { SearchBar } from './components/SearchBar';
 import { FIELD_COLOR } from './lib/time';
 import { resolveEventDate } from './lib/dateDispute';
@@ -32,6 +34,7 @@ import {
   makeScale,
   shallower,
   windowFor,
+  type ExpandLevel,
   type TimeWindow,
 } from './lib/timeScale';
 import type { SearchResult } from './lib/search';
@@ -54,9 +57,9 @@ export default function App() {
   // Demo seed + real data files from data/, merged once at start-up.
   const initial = useMemo(() => mergeDatasets(seed, loadRepoData()), []);
   const [data, setData] = useState<Dataset>(initial);
-  const [zoom, setZoom] = useState<TimeWindow | null>(null); // null = all time
-  const scale = useMemo(() => makeScale(zoom), [zoom]);
-  const level = levelOf(zoom);
+  const [expansion, setExpansion] = useState<Expansion>({ window: null, anchor: 1900, seq: 0 }); // window null = not expanded
+  const scale = useMemo(() => makeScale(expansion.window), [expansion.window]);
+  const level = levelOf(expansion.window);
   const [targetS, setTargetS] = useState(() => makeScale(null).toS(1900) - 2); // where the camera is heading
   const [year, setYear] = useState(1900); // the moment currently in view (for the HUD)
   const yearRef = useRef(year);
@@ -94,27 +97,35 @@ export default function App() {
     return Math.max(sc.sMin - ahead, Math.min(sc.sMax, sc.toS(y) - ahead));
   }, [mobile]);
 
-  /** Change zoom, keeping `focusYear` (default: what's in view now) mid-screen. */
-  const zoomTo = useCallback((w: TimeWindow | null, focusYear = yearRef.current) => {
-    const next = makeScale(w);
-    setZoom(w);
-    setTargetS(focusS(next, focusYear));
+  /**
+   * Expand (or collapse) to `w`, keeping `anchor` still on screen. With `flyTo`, travel to
+   * that moment afterwards. The target is also set here, so it still works if the 3D river
+   * is being re-created (e.g. straight after closing a claim map).
+   */
+  const expandTo = useCallback((w: TimeWindow | null, anchor: number, flyTo?: number) => {
+    setExpansion((e) => ({ window: w, anchor, flyTo, seq: e.seq + 1 }));
+    if (flyTo !== undefined) setTargetS(focusS(makeScale(w), flyTo));
   }, [focusS]);
 
-  /** Pinch, Ctrl+scroll, +/− keys and buttons: one level in or out around what's in view. */
-  const zoomStep = useCallback((dir: 1 | -1) => {
+  /** Double-click / a bubble's menu: expand to `lvl` around `anchorYear`. */
+  const expandAround = useCallback((lvl: ExpandLevel, anchorYear: number) => {
+    expandTo(windowFor(lvl, anchorYear), anchorYear);
+  }, [expandTo]);
+
+  /** + / − keys and the Collapse control: one level in or out, around the middle of the screen. */
+  const expandStep = useCallback((dir: 1 | -1) => {
     const y = yearRef.current;
     const nextLevel = dir > 0 ? deeper(level) : shallower(level);
     if (!nextLevel) return;
-    zoomTo(windowFor(nextLevel, y), y);
-  }, [level, zoomTo]);
+    expandTo(windowFor(nextLevel, y), y);
+  }, [level, expandTo]);
 
-  /** Fly to a date, zoomed in just enough to see it clearly, and highlight `id`. */
+  /** Fly to a date, expanded just enough to see it clearly, and highlight `id`. */
   const flyTo = useCallback((date: FuzzyDate, id: string) => {
     setHighlight(id);
     const lvl = levelForPrecision(date.precision);
-    zoomTo(windowFor(lvl, date.best), date.best);
-  }, [zoomTo]);
+    expandTo(windowFor(lvl, date.best), yearRef.current, date.best); // the view stays still, then flies
+  }, [expandTo]);
 
   /** Fly to where an entity was born/founded (the "rabbit hole" jump). */
   const jumpToEntity = useCallback((id: string) => {
@@ -276,7 +287,7 @@ export default function App() {
     <div className="app">
       <River
         data={data}
-        scale={scale}
+        expansion={expansion}
         level={level}
         targetS={targetS}
         setTargetS={setTargetS}
@@ -286,8 +297,8 @@ export default function App() {
         highlightId={highlight}
         mobile={mobile}
         showImported={showImported}
-        onZoomStep={zoomStep}
-        onZoomTo={(w, focus) => zoomTo(w, focus)}
+        onExpand={expandAround}
+        onExpandStep={expandStep}
         topic={path && river ? { data, river, pos: topicPos, mobile, onPick: goToStop, onBranch: (id) => switchTo(id, 'branch') } : undefined}
       />
 
@@ -297,7 +308,7 @@ export default function App() {
         <header className="hud">
           <div className="hud-left">
             <div className="brand">∞ Infinity Timeline <span className="demo-tag">prototype · demo data</span></div>
-            <TimeNav window={zoom} level={level} onZoomTo={(w) => zoomTo(w)} onZoomStep={zoomStep} />
+            <ExpandNav window={expansion.window} mobile={mobile} onGoTo={(w) => expandTo(w, yearRef.current)} onCollapse={() => expandStep(-1)} />
           </div>
           <SearchBar data={data} mobile={mobile} onPick={onPick} />
           <div className="year">{formatForLevel(year, level)}</div>
@@ -310,7 +321,6 @@ export default function App() {
             {FIELDS.map((f) => <span key={f}><i style={{ background: FIELD_COLOR[f] }} />{f}</span>)}
             <span><i className="span-swatch" />uncertain date</span>
             <span><i className="span-swatch disputed" />disputed date</span>
-            <span><i className="cluster-swatch" />cluster (tap to zoom)</span>
             {importedCount > 0 && (
               <label className="toggle">
                 <input type="checkbox" checked={showImported} onChange={(e) => setShowImported(e.target.checked)} />
@@ -318,7 +328,7 @@ export default function App() {
               </label>
             )}
           </div>
-          <OverviewBar window={zoom} year={year} onTravel={(y) => setTargetS(focusS(scale, y))} />
+          <OverviewBar window={expansion.window} year={year} onTravel={(y) => setTargetS(focusS(scale, y))} />
           <input
             className="scrubber"
             type="range"
@@ -337,8 +347,8 @@ export default function App() {
           </div>
           <p className="help">
             {mobile
-              ? 'Swipe to travel · pinch to zoom time · tap a bubble or cluster'
-              : 'Scroll or drag to travel · Ctrl+scroll, pinch or +/− to zoom time · click the water to zoom into a period · ◆ = people & organisations'}
+              ? 'Swipe to travel · double-tap the river to expand time · tap a bubble (overlapping ones fan out)'
+              : 'Scroll or drag to travel · double-click the river or press + / − to expand time · click a bubble (overlapping ones fan out) · ◆ = people & organisations'}
           </p>
         </footer>
       )}

@@ -1,8 +1,8 @@
-// Tests for importance, clustering and level of detail, and search.
+// Tests for importance, bubbles / stacks / fan-out on the main river, and search.
 import { describe, expect, it } from 'vitest';
 import { seed } from '../data/seed';
 import { loadRepoData, mergeDatasets } from '../data/repoData';
-import { planScreen, type ScreenItem } from './cluster';
+import { fanPositions, fanRadius, planScreen, type ScreenItem } from './cluster';
 import { eventImportance, LOD_THRESHOLD } from './importance';
 import { search } from './search';
 
@@ -20,58 +20,78 @@ describe('importance', () => {
     }
   });
 
-  it('debated landmark events outrank plain imports, and every landmark shows at "all time"', () => {
+  it('debated landmark events outrank plain imports, and every landmark gets a bubble on the normal river', () => {
     const ww2 = eventImportance(all.events.find((e) => e.id === 'ev_ww2')!, all).score;
     const imported = all.events.filter((e) => e.provenance).map((e) => eventImportance(e, all).score);
     expect(ww2).toBeGreaterThan(Math.max(...imported));
-    for (const ev of seed.events) expect(eventImportance(ev, all).score).toBeGreaterThanOrEqual(LOD_THRESHOLD.all);
+    for (const ev of seed.events) expect(eventImportance(ev, all).score).toBeGreaterThanOrEqual(LOD_THRESHOLD.normal);
   });
 
-  it('only the best-covered imports get a bubble at "all time"', () => {
-    const shown = all.events.filter((e) => e.provenance && eventImportance(e, all).score >= LOD_THRESHOLD.all);
+  it('only the best-covered imports get a bubble on the normal river', () => {
+    const shown = all.events.filter((e) => e.provenance && eventImportance(e, all).score >= LOD_THRESHOLD.normal);
     expect(shown.length).toBeGreaterThan(5);
     expect(shown.length).toBeLessThan(40);
   });
 });
 
-describe('clustering', () => {
+describe('bubbles, stacks and fan-out', () => {
   const opts = { minRadius: 10, gap: 4 };
 
-  it('keeps well-spaced bubbles apart', () => {
-    const p = planScreen([item('a', 0, 5), item('b', 100, 3)], opts);
-    expect(p.clusters).toEqual([]);
-    expect(p.singles.map((s) => s.id)).toEqual(['a', 'b']);
+  it('every important event keeps its own bubble — nothing is merged', () => {
+    const p = planScreen([item('a', 0, 1), item('b', 8, 9), item('c', 15, 4), item('far', 300, 2)], opts);
+    expect(p.bubbles.map((b) => b.id).sort()).toEqual(['a', 'b', 'c', 'far']);
   });
 
-  it('merges overlapping bubbles into a cluster anchored on the most important one', () => {
+  it('overlapping bubbles form a stack, most important first; lone ones are not in any stack', () => {
     const p = planScreen([item('a', 0, 1), item('b', 8, 9), item('c', 15, 4), item('far', 300, 2)], opts);
-    expect(p.clusters).toHaveLength(1);
-    expect(p.clusters[0].anchorId).toBe('b');
-    expect(p.clusters[0].memberIds.sort()).toEqual(['a', 'b', 'c']);
-    expect(p.singles.map((s) => s.id)).toEqual(['far']);
+    expect(p.stacks).toEqual([['b', 'c', 'a']]);
+  });
+
+  it('chains of touching bubbles are one stack', () => {
+    const p = planScreen([item('a', 0, 3), item('b', 22, 2), item('c', 44, 1)], opts); // a–b and b–c touch, a–c don't
+    expect(p.stacks).toEqual([['a', 'b', 'c']]);
   });
 
   it('draws unimportant events as faint dots', () => {
     const p = planScreen([item('a', 0, 5), item('dim', 200, 1, { major: false })], opts);
     expect(p.faint).toEqual(['dim']);
+    expect(p.bubbles.map((b) => b.id)).toEqual(['a']);
   });
 
-  it('a pinned (searched-for) event always stands alone, with its label', () => {
+  it('a pinned (searched-for) event always gets a bubble and its label', () => {
     const p = planScreen([item('big', 0, 50), item('found', 5, 1, { pinned: true, major: false })], opts);
-    expect(p.singles).toContainEqual({ id: 'found', showLabel: true });
-    expect(p.clusters).toEqual([]);
-    expect(p.faint).toEqual(['big']);
+    expect(p.bubbles).toContainEqual({ id: 'found', showLabel: true });
+    expect(p.stacks).toEqual([['found', 'big']]);
   });
 
   it('hides labels that would overlap, keeping the more important one', () => {
     const p = planScreen([item('a', 0, 5), item('b', 40, 9)], opts); // bubbles clear, 80px labels clash
-    expect(p.singles).toEqual([{ id: 'b', showLabel: true }, { id: 'a', showLabel: false }]);
+    expect(p.bubbles).toEqual([{ id: 'b', showLabel: true }, { id: 'a', showLabel: false }]);
   });
 
-  it('a minimum radius keeps tap targets from sitting on top of each other', () => {
+  it('a minimum radius means tiny bubbles closer than a fingertip count as overlapping', () => {
     const tiny = (id: string, x: number) => item(id, x, 1, { r: 2 });
-    expect(planScreen([tiny('a', 0), tiny('b', 30)], { minRadius: 22, gap: 0 }).clusters).toHaveLength(1);
+    expect(planScreen([tiny('a', 0), tiny('b', 30)], { minRadius: 22, gap: 0 }).stacks).toHaveLength(1);
   });
+
+  it('fans out round a ring, half each side, with rows far enough apart for 44px buttons', () => {
+    for (const n of [2, 3, 5, 8, 12]) {
+      const pos = fanPositions(n, fanRadius(n));
+      expect(pos.filter((p) => p.side === 'right').length).toBe(Math.ceil(n / 2));
+      expect(pos.every((p) => (p.side === 'right' ? p.x >= 0 : p.x <= 0))).toBe(true);
+      for (const side of ['left', 'right'] as const) {
+        const ys = pos.filter((p) => p.side === side).map((p) => p.y);
+        for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(44);
+      }
+    }
+  });
+
+  it('on a narrow screen, can put every bubble on one side', () => {
+    const pos = fanPositions(7, fanRadius(7), 'right');
+    expect(pos.every((p) => p.side === 'right' && p.x >= 0)).toBe(true);
+    for (let i = 1; i < pos.length; i++) expect(pos[i].y - pos[i - 1].y).toBeGreaterThanOrEqual(44);
+  });
+
 });
 
 describe('search', () => {

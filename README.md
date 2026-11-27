@@ -36,16 +36,29 @@ npm test               # trust, status, dates, layout, importer and data tests
 npm run check          # everything CI runs: validate data + tests + production build
 ```
 
-Controls: **scroll / drag** to travel through time, **click** a glowing event to open its claim map, click any source to see its trust breakdown and funding chain, and **"Jump on timeline"** to warp to an entity's founding.
-In the claim map, **drag** to move, **pinch or scroll** to zoom, and tap a bubble to go deeper. On phones the river becomes a vertical "dive" you swipe through, and the map's bubbles and labels are drawn much larger.
+Controls:
+- **Scroll / drag** to travel through time.
+- **Click** a glowing event to select it. Its menu opens the claim map or expands time around it.
+- **Click any source** to see its trust breakdown and funding chain.
+- **"Jump on timeline"** warps to an entity's founding.
+
+In the claim map, **drag** to move, **pinch or Ctrl+scroll** to zoom, and tap a bubble to go deeper. On phones the river becomes a vertical "dive" you swipe through, and the map's bubbles and labels are drawn much larger.
 
 **Uncertain dates** glow as a span on the river from the earliest to the latest possible moment, brightest at the best guess. **Disputed dates** glow amber, with a marker for each proposal still standing — try *"When did WW2 actually begin?"*.
 
-**Zooming time.** Pinch, **Ctrl + scroll** or the **+ / −** keys zoom the river's timescale through *all time → century → decade → year → month → day*. You can also click the water and choose **"Zoom into this period"**. The zoomed period gets an even, straight stretch of river; the rest of history stays visible but squeezed. A breadcrumb at the top (*All time › 1900s › 1930s › 1939 › Sep 1939*) zooms back out, and a bar above the slider shows where the zoomed period sits in all of history.
+**Expanding time in place.** Time expands *normal → months → days*.
+- **How:** **double-click (or double-tap) the river**, press **+**, or choose **Expand to months / Expand to days** from a bubble's menu.
+- **What you see:** the year (or month) around that moment becomes a brighter, wider, evenly spaced stretch of river, with month or day ticks. The rest of history stays visible but squeezed.
+- **Nothing jumps:** the change animates over half a second, and the moment you chose stays exactly where it was on screen throughout. The camera is recalculated every frame (`src/lib/cameraAnchor.ts`).
+- **Stepping back out:** the small **1939 › Sep 1939 › Collapse** control at the top (or **−**), anchored the same way.
+- **Overview:** a bar above the slider shows where the expanded period sits in all of history.
 
-**Crowded periods.** Events whose bubbles would overlap merge into a **cluster** showing how many events it holds and a ring coloured by field; click it to zoom into the period it covers. Each event has an explainable **importance** score (debates, links, cited sources, and for Wikidata imports how many Wikipedias cover it). Zoomed out, only important events get labelled bubbles; the rest are faint dots until you zoom in.
+**Crowded spots.** Every event has its own bubble.
+- **Overlapping bubbles:** clicking where several overlap **fans them out in a labelled ring** (like overlapping map pins), so you can pick any one. Clicking elsewhere closes it.
+- **Hover (desktop):** bubbles under the cursor swell up and show their labels.
+- **Importance:** each event has an explainable score (debates, links, cited sources, and for Wikidata imports how many Wikipedias cover it). On the normal river, less important events are faint dots until you expand time around them.
 
-**Search** (the 🔍 button on phones) matches events, people/organisations and claims as you type, with field filters. Picking a result flies there, zooms to a suitable level and highlights it. Everything you can tap on a phone is at least 44px.
+**Search** (the 🔍 button on phones) matches events, people/organisations and claims as you type, with field filters. Picking a result flies there, expands time as far as the date's precision deserves, and highlights it. Everything you can tap on a phone is at least 44px.
 
 **Topic rivers.** Opening a claim map hides the main river and shows a single *topic river* behind the map, holding only the events related to the one in the middle.
 - **What counts as related:** typed links between events (*caused*, *led to*, *part of*, *response to*), people and organisations shared by their debates, and relations imported from Wikidata.
