@@ -15,6 +15,21 @@
     "date": { "$ref": "fuzzy-date.schema.json", "description": "When it happened (or began)." },
     "end": { "$ref": "fuzzy-date.schema.json", "description": "When it ended, for things that lasted a while." },
     "topicIds": { "type": "array", "items": { "type": "string" } },
+    "links": {
+      "type": "array",
+      "description": "Links from this event to others. Read as: THIS EVENT <type> the other event.",
+      "items": {
+        "type": "object",
+        "required": ["to", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "to": { "type": "string", "description": "The other event's id (its file name without .json, or wd_Q… for imports)." },
+          "type": { "enum": ["caused", "led_to", "part_of", "response_to"], "description": "caused · led_to (came before and helped bring about) · part_of · response_to" },
+          "note": { "type": "string", "description": "One plain sentence on why they're linked." },
+          "sources": { "type": "array", "items": { "type": "string" }, "description": "Source ids backing the link (data/sources/<id> or wikidata:Q…)." }
+        }
+      }
+    },
     "provenance": {
       "type": "object",
       "additionalProperties": false,

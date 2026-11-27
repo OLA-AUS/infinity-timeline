@@ -3,8 +3,14 @@
 // Layout: one bubble in the middle (the event, topic or claim you're looking at) with
 // lines out to its children (topics → claims → evidence / counter-claims).
 // Positions come from a force layout (src/lib/forceLayout.ts) so labels never sit on a line.
-// You can drag to pan, pinch or scroll to zoom, and tap a bubble to go deeper.
+// You can drag to pan, pinch or Ctrl+scroll to zoom, and tap a bubble to go deeper.
 // On phones everything is drawn much larger, and you pan around instead of squinting.
+//
+// Topic rivers: behind the map runs a river of events related to the one in the middle
+// (TopicRiver.tsx). A plain scroll, or dragging the strip at the bottom, glides along it,
+// and the map's centre switches to the nearest event with a soft fade. Events linked to
+// the centre appear as bubbles too; tapping one makes it the new centre and swaps in its
+// own topic river. The breadcrumb shows the trail of events you've moved through.
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { Claim, Dataset } from '../types';
 import { claimStatus, STATUS_COLOR } from '../lib/status';
@@ -13,12 +19,39 @@ import { formatDate, formatShort } from '../lib/dates';
 import { resolveEventDate } from '../lib/dateDispute';
 import { DEFAULT_LAYOUT, layoutBounds, layoutStar, type Placed } from '../lib/forceLayout';
 import { usePanZoom, type View } from '../lib/usePanZoom';
+import { directLinks, LINK_WORDS, type Edge, type TopicRiver as TopicRiverModel } from '../lib/related';
+import { FIELD_COLOR } from '../lib/time';
 import { ClaimDetail } from './ClaimDetail';
+import { EventLinks } from './EventLinks';
+import { TopicStrip } from './TopicStrip';
 import { DateExplain } from './DateExplain';
 import { OpinionChart } from './OpinionChart';
 
 /** One step of the breadcrumb trail: what kind of thing is in the middle, and its id. */
 export type Focus = { kind: 'event' | 'topic' | 'claim'; id: string };
+
+/** One event in the trail of centres you've visited, and how you got there. */
+export interface TrailStep {
+  eventId: string;
+  anchorId: string; // which topic river you were on
+  via: 'start' | 'glide' | 'click' | 'branch';
+}
+const VIA_GLYPH: Record<TrailStep['via'], string> = { start: '', glide: '→', click: '↪', branch: '⑂' };
+
+/** Everything the map needs to drive the topic river (App.tsx owns the state). */
+export interface TopicControls {
+  river: TopicRiverModel;
+  graph: Map<string, Edge[]>;
+  pos: number;
+  relevance: number;
+  setRelevance: (r: number) => void;
+  onGlide: (deltaStops: number) => void;
+  onStop: (index: number) => void;
+  onSwitchEvent: (id: string, via: 'click' | 'branch') => void;
+  trail: TrailStep[];
+  onTrailJump: (index: number) => void;
+  onVoteLink: (id: string, kind: 'agree' | 'well_sourced', value: 1 | -1) => void;
+}
 
 interface Props {
   data: Dataset;
@@ -29,6 +62,7 @@ interface Props {
   onOpenEntity: (id: string) => void;
   onVote: (kind: 'agree' | 'well_sourced', id: string, value: 1 | -1) => void;
   mobile: boolean;
+  topic?: TopicControls;
 }
 
 /** A child bubble before layout. */
@@ -39,6 +73,7 @@ interface Node {
   color: string;
   ring?: string; // dashed outer ring, used for conflicts of interest
   dashed?: boolean; // dashed line, used for counter-evidence
+  dotted?: boolean; // dotted line, used for links to other events
   size: number; // radius at desktop scale
   onClick: () => void;
 }
@@ -50,7 +85,10 @@ const SIZES = {
 };
 const MAX_LINES = 3;
 
-export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEntity, onVote, mobile }: Props) {
+/** At most this many linked-event bubbles around an event, strongest first. */
+const MAX_LINK_BUBBLES = 6;
+
+export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEntity, onVote, mobile, topic }: Props) {
   const focus = path[path.length - 1];
   const push = (f: Focus) => setPath([...path, f]);
   const sz = mobile ? SIZES.mobile : SIZES.desktop;
@@ -91,6 +129,23 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
           onClick: () => push({ kind: 'topic', id: t.id }),
         });
       }
+      // Events linked to this one. Tapping one makes it the centre and swaps the topic river.
+      if (topic) {
+        for (const e of directLinks(ev.id, topic.graph).slice(0, MAX_LINK_BUBBLES)) {
+          const other = data.events.find((x) => x.id === e.to);
+          if (!other) continue;
+          const words = e.type ? (e.direction === 'out' ? `${LINK_WORDS[e.type].out} →` : `← ${LINK_WORDS[e.type].in}`) : 'related';
+          kids.push({
+            key: `link-${e.linkId}`,
+            label: other.title,
+            sub: `${words} · ${formatShort(resolveEventDate(other, data).date)}`,
+            color: FIELD_COLOR[other.field],
+            dotted: true,
+            size: 26 + 16 * e.strength, // bigger = stronger link
+            onClick: () => topic.onSwitchEvent(other.id, 'click'),
+          });
+        }
+      }
     } else if (focus.kind === 'topic') {
       const t = data.topics.find((x) => x.id === focus.id)!;
       center = { label: t.title, sub: t.dateOf ? 'date dispute' : 'debate', color: t.dateOf ? '#f5b83d' : '#7aa2ff' };
@@ -123,7 +178,7 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
       }
     }
     return { center: center!, children: kids };
-  }, [data, focus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, focus, topic?.graph]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- 2. Wrap labels into lines and run the force layout. ----
   const { placed, lines, centerLines, bounds } = useMemo(() => {
@@ -147,7 +202,12 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
   // ---- 3. Pan & zoom. Re-fit the view whenever the map or the window size changes. ----
   const svgRef = useRef<SVGSVGElement>(null);
   const size = useElementSize(svgRef);
-  const { view, setView, wasDrag, zoomBy } = usePanZoom(svgRef, { x: 0, y: 0, k: 1 }, { minZoom: sz.minZoom * 0.5, maxZoom: 4 });
+  // With a topic river, a plain scroll glides along it; Ctrl+scroll / pinch zooms the map.
+  const { view, setView, wasDrag, zoomBy } = usePanZoom(svgRef, { x: 0, y: 0, k: 1 }, {
+    minZoom: sz.minZoom * 0.5,
+    maxZoom: 4,
+    onPlainWheel: topic ? (dy) => topic.onGlide(dy / 300) : undefined,
+  });
   const fit = () => setView(fitView(bounds, size.w, size.h, sz.minZoom));
   useEffect(fit, [bounds, size.w, size.h]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -171,14 +231,29 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
   return (
     <div className="map-overlay">
       <div className="map-header">
-        <div className="crumbs">
-          {path.map((f, i) => (
-            <button key={i} className={i === path.length - 1 ? 'active' : ''} onClick={() => setPath(path.slice(0, i + 1))}>
-              {truncate(crumbLabel(f) ?? '', mobile ? 22 : 38)}
-            </button>
+        <nav className="crumbs" aria-label="Trail">
+          {/* The trail of events you've moved through, then the topic/claim you're in. */}
+          {topic?.trail.map((t, i) => (
+            <span key={`t${i}`} className="crumb">
+              {i > 0 && <span className="via" title={`got here by ${t.via}`}>{VIA_GLYPH[t.via]}</span>}
+              <button className={i === topic.trail.length - 1 && path.length === 1 ? 'active' : ''} onClick={() => topic.onTrailJump(i)}>
+                {truncate(data.events.find((e) => e.id === t.eventId)?.title ?? '', mobile ? 18 : 30)}
+              </button>
+            </span>
           ))}
-        </div>
-        <button className="close" onClick={onClose}>✕ {mobile ? 'River' : 'Back to river'}</button>
+          {path.map((f, i) => {
+            if (topic && i === 0) return null; // the event is already the last trail step
+            return (
+              <span key={i} className="crumb">
+                {(i > 0 || topic) && <span className="via">›</span>}
+                <button className={i === path.length - 1 ? 'active' : ''} onClick={() => setPath(path.slice(0, i + 1))}>
+                  {truncate(crumbLabel(f) ?? '', mobile ? 22 : 38)}
+                </button>
+              </span>
+            );
+          })}
+        </nav>
+        <button className="close" onClick={onClose}>✕ {mobile ? 'Main river' : 'Back to main river'}</button>
       </div>
 
       <div className="map-body">
@@ -188,10 +263,12 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
               <radialGradient id="glow"><stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" /><stop offset="100%" stopColor="#ffffff" stopOpacity="0" /></radialGradient>
             </defs>
             <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
+             {/* Re-keyed on every new centre, so the swap fades in smoothly (CSS: .map-swap). */}
+             <g key={`${focus.kind}:${focus.id}`} className="map-swap">
               {/* Lines first, so bubbles and labels draw on top of them. */}
               {children.map((n) => {
                 const p = placedByKey.get(n.key)!;
-                return <line key={`l-${n.key}`} x1={0} y1={0} x2={p.x} y2={p.y} stroke={n.color} strokeOpacity={0.45} strokeWidth={2 * sz.scale} strokeDasharray={n.dashed ? '6 5' : undefined} />;
+                return <line key={`l-${n.key}`} x1={0} y1={0} x2={p.x} y2={p.y} stroke={n.color} strokeOpacity={0.45} strokeWidth={2 * sz.scale} strokeDasharray={n.dashed ? '6 5' : n.dotted ? '2 5' : undefined} strokeLinecap="round" />;
               })}
 
               {/* The bubble in the middle. */}
@@ -235,6 +312,7 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
               {children.length === 0 && (
                 <text y={sz.centerR + 40} textAnchor="middle" fill="#8892a6" fontSize={sz.font}>No forks yet — add the first claim.</text>
               )}
+             </g>
             </g>
           </svg>
 
@@ -243,7 +321,24 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
             <button onClick={() => zoomBy(1 / 1.3)} aria-label="Zoom out">－</button>
             <button onClick={fit} aria-label="Fit map to screen">⤢</button>
           </div>
-          <p className="map-help">{mobile ? 'Drag to move · pinch to zoom · tap a bubble' : 'Drag to move · scroll or pinch to zoom · click a bubble'}</p>
+          <p className="map-help">
+            {topic
+              ? mobile ? 'Swipe the strip to glide · pinch to zoom · tap a bubble' : 'Scroll or drag the strip to glide along the topic river · Ctrl+scroll to zoom · click a bubble'
+              : mobile ? 'Drag to move · pinch to zoom · tap a bubble' : 'Drag to move · scroll or pinch to zoom · click a bubble'}
+          </p>
+          {topic && (
+            <TopicStrip
+              data={data}
+              river={topic.river}
+              pos={topic.pos}
+              relevance={topic.relevance}
+              mobile={mobile}
+              onGlide={topic.onGlide}
+              onStop={topic.onStop}
+              onBranch={(id) => topic.onSwitchEvent(id, 'branch')}
+              setRelevance={topic.setRelevance}
+            />
+          )}
         </div>
 
         <aside className="map-side">
@@ -253,6 +348,15 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
             <div className="hint">
               <h3>{center.label}</h3>
               {focusEvent && <p className="muted">{focusEvent.summary}</p>}
+              {focusEvent && topic && (
+                <EventLinks
+                  data={data}
+                  eventId={focusEvent.id}
+                  onRiver={topic.river.stops.find((st) => st.eventId === focusEvent.id)}
+                  onSwitchEvent={(id) => topic.onSwitchEvent(id, 'click')}
+                  onVoteLink={topic.onVoteLink}
+                />
+              )}
               {focusEvent && <DateExplain data={data} event={focusEvent} onOpenSource={onOpenSource} onOpenTopic={(id) => push({ kind: 'topic', id })} />}
               {dateTopicEvent && (
                 <p>

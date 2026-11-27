@@ -233,3 +233,67 @@ ul.plain li { margin-bottom: 4px; }
   .ov-tick.minor { display: none; }
   .zoom-pop button, .cluster-list button { min-height: 44px; }
 }
+
+/* ---- Topic rivers -------------------------------------------------------------------- */
+/* The map overlay is now see-through, so the topic river (3D, behind) shows around the map. */
+.map-overlay { background: radial-gradient(ellipse at 40% 45%, #0c1428d0 0%, #0c142899 45%, #05070f55 100%); }
+.map-side { background: #080c18e6; }
+.map-canvas { display: flex; flex-direction: column; }
+.map-canvas .map-svg { flex: 1; min-height: 0; }
+.map-help { position: static; margin: 2px 0 0; }
+
+/* A soft fade when the centre of the map changes (gliding, or tapping a linked event). */
+.map-swap { animation: mapswap 0.45s ease; }
+@keyframes mapswap { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: none; } }
+
+/* Breadcrumb trail: event → event ⑂ event › topic › claim */
+.crumbs { align-items: center; }
+.crumb { display: inline-flex; align-items: center; gap: 4px; }
+.crumb .via { color: var(--muted); font-size: 13px; }
+
+/* Labels in the 3D topic river */
+.arc-label { font-size: 12px; font-weight: 600; white-space: nowrap; text-shadow: 0 0 6px #000, 0 0 2px #000; }
+.branch-btn { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: #2a1d47e6; border-color: #b48cff; color: #e7dcff; white-space: nowrap; }
+.branch-btn:hover { background: #3a2866; }
+
+/* The strip along the bottom of the map that drives the topic river */
+.topic-strip { padding: 6px 10px 8px; border-top: 1px solid var(--line); background: #070b16e6; }
+.strip-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.relevance { display: inline-flex; align-items: center; gap: 6px; }
+.relevance input { width: 140px; accent-color: #b48cff; }
+.strip-row { display: flex; align-items: stretch; gap: 6px; }
+.strip-step { flex: none; width: 36px; padding: 0; font-size: 14px; }
+.strip-step:disabled { opacity: 0.35; cursor: default; }
+.strip-window { position: relative; flex: 1; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.strip-window:active { cursor: grabbing; }
+.strip-track { display: flex; transition: transform 0.25s ease-out; will-change: transform; }
+.stop { flex: none; position: relative; padding: 0 3px; }
+.stop-btn { width: 100%; height: 100%; min-height: 48px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; padding: 5px 8px; background: #111a30cc; overflow: hidden; }
+.stop-btn i { width: 8px; height: 8px; border-radius: 50%; }
+.stop-btn small { color: var(--muted); font-size: 10.5px; }
+.stop-btn span { font-size: 12px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.stop.current .stop-btn { border-color: #ffe066; background: #2a2410e6; box-shadow: 0 0 12px #ffe06644; }
+.stop-branch { position: absolute; top: -6px; right: 0; font-size: 11px; padding: 1px 6px; border-radius: 999px; background: #2a1d47; border-color: #b48cff; color: #e7dcff; }
+
+/* Links in the side panel */
+.event-links { margin: 10px 0; }
+.why-here { background: #111a30; border-radius: 8px; padding: 6px 8px; }
+.link-list li { margin-bottom: 10px; }
+.link-line { font-size: 13px; }
+.link-type { font-weight: 600; }
+.link-list .demo-flag { margin-left: 6px; padding: 0 6px; }
+.link-votes { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 4px; font-size: 11.5px; }
+.link-votes button { padding: 2px 7px; font-size: 11.5px; }
+
+@media (max-width: 760px) {
+  .map-body { grid-template-rows: 62% 38%; }
+  .strip-step { width: 44px; min-height: 44px; font-size: 18px; }
+  .stop-btn { min-height: 52px; }
+  .stop { display: flex; flex-direction: column; gap: 4px; }
+  .stop-branch { position: static; width: 100%; min-height: 44px; font-size: 14px; } /* under its stop, full tap size */
+  .relevance input { width: 120px; height: 44px; }
+  .branch-btn { min-height: 44px; font-size: 15px; padding: 6px 14px; }
+  .link-votes button, .crumb button, .map-header .close { min-height: 44px; min-width: 44px; }
+  .strip-head { font-size: 13px; }
+}

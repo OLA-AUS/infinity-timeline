@@ -7,9 +7,12 @@
 //   data/entities/<id>.json              one person / organisation per file
 //   data/sources/<id>.json               one source (book, paper, archive record) per file
 //
+// An event file may list "links" to other events ({ to, type, note?, sources? }). They're
+// turned into EventLink records here, with no votes yet (votes come from the site).
+//
 // Vite bundles these at build time (import.meta.glob), so the site stays fully static
 // and can be hosted on any static host (Render, GitHub Pages) with no server.
-import type { Dataset, Entity, Source, TimelineEvent } from '../types';
+import type { Dataset, Entity, EventLink, Source, TimelineEvent } from '../types';
 
 type EventFile = Omit<TimelineEvent, 'provenance'> & { $schema?: string; provenance?: TimelineEvent['provenance'] };
 type EntityFile = Entity & { $schema?: string };
@@ -41,7 +44,12 @@ function wikidataSource(id: string, ev: TimelineEvent): Source {
   };
 }
 
-export function loadRepoData(): Pick<Dataset, 'events' | 'entities' | 'sources'> {
+type RepoData = Pick<Dataset, 'events' | 'entities' | 'sources' | 'links'>;
+
+/** A stable id for a link from a data file, so votes and edits can refer to it. */
+export const linkId = (from: string, type: string, to: string) => `${from}>${type}>${to}`;
+
+export function loadRepoData(): RepoData {
   const events: TimelineEvent[] = Object.entries(eventFiles)
     .map(([key, file]) => {
       const { $schema: _schema, ...ev } = file;
@@ -51,22 +59,42 @@ export function loadRepoData(): Pick<Dataset, 'events' | 'entities' | 'sources'>
 
   const entities: Entity[] = Object.values(entityFiles).map(({ $schema: _schema, ...en }) => en);
 
-  // Hand-written sources first, then a Source record for every "wikidata:Q…" id a date points to.
+  // Hand-written sources first, then a Source record for every "wikidata:Q…" id a date or link points to.
   const sources = new Map<string, Source>(Object.values(sourceFiles).map(({ $schema: _schema, ...s }) => [s.id, s]));
   for (const ev of events) {
-    for (const id of [...ev.date.sources, ...(ev.end?.sources ?? [])]) {
+    for (const id of [...ev.date.sources, ...(ev.end?.sources ?? []), ...(ev.links ?? []).flatMap((l) => l.sources ?? [])]) {
       if (id.startsWith(WIKIDATA_SOURCE_PREFIX) && !sources.has(id)) sources.set(id, wikidataSource(id, ev));
     }
   }
-  return { events, entities, sources: [...sources.values()] };
+
+  // Links written inside event files. A link whose only sources are Wikidata came from the importer.
+  const links: EventLink[] = events.flatMap((ev) =>
+    (ev.links ?? []).map((l) => {
+      const srcs = l.sources ?? [];
+      const fromWikidata = ev.provenance?.importedFrom === 'wikidata' && srcs.length > 0 && srcs.every((x) => x.startsWith(WIKIDATA_SOURCE_PREFIX));
+      return {
+        id: linkId(ev.id, l.type, l.to),
+        from: ev.id,
+        to: l.to,
+        type: l.type,
+        note: l.note,
+        sources: srcs,
+        origin: fromWikidata ? ('wikidata' as const) : ('community' as const),
+        wellSourced: { up: 0, down: 0 },
+        agree: { up: 0, down: 0 },
+      };
+    }),
+  );
+  return { events, entities, sources: [...sources.values()], links };
 }
 
 /** Add repo data on top of the demo seed. Ids must not clash — the data validator checks this. */
-export function mergeDatasets(base: Dataset, extra: Pick<Dataset, 'events' | 'entities' | 'sources'>): Dataset {
+export function mergeDatasets(base: Dataset, extra: RepoData): Dataset {
   return {
     ...base,
     events: [...base.events, ...extra.events],
     entities: [...base.entities, ...extra.entities],
     sources: [...base.sources, ...extra.sources],
+    links: [...base.links, ...extra.links],
   };
 }

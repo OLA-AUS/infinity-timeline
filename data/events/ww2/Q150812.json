@@ -25,6 +25,29 @@
     ]
   },
   "topicIds": [],
+  "links": [
+    {
+      "to": "wd_Q1150620",
+      "type": "led_to",
+      "sources": [
+        "wikidata:Q150812"
+      ]
+    },
+    {
+      "to": "wd_Q2305266",
+      "type": "led_to",
+      "sources": [
+        "wikidata:Q150812"
+      ]
+    },
+    {
+      "to": "wd_Q44700",
+      "type": "part_of",
+      "sources": [
+        "wikidata:Q150812"
+      ]
+    }
+  ],
   "provenance": {
     "importedFrom": "wikidata",
     "qid": "Q150812",

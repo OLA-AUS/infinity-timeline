@@ -1,7 +1,7 @@
 // Tests for the Wikidata importer's conversion logic, using small hand-made answers
 // shaped like the real SPARQL results (no network needed).
 import { describe, expect, it } from 'vitest';
-import { filterEvents, groupDetails, itemToEvent, mergeValues, parseExcludeList, valueToRange, ymdToYear } from './wikidata.mjs';
+import { filterEvents, groupDetails, itemToEvent, mergeValues, parseExcludeList, relationsToLinks, valueToRange, ymdToYear } from './wikidata.mjs';
 import { checkEvent, checkReferences } from './validate.mjs';
 
 const lit = (value) => ({ type: 'literal', value });
@@ -128,5 +128,44 @@ describe('validator', () => {
     const cites = { ...good, date: { ...good.date, sources: ['made_up_book'] } };
     const errs = checkReferences([{ path: 'data/events/x/battle_x.json', kind: 'event', data: cites }]);
     expect(errs[0].message).toContain('made_up_book');
+  });
+});
+
+describe('Wikidata relations → links', () => {
+  const row = (item, prop, target) => ({ item: uri(item), prop: lit(prop), target: uri(target) });
+  const imported = new Set(['Q1', 'Q2', 'Q3']);
+
+  it('maps each property to a link type and direction', () => {
+    const links = relationsToLinks(
+      [
+        row('Q1', 'P361', 'Q2'), // Q1 part of Q2           → Q1 part_of Q2
+        row('Q3', 'P828', 'Q1'), // Q3 has cause Q1          → Q1 caused Q3
+        row('Q1', 'P156', 'Q3'), // Q1 followed by Q3        → Q1 led_to Q3
+      ],
+      imported,
+    );
+    expect(links.get('Q1')).toEqual([
+      { to: 'wd_Q2', type: 'part_of', sources: ['wikidata:Q1'] },
+      { to: 'wd_Q3', type: 'caused', sources: ['wikidata:Q3'] },
+      { to: 'wd_Q3', type: 'led_to', sources: ['wikidata:Q1'] },
+    ]);
+  });
+
+  it('merges the two sides of the same statement and drops links to things not imported', () => {
+    const links = relationsToLinks([row('Q1', 'P156', 'Q2'), row('Q2', 'P155', 'Q1'), row('Q1', 'P361', 'Q999')], imported);
+    expect(links.get('Q1')).toEqual([{ to: 'wd_Q2', type: 'led_to', sources: ['wikidata:Q1'] }]);
+  });
+
+  it('validator accepts good links and explains bad ones', () => {
+    const ev = itemToEvent(groupDetails([{ item: uri('Q1'), itemLabel: lit('One'), pointTime: lit('1940-01-01T00:00:00Z'), pointPrec: lit('9') }]).get('Q1'), { retrievedAt: '2026-11-27' });
+    const other = { ...ev, id: 'wd_Q2', provenance: { ...ev.provenance, qid: 'Q2' } };
+    const good = { ...ev, links: [{ to: 'wd_Q2', type: 'part_of', sources: ['wikidata:Q1'] }] };
+    expect(checkEvent(good, 'Q1')).toEqual([]);
+    expect(checkReferences([{ path: 'a', kind: 'event', data: good }, { path: 'b', kind: 'event', data: other }])).toEqual([]);
+    const bad = { ...ev, links: [{ to: 'wd_Q1', type: 'inspired' }] };
+    const errs = checkEvent(bad, 'Q1');
+    expect(errs.some((e) => e.includes('links the event to itself'))).toBe(true);
+    expect(errs.some((e) => e.includes('type must be one of'))).toBe(true);
+    expect(checkReferences([{ path: 'a', kind: 'event', data: { ...ev, links: [{ to: 'wd_Q404', type: 'led_to' }] } }])[0].message).toContain('wd_Q404');
   });
 });

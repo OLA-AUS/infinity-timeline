@@ -2,7 +2,7 @@
 // every organisation, person, source, fine, vote count, AI output and poll number below is a
 // FICTIONAL placeholder that exists only to demonstrate the mechanics. Replace with real,
 // cited data before launch. Real imported data lives in data/ (see CONTRIBUTING.md).
-import type { Claim, Dataset, Evidence, Source } from '../types';
+import type { Claim, Dataset, EventLink, Evidence, LinkType, Source } from '../types';
 import { between, inMonth, inYear, onDay } from '../lib/dates';
 
 // Small helpers so each row below stays on one line.
@@ -12,6 +12,15 @@ const ev = (
   id: string, claimId: string, sourceId: string, direction: 'for' | 'against',
   relevance: number, note: string, up = 20, down = 4,
 ): Evidence => ({ id, claimId, sourceId, direction, relevance, note, wellSourced: { up, down } });
+
+/** A demo link between two events (always flagged demo). Votes: well-sourced up/down, agree up/down. */
+const link = (
+  id: string, from: string, to: string, type: LinkType, note: string, claimantId: string, sources: string[],
+  ws: [number, number], agree: [number, number],
+): EventLink => ({
+  id, from, to, type, note, claimantId, sources, origin: 'curated', demo: true,
+  wellSourced: { up: ws[0], down: ws[1] }, agree: { up: agree[0], down: agree[1] },
+});
 
 /** A demo source (always flagged as demo in the UI). */
 const src = (s: Omit<Source, 'demo'>): Source => ({ ...s, demo: true });
@@ -75,6 +84,8 @@ export const seed: Dataset = {
     // This event's date is itself disputed — see topic t_ww2_start below.
     { id: 'ev_ww2', title: 'World War II begins', date: onDay(1939, 9, 1), field: 'politics', summary: 'Germany invades Poland, 1 September 1939 — the usual start date. Some historians start the war in Asia, earlier.', topicIds: ['t_ww2_start', 't_ukwin', 't_churchill'] },
     { id: 'ev_ww2end', title: 'World War II ends', date: onDay(1945, 9, 2), field: 'politics', summary: 'Japan signs the Instrument of Surrender, 2 September 1945.', topicIds: [] },
+    // Famine dates are usually given as 1943–44; uncited here, like the other seed dates.
+    { id: 'ev_bengal', title: 'Bengal famine', date: between(1943, 1945, 1943.6, 'year'), field: 'politics', summary: 'Famine in Bengal, British India, during the Second World War.', topicIds: [] },
     { id: 'ev_india', title: 'Indian independence', date: onDay(1947, 8, 15), field: 'politics', summary: '15 August 1947.', topicIds: [] },
     { id: 'ev_suez', title: 'Suez Crisis', date: onDay(1956, 10, 29), field: 'politics', summary: 'Israel invades Sinai on 29 October 1956; Britain and France follow.', topicIds: [] },
     { id: 'ev_moon', title: 'Apollo 11 Moon landing', date: onDay(1969, 7, 20), field: 'technology', summary: '20 July 1969.', topicIds: ['t_moon'] },
@@ -237,6 +248,18 @@ export const seed: Dataset = {
     { id: 'o2', topicId: 't_drugx', title: '[DEMO DATA] Public confidence in Drug X', unit: '%', demo: true,
       points: [2018.3, 2019, 2019.5, 2020.5, 2021.5, 2022.5, 2024.3, 2026].map((at, i) => ({ at, value: [71, 68, 52, 49, 40, 37, 22, 20][i], source: 'Fictional demo poll' })),
       linkedEventIds: ['ev_drugx', 'ev_covid'] },
+  ],
+
+  // Typed links between events — what topic rivers are made of. DEMO: who proposed each link,
+  // its sources and its votes are fictional; the strong/weak mix is there to show how votes
+  // change link strength. wd_Q154720 (Battle of Britain) comes from the Wikidata import in data/.
+  // Arguments: id, from, to, type, note, proposed by, sources, well-sourced [up, down], agree [up, down].
+  links: [
+    link('l_ww2_bob', 'ev_ww2', 'wd_Q154720', 'led_to', '[Demo] Britain fights on after the fall of France.', 'e_histA', ['s9', 's7'], [40, 3], [610, 40]),
+    link('l_bob_bengal', 'wd_Q154720', 'ev_bengal', 'led_to', '[Demo] Argued link: wartime shipping and food priorities.', 'e_journo', ['s10'], [6, 18], [300, 260]),
+    link('l_bengal_end', 'ev_bengal', 'ev_ww2end', 'led_to', '[Demo] The famine overlapped the last years of the war in Asia.', 'e_histB', ['s11'], [5, 15], [150, 140]),
+    link('l_end_india', 'ev_ww2end', 'ev_india', 'led_to', '[Demo] A war-weakened Britain moves towards leaving India.', 'e_histA', ['s1', 's2'], [35, 4], [700, 80]),
+    link('l_india_suez', 'ev_india', 'ev_suez', 'led_to', '[Demo] Decolonisation reshapes Britain’s position east of Suez.', 'e_histA', ['s1'], [22, 6], [420, 150]),
   ],
 };
 

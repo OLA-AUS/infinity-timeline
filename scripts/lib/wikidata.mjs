@@ -262,3 +262,56 @@ export function parseCandidateRows(bindings) {
     classes: (b.classes?.value ?? '').split(' ').filter(Boolean),
   }));
 }
+
+// ---- Relations → links ---------------------------------------------------------------
+
+/**
+ * Wikidata properties that become links between imported events, and which way they point.
+ * `reverse: true` means the statement on item A about B becomes a link from B to A
+ * (e.g. A "has cause" B  →  B caused A).
+ */
+export const RELATIONS = {
+  P361: { type: 'part_of', reverse: false }, // part of
+  P828: { type: 'caused', reverse: true }, // has cause
+  P1478: { type: 'caused', reverse: true }, // has immediate cause
+  P1542: { type: 'caused', reverse: false }, // has effect
+  P1536: { type: 'caused', reverse: false }, // immediate cause of
+  P156: { type: 'led_to', reverse: false }, // followed by
+  P155: { type: 'led_to', reverse: true }, // follows
+};
+
+/** Step 4: relation statements from a batch of items (only non-deprecated "truthy" values). */
+export function relationsQuery(qids) {
+  const values = qids.map((q) => `wd:${q}`).join(' ');
+  const props = Object.keys(RELATIONS).map((p) => `(wdt:${p} "${p}")`).join(' ');
+  return `
+SELECT ?item ?prop ?target WHERE {
+  VALUES ?item { ${values} }
+  VALUES (?p ?prop) { ${props} }
+  ?item ?p ?target .
+}`;
+}
+
+/**
+ * Turn relation rows into links between events we imported, grouped by the event they start
+ * from: Map<fromQid, [{ to: 'wd_Q…', type, sources: ['wikidata:Q…'] }]>. Links to anything we
+ * didn't import are dropped; duplicates (A follows B and B followed by A) are merged.
+ */
+export function relationsToLinks(bindings, importedQids) {
+  const out = new Map();
+  const seen = new Set();
+  for (const b of bindings) {
+    const item = qidOf(b.item.value);
+    const target = qidOf(b.target.value);
+    const rel = RELATIONS[b.prop.value];
+    if (!rel || item === target || !importedQids.has(item) || !importedQids.has(target)) continue;
+    const [from, to] = rel.reverse ? [target, item] : [item, target];
+    const key = `${from}>${rel.type}>${to}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!out.has(from)) out.set(from, []);
+    out.get(from).push({ to: `wd_${to}`, type: rel.type, sources: [`wikidata:${item}`] });
+  }
+  for (const list of out.values()) list.sort((a, b) => a.to.localeCompare(b.to) || a.type.localeCompare(b.type));
+  return out;
+}

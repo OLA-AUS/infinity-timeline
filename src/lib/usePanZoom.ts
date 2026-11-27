@@ -4,6 +4,9 @@
 //   • one finger / mouse drag  → pan
 //   • two fingers              → pinch-zoom around the point between them (and pan)
 //   • mouse wheel / trackpad   → zoom around the cursor (trackpad pinch arrives as ctrl+wheel)
+//                                — unless `onPlainWheel` is given: then a plain scroll is handed to
+//                                it (the claim map uses that to glide along the topic river) and
+//                                only Ctrl+scroll / pinch zooms
 // Clicks still work: if the pointer moved more than a few pixels it counts as a drag,
 // and `wasDrag()` tells click handlers to ignore that click.
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
@@ -17,11 +20,14 @@ export interface View {
 export interface PanZoomOptions {
   minZoom?: number;
   maxZoom?: number;
+  onPlainWheel?: (deltaY: number) => void;
 }
 
 const DRAG_THRESHOLD_PX = 6;
 
-export function usePanZoom(ref: RefObject<SVGSVGElement>, initial: View, { minZoom = 0.2, maxZoom = 4 }: PanZoomOptions = {}) {
+export function usePanZoom(ref: RefObject<SVGSVGElement>, initial: View, { minZoom = 0.2, maxZoom = 4, onPlainWheel }: PanZoomOptions = {}) {
+  const plainWheel = useRef(onPlainWheel);
+  plainWheel.current = onPlainWheel;
   const [view, setView] = useState<View>(initial);
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -100,6 +106,10 @@ export function usePanZoom(ref: RefObject<SVGSVGElement>, initial: View, { minZo
 
     const wheel = (e: WheelEvent) => {
       e.preventDefault();
+      if (plainWheel.current && !e.ctrlKey && !e.metaKey) {
+        plainWheel.current(e.deltaY);
+        return;
+      }
       const p = local(e);
       // ctrl+wheel is how trackpads report a pinch; it needs a stronger factor.
       const factor = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));

@@ -103,6 +103,32 @@ Dates can be disputed exactly like claims. Each proposed date becomes a claim wi
 
 Votes saying "I agree" never settle a date — only evidence does. To start one, use the **📅 Dispute this date** link on the event, or the [date dispute template](https://github.com/OLA-AUS/infinity-timeline/issues/new?template=date_dispute.yml). There's a worked demo on the river: *"When did WW2 actually begin?"* (1 Sep 1939 vs 7 Jul 1937).
 
+### Linking events
+
+Links build the topic rivers you see behind a claim map. Add them inside the event file the link *starts from*:
+
+```json
+"links": [
+  { "to": "wd_Q154720", "type": "led_to", "note": "One plain sentence on why.", "sources": ["some_book_id"] }
+]
+```
+
+Read it as *THIS EVENT type OTHER EVENT*. The types are:
+
+| `type` | meaning |
+|---|---|
+| `caused` | this event caused the other |
+| `led_to` | this came first and helped bring the other about (weaker than caused) |
+| `part_of` | this event is part of the other |
+| `response_to` | this event was a response to the other |
+
+`to` is the other event's id: its file name without `.json`, or `wd_Q…` for imports.
+
+- **Sources:** a link with sources starts stronger.
+- **Votes:** on the site, "well sourced" votes make it stronger or weaker, while "agree" votes are just opinion.
+- **Strength:** the full rule is in [`docs/TRUST_MODEL.md`](docs/TRUST_MODEL.md) §5b.
+- **Wikidata:** the importer adds Wikidata's own relations (part of, has cause, followed by…) automatically.
+
 ### Adding a source
 
 Create `data/sources/<id>.json` (see [`data/schema/source.schema.json`](data/schema/source.schema.json)). Authors, institution and funders are entity ids in `data/entities/` — add those too if they're new. Unknown funding is fine (`"funderIds": []`); the trust score flags it openly. **Only real, checkable sources.** Real data must never point at demo entities from `src/data/seed.ts`.
@@ -147,8 +173,8 @@ Where things live:
 | Path | What |
 |---|---|
 | `src/types.ts` | Every data shape. Start here. |
-| `src/lib/` | Pure logic with tests: `trust.ts` (trust scores), `status.ts` (claim status), `dates.ts` + `dateDispute.ts` (uncertain and disputed dates), `forceLayout.ts` (claim map layout), `time.ts` + `timeScale.ts` (where things sit on the river, and time zoom), `importance.ts` + `cluster.ts` (what to show when crowded), `search.ts`, `usePanZoom.ts` (drag / pinch / zoom). |
-| `src/components/` | React components: `River.tsx` (3D) + `RiverSpans.tsx`, `TimeNav.tsx` (zoom breadcrumb, overview bar), `SearchBar.tsx`, `ClaimMap.tsx`, `ClaimDetail.tsx`, `SourcePanel.tsx`, `DateExplain.tsx`, charts. |
+| `src/lib/` | Pure logic with tests: `trust.ts` (trust scores), `status.ts` (claim status), `dates.ts` + `dateDispute.ts` (uncertain and disputed dates), `forceLayout.ts` (claim map layout), `time.ts` + `timeScale.ts` (where things sit on the river, and time zoom), `importance.ts` + `cluster.ts` (what to show when crowded), `related.ts` (links, relatedness, topic rivers), `search.ts`, `usePanZoom.ts` (drag / pinch / zoom). |
+| `src/components/` | React components: `River.tsx` (3D) + `RiverSpans.tsx`, `TimeNav.tsx` (zoom breadcrumb, overview bar), `SearchBar.tsx`, `TopicRiver.tsx` + `TopicStrip.tsx` + `EventLinks.tsx` (topic rivers), `ClaimMap.tsx`, `ClaimDetail.tsx`, `SourcePanel.tsx`, `DateExplain.tsx`, charts. |
 | `src/data/seed.ts` | **Demo** data. Fictional except event dates. |
 | `src/data/repoData.ts` | Loads the real data in `data/`. |
 | `scripts/` | Importers, the data validator, the date helper. Plain Node.js, no build step. |
