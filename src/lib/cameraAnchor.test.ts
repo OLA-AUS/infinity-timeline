@@ -1,83 +1,94 @@
-// Tests for "expand in place": the anchored moment must not move on screen, and expanding
-// then collapsing must put the camera back exactly where it was.
+// Tests for the camera during level changes and expansions: it never jumps, lands exactly
+// on its anchor, and nested expand / collapse keep the camera at the right moment.
 import { describe, expect, it } from 'vitest';
 import { ymdToYear } from './dates';
-import { anchorPose, cameraFrame, easeOut, relativeToCamera, RIG, type CameraPose } from './cameraAnchor';
-import { blendScales, makeScale, windowFor } from './timeScale';
+import { anchorMoments, cameraFrame, cameraTime, easeOut, RIG, transitionPose, type CameraPose } from './cameraAnchor';
+import { blendScales, makeScale, type TimeScale } from './timeScale';
+import { chooseLevel, collapse, continueWindow, expandCluster, FULL_RIVER, type ViewChange } from './viewStack';
 
-const sep1939 = ymdToYear(1939, 9, 1);
-const normal = makeScale(null);
-const months = makeScale(windowFor('months', sep1939));
-const days = makeScale(windowFor('days', sep1939));
-const close = (a: number[], b: number[], digits = 6) => a.forEach((v, i) => expect(v).toBeCloseTo(b[i], digits));
+const full = makeScale(null);
+
+/** Run a view change from `pose` with scale `from` to the end, returning every frame's camera. */
+function run(change: ViewChange, pose: CameraPose, from: TimeScale, rig = RIG.desktop, steps = 100) {
+  const to = makeScale(change.stack[change.stack.length - 1].window);
+  const { aFrom, aTo } = anchorMoments(change.anchor, pose, from);
+  const frames: { pose: CameraPose; scale: TimeScale }[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const e = easeOut(i / steps);
+    const scale = i === steps ? to : blendScales(from, to, e);
+    frames.push({ pose: transitionPose(pose, from, scale, aFrom, aTo, e, rig), scale });
+  }
+  return { frames, end: frames[frames.length - 1], to };
+}
+
+const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
 for (const [name, rig] of Object.entries(RIG)) {
-  describe(`anchoring (${name})`, () => {
-    // Camera somewhere before the anchor, as if you'd been looking at it from a little way back.
-    const start: CameraPose = { s: normal.toS(sep1939) - 9, latC: 0, latL: 0 };
+  describe(`transitions (${name})`, () => {
+    const start: CameraPose = { s: full.toS(1937.2), latC: 0, latL: 0 };
+    const cluster = [ymdToYear(1939, 5, 10), ymdToYear(1940, 7, 10), ymdToYear(1943, 6, 20)];
 
-    it('keeps the anchored moment at the same place relative to the camera', () => {
-      const before = relativeToCamera(sep1939, start, normal, rig);
-      const expanded = anchorPose(start, normal, months, sep1939, rig);
-      const after = relativeToCamera(sep1939, expanded, months, rig);
-      close(after.fromCamera, before.fromCamera);
-      close(after.lookDir, before.lookDir); // same viewing direction too, so same screen spot
+    it('the first frame is exactly where the camera already was (no jump at the start)', () => {
+      const { frames } = run(expandCluster(FULL_RIVER, cluster), start, full, rig);
+      const a = cameraFrame(start, full, rig);
+      const b = cameraFrame(frames[0].pose, frames[0].scale, rig);
+      expect(dist(a.position, b.position)).toBeLessThan(1e-9);
+      expect(dist(a.look, b.look)).toBeLessThan(1e-9);
     });
 
-    it('keeps it fixed on every frame of the animation, not just at the end', () => {
-      const before = relativeToCamera(sep1939, start, normal, rig);
-      for (const u of [0.1, 0.35, 0.5, 0.8, 0.99]) {
-        const mid = blendScales(normal, months, easeOut(u));
-        const pose = anchorPose(start, normal, mid, sep1939, rig);
-        close(relativeToCamera(sep1939, pose, mid, rig).fromCamera, before.fromCamera, 5);
-      }
+    it('moves a little each frame — no frame jumps far ahead of the others', () => {
+      const { frames } = run(expandCluster(FULL_RIVER, cluster), start, full, rig);
+      const pts = frames.map((f) => cameraFrame(f.pose, f.scale, rig).position);
+      const steps = pts.slice(1).map((p, i) => dist(p, pts[i]));
+      const total = steps.reduce((a, b) => a + b, 0);
+      // Ease-out makes early steps up to ~3× the average; anything much bigger would be a jump.
+      expect(Math.max(...steps)).toBeLessThan((total / steps.length) * 4);
     });
 
-    it('expanding then collapsing returns the exact same camera position', () => {
-      const expanded = anchorPose(start, normal, months, sep1939, rig);
-      const back = anchorPose(expanded, months, normal, sep1939, rig);
-      expect(back.s).toBeCloseTo(start.s, 9);
-      expect(back.latC).toBeCloseTo(0, 9);
-      expect(back.latL).toBeCloseTo(0, 9);
-      close(cameraFrame(back, normal, rig).position, cameraFrame(start, normal, rig).position, 9);
+    it('expanding a cluster lands the camera exactly on its first event, centred on the river', () => {
+      const { end, to } = run(expandCluster(FULL_RIVER, cluster), start, full, rig);
+      expect(cameraTime(end.pose, to)).toBeCloseTo(cluster[0], 9);
+      expect(end.pose.latC).toBeCloseTo(0, 12);
+      expect(end.pose.latL).toBeCloseTo(0, 12);
     });
 
-    it('normal → months → days → months → normal is a round trip too', () => {
-      const a = anchorPose(start, normal, months, sep1939, rig);
-      const b = anchorPose(a, months, days, sep1939, rig);
-      const c = anchorPose(b, days, months, sep1939, rig);
-      const d = anchorPose(c, months, normal, sep1939, rig);
-      expect(c.s).toBeCloseTo(a.s, 9);
-      expect(d.s).toBeCloseTo(start.s, 9);
-      close(cameraFrame(d, normal, rig).look, cameraFrame(start, normal, rig).look, 9);
+    it('a scale-bar level lands on its anchor (here: 1 Jan of the year shown)', () => {
+      const here = { s: full.toS(1941.6), latC: 0, latL: 0 };
+      const change = chooseLevel(FULL_RIVER, 'years', cameraTime(here, full))!;
+      const { end, to } = run(change, here, full, rig);
+      expect(cameraTime(end.pose, to)).toBeCloseTo(ymdToYear(1941, 1, 1, 0), 9);
     });
 
-    it('works when the anchor is not the moment the camera follows', () => {
-      // e.g. you double-clicked something further up the river.
-      const anchor = ymdToYear(1939, 11, 30);
-      const novDays = makeScale(windowFor('days', anchor)); // expanding around it shows November
-      const before = relativeToCamera(anchor, start, normal, rig);
-      const pose = anchorPose(start, normal, novDays, anchor, rig);
-      close(relativeToCamera(anchor, pose, novDays, rig).fromCamera, before.fromCamera);
-      close(relativeToCamera(anchor, pose, novDays, rig).lookDir, before.lookDir);
+    it('going back keeps the camera on the same moment the whole way', () => {
+      const expanded = run(expandCluster(FULL_RIVER, cluster), start, full, rig);
+      const t = cameraTime(expanded.end.pose, expanded.to);
+      const back = run(collapse(expandCluster(FULL_RIVER, cluster).stack), expanded.end.pose, expanded.to, rig);
+      for (const f of back.frames) expect(cameraTime(f.pose, f.scale)).toBeCloseTo(t, 6);
+    });
+
+    it('nested: expand, expand inside, collapse twice — the camera ends at the inner first event', () => {
+      const outer = expandCluster(FULL_RIVER, cluster);
+      const step1 = run(outer, start, full, rig);
+      const innerEvents = [ymdToYear(1940, 7, 10), ymdToYear(1940, 9, 15), ymdToYear(1940, 10, 31)];
+      const inner = expandCluster(outer.stack, innerEvents);
+      const step2 = run(inner, step1.end.pose, step1.to, rig);
+      expect(cameraTime(step2.end.pose, step2.to)).toBeCloseTo(innerEvents[0], 9);
+      const back1 = run(collapse(inner.stack), step2.end.pose, step2.to, rig);
+      const back2 = run(collapse(collapse(inner.stack).stack), back1.end.pose, back1.to, rig);
+      expect(back2.to.window).toBeNull(); // back on the full river
+      expect(cameraTime(back2.end.pose, back2.to)).toBeCloseTo(innerEvents[0], 6); // still at that moment
+      expect(back2.end.pose.s).toBeCloseTo(full.toS(innerEvents[0]), 6);
+    });
+
+    it('Continue slides by exactly the window\'s length, keeping the same place within it', () => {
+      const expanded = run(expandCluster(FULL_RIVER, cluster), start, full, rig);
+      const stack = expandCluster(FULL_RIVER, cluster).stack;
+      const w = stack[1].window!;
+      const t = cameraTime(expanded.end.pose, expanded.to);
+      const next = run(continueWindow(stack, 1)!, expanded.end.pose, expanded.to, rig);
+      expect(cameraTime(next.end.pose, next.to)).toBeCloseTo(t + (w.end - w.start), 6);
+      // Same distance from the window's start, on the river, before and after.
+      expect(next.end.pose.s - next.to.toS(next.to.window!.start)).toBeCloseTo(expanded.end.pose.s - expanded.to.toS(w.start), 6);
     });
   });
 }
-
-describe('blended scales', () => {
-  it('slide each year smoothly between the two scales, and can be inverted', () => {
-    for (const u of [0, 0.25, 0.5, 0.75, 1]) {
-      const b = blendScales(normal, months, u);
-      for (const y of [1900, 1939, sep1939, 1939.9, 1945]) {
-        expect(b.toS(y)).toBeCloseTo(normal.toS(y) * (1 - u) + months.toS(y) * u, 9);
-        expect(b.toYear(b.toS(y))).toBeCloseTo(y, 6);
-      }
-    }
-  });
-
-  it('ease-out starts fast and lands exactly', () => {
-    expect(easeOut(0)).toBe(0);
-    expect(easeOut(1)).toBe(1);
-    expect(easeOut(0.5)).toBeGreaterThan(0.5);
-  });
-});

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { seed } from '../data/seed';
 import { loadRepoData, mergeDatasets } from '../data/repoData';
-import { fanPositions, fanRadius, planScreen, type ScreenItem } from './cluster';
+import { fanPositions, fanRadius, overlapping, planScreen, type ScreenItem } from './cluster';
 import { eventImportance, LOD_THRESHOLD } from './importance';
 import { search } from './search';
 
@@ -20,15 +20,15 @@ describe('importance', () => {
     }
   });
 
-  it('debated landmark events outrank plain imports, and every landmark gets a bubble on the normal river', () => {
+  it('debated landmark events outrank plain imports, and every landmark gets a bubble on the full river', () => {
     const ww2 = eventImportance(all.events.find((e) => e.id === 'ev_ww2')!, all).score;
     const imported = all.events.filter((e) => e.provenance).map((e) => eventImportance(e, all).score);
     expect(ww2).toBeGreaterThan(Math.max(...imported));
-    for (const ev of seed.events) expect(eventImportance(ev, all).score).toBeGreaterThanOrEqual(LOD_THRESHOLD.normal);
+    for (const ev of seed.events) expect(eventImportance(ev, all).score).toBeGreaterThanOrEqual(LOD_THRESHOLD.full);
   });
 
-  it('only the best-covered imports get a bubble on the normal river', () => {
-    const shown = all.events.filter((e) => e.provenance && eventImportance(e, all).score >= LOD_THRESHOLD.normal);
+  it('only the best-covered imports get a bubble on the full river', () => {
+    const shown = all.events.filter((e) => e.provenance && eventImportance(e, all).score >= LOD_THRESHOLD.full);
     expect(shown.length).toBeGreaterThan(5);
     expect(shown.length).toBeLessThan(40);
   });
@@ -50,6 +50,14 @@ describe('bubbles, stacks and fan-out', () => {
   it('chains of touching bubbles are one stack', () => {
     const p = planScreen([item('a', 0, 3), item('b', 22, 2), item('c', 44, 1)], opts); // a–b and b–c touch, a–c don't
     expect(p.stacks).toEqual([['a', 'b', 'c']]);
+  });
+
+  it('a click fans out only the bubbles that directly overlap it, not a whole chain', () => {
+    const p = planScreen([item('a', 0, 3), item('b', 22, 2), item('c', 44, 1), item('d', 66, 1)], opts); // a chain
+    expect(p.stacks).toEqual([['a', 'b', 'c', 'd']]);
+    expect(overlapping(p, 'a', opts.gap).sort()).toEqual(['a', 'b']);
+    expect(overlapping(p, 'b', opts.gap).sort()).toEqual(['a', 'b', 'c']);
+    expect(overlapping(planScreen([item('x', 0, 1), item('y', 300, 1)], opts), 'x', opts.gap)).toEqual([]);
   });
 
   it('draws unimportant events as faint dots', () => {
@@ -80,10 +88,19 @@ describe('bubbles, stacks and fan-out', () => {
       expect(pos.filter((p) => p.side === 'right').length).toBe(Math.ceil(n / 2));
       expect(pos.every((p) => (p.side === 'right' ? p.x >= 0 : p.x <= 0))).toBe(true);
       for (const side of ['left', 'right'] as const) {
-        const ys = pos.filter((p) => p.side === side).map((p) => p.y);
+        const ys = pos.filter((p) => p.side === side).map((p) => p.y).sort((a, b) => a - b);
         for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(44);
       }
     }
+  });
+
+  it('reads clockwise from the top: down the right side, then back up the left', () => {
+    const pos = fanPositions(6, fanRadius(6));
+    expect(pos.map((p) => p.side)).toEqual(['right', 'right', 'right', 'left', 'left', 'left']);
+    // Angle measured clockwise from 12 o'clock increases all the way round.
+    const angle = (p: { x: number; y: number }) => (Math.atan2(p.x, -p.y) + 2 * Math.PI) % (2 * Math.PI);
+    const angles = pos.map(angle);
+    for (let i = 1; i < angles.length; i++) expect(angles[i]).toBeGreaterThan(angles[i - 1]);
   });
 
   it('on a narrow screen, can put every bubble on one side', () => {

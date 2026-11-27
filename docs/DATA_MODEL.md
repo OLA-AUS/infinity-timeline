@@ -36,18 +36,23 @@ Computed, never stored: `src/lib/importance.ts → eventImportance()` returns a 
 
 `importance = 10 × debates + 3 × opinion charts linking to it + 2 × distinct date sources + 4 × log2(1 + sitelinks) + 25 if hand-picked`
 
-`provenance.sitelinks` (how many Wikipedia language editions cover an item) is written by the Wikidata importer. `LOD_THRESHOLD` sets the minimum importance for a bubble at each level of expansion: 25 on the normal river; when expanded to months or days, everything gets one. Below it an event is a faint dot. Like trust weights, changing these is a governance decision.
+`provenance.sitelinks` (how many Wikipedia language editions cover an item) is written by the Wikidata importer. `LOD_THRESHOLD` sets the minimum importance for a bubble at each level of expansion: 25 on the full river; at any other level (a period, years, months, weeks or days), everything gets one. Below it an event is a faint dot. Like trust weights, changing these is a governance decision.
 
-## Expanding time in place
-`src/lib/timeScale.ts` defines the expansion and its scale.
-- **Expansion:** an **expanded period** (`{ level, start, end }`, or `null` for none). `months` is a calendar year shown month by month; `days` is a calendar month shown day by day.
-- **Scale:** inside the period, time is linear over `WINDOW_LENGTH` river units. Outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`.
-- **Placing things:** `makeScale(period)` gives `toS(year)` / `toYear(s)` for placing everything in 3D. `blendScales(a, b, u)` gives the in-between scales for the 500ms ease-out animation.
+## Time scale and expanded periods
+`src/lib/timeScale.ts` defines the levels and their scale.
+- **Levels:** `full` · `period` · `years` · `months` · `weeks` · `days`. Except for the full river, each shows a **window** `{ level, start, end, tick }`: Years a decade, Months a calendar year, Weeks a calendar quarter, Days a calendar month, and a period whatever span was expanded.
+- **Scale:** inside the window, time is linear over `WINDOW_LENGTH` river units. Outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`.
+- **Placing things:** `makeScale(window)` gives `toS(year)` / `toYear(s)` for placing everything in 3D. `blendScales(a, b, u)` gives the in-between scales for the 500ms ease-out animation.
 
-`src/lib/cameraAnchor.ts` keeps the chosen moment still on screen:
-- **Depth:** the camera moves along the river by exactly as much as the anchor does, so the anchor stays the same distance ahead.
-- **Sideways:** the river's wiggle depends only on the year, so the anchor never moves sideways. The camera and the point it looks at get small sideways corrections (`latC`, `latL`) that keep them exactly where they were, and these fade out once you travel.
-- **Tested:** expanding then collapsing returns the identical camera position.
+`src/lib/viewStack.ts` holds the breadcrumb, a stack of steps starting at the full river:
+- **Expanding a cluster** pushes a period from its first to last event with 5% padding each side, anchored on the first event. Expanding inside a period pushes another.
+- **Choosing a level** from the scale bar: Full river resets the stack; Period goes back to the innermost period; Years/Months/Weeks/Days replace any unit step on top. The anchor is the selected event's date if there is one, otherwise the start of the current unit (`unitStart`).
+- **Going back** (a breadcrumb step, Collapse) keeps the camera at the same moment. **Continue** slides the top window by its own length and moves the camera by the same amount.
+
+`src/lib/cameraAnchor.ts` animates the camera between levels:
+- **No jumps:** the first frame is exactly where the camera already was; each frame the anchor moment slides towards its target and the distance between camera and anchor shrinks to nothing.
+- **Sideways:** the river's wiggle depends only on the year. The camera and the point it looks at carry small sideways corrections (`latC`, `latL`) from where they started, which ease to zero, so the camera ends centred on the river at its anchor.
+- **Tested:** cluster expansion lands on the first event; scale-bar levels land on their anchors; nested expand and collapse end at the right moment; Continue shifts by exactly the window's length.
 
 ## Links between events
 **EventLink** — `{ id, from, to, type, note?, sources[], origin, claimantId?, wellSourced, agree, demo? }` in `Dataset.links`. Read it as *FROM type TO*:

@@ -38,7 +38,7 @@ npm run check          # everything CI runs: validate data + tests + production 
 
 Controls:
 - **Scroll / drag** to travel through time.
-- **Click** a glowing event to select it. Its menu opens the claim map or expands time around it.
+- **Click** a glowing event to select it. Its menu opens the claim map; with it selected, a scale-bar level expands time around it.
 - **Click any source** to see its trust breakdown and funding chain.
 - **"Jump on timeline"** warps to an entity's founding.
 
@@ -46,15 +46,18 @@ In the claim map, **drag** to move, **pinch or Ctrl+scroll** to zoom, and tap a 
 
 **Uncertain dates** glow as a span on the river from the earliest to the latest possible moment, brightest at the best guess. **Disputed dates** glow amber, with a marker for each proposal still standing — try *"When did WW2 actually begin?"*.
 
-**Expanding time in place.** Time expands *normal → months → days*.
-- **How:** **double-click (or double-tap) the river**, press **+**, or choose **Expand to months / Expand to days** from a bubble's menu.
-- **What you see:** the year (or month) around that moment becomes a brighter, wider, evenly spaced stretch of river, with month or day ticks. The rest of history stays visible but squeezed.
-- **Nothing jumps:** the change animates over half a second, and the moment you chose stays exactly where it was on screen throughout. The camera is recalculated every frame (`src/lib/cameraAnchor.ts`).
-- **Stepping back out:** the small **1939 › Sep 1939 › Collapse** control at the top (or **−**), anchored the same way.
-- **Overview:** a bar above the slider shows where the expanded period sits in all of history.
+**Time scale.** Under the big date (top right) is a scale bar: **Full river · Period · Years · Months · Weeks · Days**, with the current level highlighted. The big date always shows the time where the camera is.
+- **Choosing a level:** click it (or press **+** / **−**). Years shows a decade, Months a year, Weeks a quarter, Days a month, as an evenly spaced stretch of river with ticks. The rest of history stays visible but squeezed.
+- **Where you land:** on the selected event's date if one is selected. Otherwise at the start of the current unit: Years → 1 Jan of the year shown, Months → the 1st of the month shown, Weeks → that week's Monday, Days → the first day of the current month (or period, if it's short).
+- **Period** is greyed out until you expand a cluster of events (below); it then takes you back to that period.
+- **Nothing jumps:** every change animates over about half a second and ends exactly on its anchor (`src/lib/cameraAnchor.ts`).
+- **Overview:** a bar above the slider shows where the expanded stretch sits in all of history.
 
 **Crowded spots.** Every event has its own bubble.
-- **Overlapping bubbles:** clicking where several overlap **fans them out in a labelled ring** (like overlapping map pins), so you can pick any one. Clicking elsewhere closes it.
+- **Overlapping bubbles:** clicking where several overlap **fans them out in a labelled ring**, sorted by date clockwise from the top, and dims everything else. Pick any one, or click the dimmed scene to close it.
+- **Expanding a cluster:** the floating **Expand these N events · May 1939 – Jun 1943** button above the ring spreads exactly that span (plus about 5% each side) evenly along the river and puts the camera on the first event. Clusters inside it can be expanded again.
+- **Breadcrumb:** each expansion adds a step (**Full river › May 1939 – Jun 1943 › …**); click a step to go back to it.
+- **Edges of a period:** everything outside fades and loses its labels. Each edge has an end cap (*End of period · Jun 1943*) with **Continue →** (slide the period on by its own length) and **Collapse**.
 - **Hover (desktop):** bubbles under the cursor swell up and show their labels.
 - **Importance:** each event has an explainable score (debates, links, cited sources, and for Wikidata imports how many Wikipedias cover it). On the normal river, less important events are faint dots until you expand time around them.
 

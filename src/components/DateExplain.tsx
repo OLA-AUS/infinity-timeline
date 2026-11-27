@@ -72,15 +72,15 @@ export function DateExplain({ data, event, onOpenSource, onOpenTopic }: Props) {
 /** Why this event gets a labelled bubble (or only a faint dot) when you zoom out. */
 function ImportanceExplain({ data, event }: { data: Dataset; event: TimelineEvent }) {
   const imp = eventImportance(event, data);
-  const onNormal = imp.score >= LOD_THRESHOLD.normal;
+  const onNormal = imp.score >= LOD_THRESHOLD.full;
   return (
     <details className="importance">
       <summary>River importance: {imp.score}</summary>
       <p className="small muted">
         Decides what's shown when the river is crowded.{' '}
         {onNormal
-          ? <>This event gets its own bubble on the normal river (it needs {LOD_THRESHOLD.normal}).</>
-          : <>On the normal river this event is a faint dot (a bubble needs {LOD_THRESHOLD.normal}); expand time to months or days to see it as a bubble.</>}
+          ? <>This event gets its own bubble on the full river (it needs {LOD_THRESHOLD.full}).</>
+          : <>On the full river this event is a faint dot (a bubble needs {LOD_THRESHOLD.full}); choose any other level on the scale bar, or expand a period, to see it as a bubble.</>}
       </p>
       <ul className="factors">
         {imp.factors.map((f, i) => (
