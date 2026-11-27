@@ -29,7 +29,8 @@
 - Open editing with versioning and "view as of date"
 - Reputation per field, brigading detection, vote cluster visualisation
 - Public moderation log and appeals
-- Shareable rabbit-hole trails
+- ✅ Topic rivers: typed, votable event links (+ Wikidata relations), relevance slider, branch points, trail breadcrumb
+- Shareable rabbit-hole trails (the trail exists; next: a shareable URL for it)
 - AI snapshot submission + reproduction workflow
 
 ## Phase 3 — Time & opinion

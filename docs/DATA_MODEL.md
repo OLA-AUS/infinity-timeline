@@ -41,6 +41,32 @@ Computed, never stored: `src/lib/importance.ts → eventImportance()` returns a 
 ## Time zoom
 `src/lib/timeScale.ts`. The river's zoom is a calendar **window** (`{ level, start, end }`, or `null` for all time) at one of `century | decade | year | month | day`. Inside the window time is linear over `WINDOW_LENGTH` river units; outside it the normal log scale continues, squeezed by `OUTSIDE_SQUEEZE`. `makeScale(window)` gives `toS(year)` / `toYear(s)` for placing everything in 3D.
 
+## Links between events
+**EventLink** — `{ id, from, to, type, note?, sources[], origin, claimantId?, wellSourced, agree, demo? }` in `Dataset.links`. Read it as *FROM type TO*:
+
+| type | meaning |
+|---|---|
+| `caused` | the first caused the second |
+| `led_to` | the first came before and helped bring about the second (weaker than caused) |
+| `part_of` | the first is part of the second |
+| `response_to` | the first happened in response to the second |
+
+Links are claims in their own right. Their **strength** (0–1, `src/lib/related.ts → linkStrength`, with an Explain breakdown) is:
+- a starting value by `origin`: curated 0.75, Wikidata 0.7, community 0.5;
+- plus 0.05 per source, up to 0.15;
+- times the same capped "well sourced" vote factor used for evidence.
+
+"Agree" votes are opinion and never change it.
+
+In data files a link is written inside the event it starts from: `"links": [{ "to": "wd_Q123", "type": "part_of", "note": "…", "sources": ["…"] }]`. The loader gives it the id `from>type>to`. The Wikidata importer writes these from P361 *part of*, P828/P1478 *has (immediate) cause*, P1542/P1536 *has effect / immediate cause of* and P155/P156 *follows / followed by*, and only between events it imported.
+
+## Topic rivers
+`src/lib/related.ts`. An anchor event's **topic river** is the anchor plus the events related enough to it, in date order.
+- **The graph:** events are joined by links (both directions) and by **shared entities** — the people and organisations involved in both events' debates (claimants, authors, institutions, funders). Shared entities are a loose connection: 0.15 each, capped at 0.35.
+- **Scoring:** a path's score is the product of its step strengths, × 0.75 for each hop after the first.
+- **Relevance slider (0–1):** sets the weakest score shown (0.6 down to 0.1) and the number of hops walked (1, 2 or 3).
+- **Branch points:** a stop that has related events *not* on the current river is a branch point (another topic river crosses there).
+
 ## Signals
 - **Vote** — `{ userId, targetId, kind: 'agree' | 'well_sourced', value: +1 | -1, at }`
 - **ExternalPoll** — results imported from other platforms/pollsters, with link, method, sample size.

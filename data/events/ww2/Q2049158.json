@@ -15,6 +15,15 @@
     ]
   },
   "topicIds": [],
+  "links": [
+    {
+      "to": "wd_Q170314",
+      "type": "part_of",
+      "sources": [
+        "wikidata:Q2049158"
+      ]
+    }
+  ],
   "provenance": {
     "importedFrom": "wikidata",
     "qid": "Q2049158",

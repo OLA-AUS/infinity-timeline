@@ -12,6 +12,7 @@ A 3D community-edited timeline of human history. Every claim shows who made it, 
 - Seed data must be clearly marked as demo until replaced with real cited data. Never invent real-world citations, fines or poll numbers.
 
 - Dates are `FuzzyDate` {earliest, latest, best, precision, method, sources}. Disputed dates go through claims + evidence (`Topic.dateOf`, `Claim.proposedDate`), never votes.
+- Event links (`Dataset.links`: caused / led_to / part_of / response_to) are votable like claims: "well sourced" moves link strength, "agree" never does. Every strength has an Explain breakdown.
 - Real data lives in `data/` as one JSON file per item and changes only via pull requests. Real data must not reference demo seed entities. Imported files edited by hand get `provenance.manualEdits: true`.
 - Code style and comment conventions: `CONTRIBUTING.md` (plain-English comments, pure logic in `src/lib` with tests).
 
@@ -21,8 +22,9 @@ A 3D community-edited timeline of human history. Every claim shows who made it, 
 - `src/lib/trust.ts` — trust scoring + funding propagation; `src/lib/status.ts` — claim status
 - `src/lib/dates.ts` — FuzzyDate helpers/formatting; `src/lib/dateDispute.ts` — resolve disputed dates
 - `src/lib/forceLayout.ts` — claim map layout (labels off lines); `src/lib/usePanZoom.ts` — drag/pinch/wheel
-- `src/lib/timeScale.ts` — river time zoom (windows, linear-inside/squeezed-outside scale, breadcrumbs); `src/lib/importance.ts` — event importance + LOD thresholds; `src/lib/cluster.ts` — screen-space clustering / label planning; `src/lib/search.ts`
+- `src/lib/timeScale.ts` — river time zoom (windows, linear-inside/squeezed-outside scale, breadcrumbs); `src/lib/importance.ts` — event importance + LOD thresholds; `src/lib/cluster.ts` — screen-space clustering / label planning; `src/lib/search.ts`; `src/lib/related.ts` — link strength, relatedness graph, topic rivers + branch points
 - `src/components/River.tsx` — 3D timeline (LOD planner, clusters, faint dots, zoom gestures, ≥44px hit areas on mobile); `RiverSpans.tsx` — uncertainty spans; `TimeNav.tsx` — breadcrumb + overview bar; `SearchBar.tsx`; `ClaimMap.tsx` — mind map; `DateExplain.tsx`; `SourcePanel.tsx` — provenance; `OpinionChart.tsx`; `AISnapshots.tsx`
+- Topic rivers: `TopicRiver.tsx` (3D, shown instead of the main river while a claim map is open), `TopicStrip.tsx` (glide strip + relevance slider), `EventLinks.tsx` (link list + votes). State (anchor, topicPos, trail) lives in App.tsx.
 - Every 3D position goes through the current `TimeScale` (`place()` in RiverSpans.tsx) — never call `yearToS` directly in the scene.
 - `scripts/` — `import-wikidata-ww2.mjs` (+ `lib/wikidata.mjs`), `validate-data.mjs` (+ `lib/validate.mjs`), `make-date.mjs`
 - `.github/workflows/` — `ci.yml` (PRs), `import-wikidata.yml` (monthly re-import PR), `deploy.yml` (optional GitHub Pages, manual only)

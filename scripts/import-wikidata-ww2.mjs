@@ -10,6 +10,7 @@
 //   1. find candidates linked to WW2 that have a date, most-linked first
 //   2. keep only real events (things Wikidata classes as an "occurrence"; not people or units)
 //   3. fetch names, descriptions and dates, and convert them (scripts/lib/wikidata.mjs)
+//   4. fetch relations between those events (part of, has cause, followed by…) → "links"
 //
 // Safe to re-run. Nothing is ever deleted: events that drop out of the results keep their
 // files. Files with "manualEdits": true are skipped so hand corrections are never lost.
@@ -31,6 +32,8 @@ import {
   parseCandidateRows,
   parseClassRows,
   parseExcludeList,
+  relationsQuery,
+  relationsToLinks,
 } from './lib/wikidata.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -118,7 +121,23 @@ async function main() {
   }
   console.log();
 
-  // 4. Write files, never clobbering hand edits.
+  // 4. Relations between the events we're importing become links (stored in the "from" event's file).
+  const importedQids = new Set(out.map((e) => e.provenance.qid));
+  const relRows = [];
+  for (const batch of chunk([...importedQids], 100)) {
+    relRows.push(...(await sparql(relationsQuery(batch), 'relations')));
+    await sleep(1000);
+  }
+  const linksFrom = relationsToLinks(relRows, importedQids);
+  for (let i = 0; i < out.length; i++) {
+    const links = linksFrom.get(out[i].provenance.qid);
+    if (!links) continue;
+    const { provenance, ...rest } = out[i];
+    out[i] = { ...rest, links, provenance }; // keep "provenance" last in the file
+  }
+  console.log(`  ${[...linksFrom.values()].flat().length} links between imported events`);
+
+  // 5. Write files, never clobbering hand edits.
   if (!DRY) fs.mkdirSync(OUT, { recursive: true });
   const stats = { created: 0, updated: 0, unchanged: 0, skippedManual: 0 };
   for (const ev of out) {

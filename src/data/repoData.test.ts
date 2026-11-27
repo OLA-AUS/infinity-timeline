@@ -42,3 +42,20 @@ describe('repo data', () => {
     for (const ev of all.events) expect(Number.isFinite(resolveEventDate(ev, all).date.best)).toBe(true);
   });
 });
+
+describe('links from data files', () => {
+  it('load as EventLinks with stable ids, pointing at loaded events', () => {
+    expect(repo.links.length).toBeGreaterThan(50);
+    const ids = new Set(all.events.map((e) => e.id));
+    for (const l of repo.links) {
+      expect(l.id).toBe(`${l.from}>${l.type}>${l.to}`);
+      expect(ids.has(l.from) && ids.has(l.to)).toBe(true);
+      expect(l.origin).toBe('wikidata');
+      expect(l.wellSourced).toEqual({ up: 0, down: 0 });
+    }
+  });
+
+  it('every link source exists as a Source', () => {
+    for (const l of repo.links) for (const s of l.sources) expect(all.sources.some((x) => x.id === s), s).toBe(true);
+  });
+});

@@ -56,6 +56,13 @@ Evidence attached to a claim = `sourceTrust × relevance × wellSourcedVoteFacto
 
 Status is recomputed on every change and **snapshotted over time**, so the "swing graph" is automatic.
 
+## 5b. Link strength (how strongly two events are connected)
+Typed links between events (*caused*, *led to*, *part of*, *response to*) are claims too.
+
+`strength = clamp01((base + min(0.15, 0.05 × sources)) × wellSourcedFactor)`
+
+`base` is 0.75 for a curated link, 0.7 for one imported from Wikidata and 0.5 for one from an editor. Strength decides which events appear on a topic river, and it has an Explain breakdown. "Agree" votes on a link are shown but never change it. Reference: `src/lib/related.ts`.
+
 ## 6. Public opinion (separate signal)
 Agree/disagree, likes, imported poll results from other platforms (with links). **Never** changes status — it's displayed alongside, graphed over time, and compared with the evidence curve. The gap between "what the evidence says" and "what people believe" is one of the most interesting things the platform can show.
 

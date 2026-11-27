@@ -25,6 +25,15 @@
     ]
   },
   "topicIds": [],
+  "links": [
+    {
+      "to": "wd_Q122100",
+      "type": "led_to",
+      "sources": [
+        "wikidata:Q122100"
+      ]
+    }
+  ],
   "provenance": {
     "importedFrom": "wikidata",
     "qid": "Q134949",

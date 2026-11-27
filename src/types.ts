@@ -114,6 +114,48 @@ export interface TimelineEvent {
   summary: string;
   topicIds: string[]; // debates hanging off this event
   provenance?: EventProvenance;
+  /**
+   * Links from this event to others, as written in a data file (data/events/…).
+   * The loader turns these into EventLink records in Dataset.links.
+   */
+  links?: EventLinkSpec[];
+}
+
+/**
+ * How two events are related. Read it as "FROM <type> TO":
+ *   caused       — the first event caused the second
+ *   led_to       — the first came before and helped bring about the second (weaker than caused)
+ *   part_of      — the first is a part of the second (a battle that is part of a campaign)
+ *   response_to  — the first happened in response to the second
+ */
+export type LinkType = 'caused' | 'led_to' | 'part_of' | 'response_to';
+export const LINK_TYPES: LinkType[] = ['caused', 'led_to', 'part_of', 'response_to'];
+
+/** A link as written inside an event's data file: always outgoing, from that event. */
+export interface EventLinkSpec {
+  to: string; // the other event's id
+  type: LinkType;
+  note?: string;
+  sources?: string[]; // Source ids (or "wikidata:Q…") backing the link
+}
+
+/**
+ * A typed link between two events — the river's "this is connected to that".
+ * Links are claims in their own right: "well sourced" votes change how strong the link
+ * is (src/lib/related.ts → linkStrength), "agree" votes are public opinion and never do.
+ */
+export interface EventLink {
+  id: string;
+  from: string; // event id
+  to: string; // event id
+  type: LinkType;
+  note?: string;
+  sources: string[];
+  origin: 'curated' | 'wikidata' | 'community'; // who drew it: hand-picked, importer, or an editor
+  claimantId?: string; // entity that proposed the link, if known
+  wellSourced: { up: number; down: number }; // moves strength
+  agree: { up: number; down: number }; // public opinion — never moves strength
+  demo?: boolean;
 }
 
 /**
@@ -234,4 +276,5 @@ export interface Dataset {
   evidence: Evidence[];
   aiSnapshots: AISnapshot[];
   opinions: OpinionSeries[];
+  links: EventLink[];
 }

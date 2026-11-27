@@ -7,9 +7,11 @@ export const FIELDS = ['politics', 'science', 'medicine', 'economics', 'technolo
 export const PRECISIONS = ['day', 'month', 'year', 'decade', 'century', 'millennium'];
 export const METHODS = ['documented', 'contemporary_accounts', 'archaeological', 'radiocarbon', 'scholarly_estimate', 'wikidata', 'community'];
 export const ENTITY_KINDS = ['person', 'institution', 'company', 'government', 'funder', 'publication'];
+export const LINK_TYPES = ['caused', 'led_to', 'part_of', 'response_to'];
 export const SOURCE_TYPES = ['meta_analysis', 'rct', 'peer_reviewed', 'book', 'preprint', 'journalism', 'op_ed', 'social_post', 'primary_document', 'reference_work'];
 
-const EVENT_KEYS = ['$schema', 'id', 'title', 'summary', 'field', 'date', 'end', 'topicIds', 'provenance'];
+const EVENT_KEYS = ['$schema', 'id', 'title', 'summary', 'field', 'date', 'end', 'topicIds', 'links', 'provenance'];
+const LINK_KEYS = ['to', 'type', 'note', 'sources'];
 const ENTITY_KEYS = ['$schema', 'id', 'name', 'kind', 'field', 'founded', 'description'];
 const SOURCE_KEYS = ['$schema', 'id', 'title', 'type', 'publishedAt', 'authorIds', 'institutionId', 'funderIds', 'conflictOfInterest', 'retracted', 'url'];
 const PROVENANCE_KEYS = ['importedFrom', 'qid', 'retrievedAt', 'wikipedia', 'sitelinks', 'manualEdits', 'conflictingValues'];
@@ -53,6 +55,20 @@ export function checkEvent(ev, fileBase) {
     if (isNum(ev.end?.best) && isNum(ev.date?.best) && ev.end.best < ev.date.best) errs.push('end.best is before date.best');
   }
   if (ev.topicIds !== undefined && !isStrArray(ev.topicIds)) errs.push('topicIds must be a list of ids');
+  if (ev.links !== undefined) {
+    if (!Array.isArray(ev.links)) errs.push('links must be a list');
+    else
+      ev.links.forEach((l, i) => {
+        const where = `links[${i}]`;
+        if (!l || typeof l !== 'object') return errs.push(`${where} must be an object like { "to": "other_event_id", "type": "led_to" }`);
+        if (!isStr(l.to)) errs.push(`${where}.to must be the id of another event`);
+        if (l.to === ev.id) errs.push(`${where} links the event to itself`);
+        if (!LINK_TYPES.includes(l.type)) errs.push(`${where}.type must be one of ${LINK_TYPES.join(', ')}`);
+        if (l.sources !== undefined && !isStrArray(l.sources)) errs.push(`${where}.sources must be a list of source ids`);
+        if (l.note !== undefined && typeof l.note !== 'string') errs.push(`${where}.note must be text`);
+        errs.push(...unknownKeys(l, LINK_KEYS, where));
+      });
+  }
   const p = ev.provenance;
   if (p !== undefined) {
     if (!['wikidata', 'manual'].includes(p.importedFrom)) errs.push('provenance.importedFrom must be "wikidata" or "manual"');
@@ -111,14 +127,19 @@ export function checkReferences(files) {
   }
   const ids = (kind) => new Set(files.filter((f) => f.kind === kind).map((f) => f.data?.id));
   const entities = ids('entity');
+  const events = ids('event');
   const sources = ids('source');
   const sourceOk = (id) => sources.has(id) || /^wikidata:Q\d+$/.test(id);
 
   for (const f of files) {
     const d = f.data ?? {};
     if (f.kind === 'event') {
-      for (const id of [...(d.date?.sources ?? []), ...(d.end?.sources ?? [])]) {
+      const links = Array.isArray(d.links) ? d.links : [];
+      for (const id of [...(d.date?.sources ?? []), ...(d.end?.sources ?? []), ...links.flatMap((l) => l?.sources ?? [])]) {
         if (!sourceOk(id)) errs.push({ path: f.path, message: `source "${id}" not found — add data/sources/${id}.json, or use "wikidata:Q…"` });
+      }
+      for (const l of links) {
+        if (l?.to && !events.has(l.to)) errs.push({ path: f.path, message: `links to event "${l.to}", which isn't in data/events/` });
       }
     }
     if (f.kind === 'entity') {

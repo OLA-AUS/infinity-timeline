@@ -47,6 +47,15 @@ In the claim map, **drag** to move, **pinch or scroll** to zoom, and tap a bubbl
 
 **Search** (the 🔍 button on phones) matches events, people/organisations and claims as you type, with field filters. Picking a result flies there, zooms to a suitable level and highlights it. Everything you can tap on a phone is at least 44px.
 
+**Topic rivers.** Opening a claim map hides the main river and shows a single *topic river* behind the map, holding only the events related to the one in the middle.
+- **What counts as related:** typed links between events (*caused*, *led to*, *part of*, *response to*), people and organisations shared by their debates, and relations imported from Wikidata.
+- **Relevance slider:** widens the river from direct links only to looser connections.
+- **Gliding:** scroll, or drag the strip at the bottom of the map, to glide along the river. The map's centre switches to the nearest event with a soft fade.
+- **Switching rivers:** tap a linked-event bubble to make it the centre and swap in its own topic river. Where another topic river crosses there's a **⑂ branch point** you can switch onto.
+- **Trail:** the breadcrumb shows each event you've moved through (*WW2 begins → Operation Sea Lion ⑂ Bengal famine ↪ WW2 ends*).
+- **Getting back:** **Back to main river** lands you on the main river at the event you were on.
+- **Voting on links:** links are voted on like claims. "Well sourced" changes a link's strength; "agree" is opinion only. Try the demo chain: *WW2 begins → Battle of Britain → Bengal famine → WW2 ends → Indian independence → Suez Crisis*.
+
 > ⚠️ All seed data in `src/data/seed.ts` is **demo data**. Sources, organisations, fines and poll numbers are fictional placeholders to show the mechanics — replace with real, cited data. Real data lives in `data/`.
 
 ## Data & editing

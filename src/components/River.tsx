@@ -17,6 +17,9 @@
 // time outside it is still there, squeezed.
 //
 // Travel: scroll, drag, swipe or the arrow keys.
+//
+// While a claim map is open, the main river is hidden and the canvas shows a single topic
+// river instead (TopicRiver.tsx), with only the events related to the map's subject.
 import { Html, Line, Stars } from '@react-three/drei';
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -40,6 +43,8 @@ import {
   type ZoomLevel,
 } from '../lib/timeScale';
 import { place, spanVisible, UncertaintySpan } from './RiverSpans';
+import { HitArea, MIN_TAP_RADIUS } from './HitArea';
+import { TopicScene, type TopicProps } from './TopicRiver';
 
 interface Props {
   data: Dataset;
@@ -57,6 +62,8 @@ interface Props {
   onZoomStep: (dir: 1 | -1) => void;
   /** Zoom to a particular window (null = all time), keeping `focusYear` in view. */
   onZoomTo: (w: TimeWindow | null, focusYear: number) => void;
+  /** When set, show this topic river instead of the main river (a claim map is open). */
+  topic?: TopicProps;
 }
 
 /** Years that get a big faint label beside the river (when they're outside the zoom window). */
@@ -72,8 +79,6 @@ export const FOCUS_AHEAD = { desktop: 2, mobile: 15 };
 
 /** How far ahead you can see (matches the fog). Events further away aren't planned. */
 const VIEW_DISTANCE = 95;
-/** Minimum tap-target radius in screen pixels: 22px radius = the 44px minimum on phones. */
-const MIN_TAP_RADIUS = { mobile: 22, desktop: 9 };
 
 /**
  * Moves the camera smoothly towards the target point in time, and reports the current year.
@@ -225,42 +230,6 @@ function Ticks({ scale }: { scale: TimeScale }) {
       {w && gate(w.start, `▶ ${windowLabel(w)}`)}
       {w && gate(w.end, `${windowLabel(w)} ◀`)}
     </group>
-  );
-}
-
-/**
- * An invisible sphere that grows when the object is far away, so it's always at least
- * `minPx` pixels (radius) on screen — easy to tap even when the visible bubble is tiny.
- */
-function HitArea({ radius, minPx, onClick, onOver, onOut }: {
-  radius: number;
-  minPx: number;
-  onClick: () => void;
-  onOver?: () => void;
-  onOut?: () => void;
-}) {
-  const ref = useRef<THREE.Mesh>(null);
-  const { camera, size } = useThree();
-  const wp = useMemo(() => new THREE.Vector3(), []);
-  useFrame(() => {
-    const m = ref.current;
-    if (!m) return;
-    m.getWorldPosition(wp);
-    const dist = camera.position.distanceTo(wp);
-    const fov = ((camera as THREE.PerspectiveCamera).fov * Math.PI) / 180;
-    const worldPerPx = (2 * dist * Math.tan(fov / 2)) / size.height;
-    m.scale.setScalar(Math.max(radius, minPx * worldPerPx));
-  });
-  return (
-    <mesh
-      ref={ref}
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
-      onPointerOver={(e) => { e.stopPropagation(); onOver?.(); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { onOut?.(); document.body.style.cursor = 'auto'; }}
-    >
-      <sphereGeometry args={[1, 12, 12]} />
-      <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-    </mesh>
   );
 }
 
@@ -633,6 +602,8 @@ export function River(props: Props) {
   // Keep the latest zoom callback without re-binding the listeners on every render.
   const zoomRef = useRef(onZoomStep);
   zoomRef.current = onZoomStep;
+  const topicOpen = useRef(false);
+  topicOpen.current = !!props.topic;
 
   // Scroll / drag / swipe / keys travel through time. Pinch, Ctrl+scroll and +/− zoom.
   useEffect(() => {
@@ -692,7 +663,7 @@ export function River(props: Props) {
       if (pointers.size < 2) pinchStart = 0;
     };
     const key = (e: KeyboardEvent) => {
-      if (typing(e.target)) return; // don't steer the river while typing in the search box
+      if (typing(e.target) || topicOpen.current) return; // not while typing, or while a claim map is open
       if (e.key === 'ArrowUp' || e.key === 'ArrowRight') setTargetS((s) => clamp(s + 5));
       if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') setTargetS((s) => clamp(s - 5));
       if (e.key === '+' || e.key === '=') zoomRef.current(1);
@@ -717,7 +688,7 @@ export function River(props: Props) {
   return (
     <div ref={wrap} className="river" style={{ touchAction: 'none' }}>
       <Canvas camera={{ fov: mobile ? 70 : 60, near: 0.1, far: 400 }} dpr={[1, 2]}>
-        <Scene {...props} />
+        {props.topic ? <TopicScene {...props.topic} /> : <Scene {...props} />}
       </Canvas>
     </div>
   );
