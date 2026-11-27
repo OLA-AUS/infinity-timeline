@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q254599",
+  "title": "Battle of Shanghai",
+  "summary": "1937 battle of the Second Sino-Japanese War",
+  "field": "politics",
+  "date": {
+    "earliest": 1937.613699,
+    "latest": 1937.616438,
+    "best": 1937.615068,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q254599"
+    ]
+  },
+  "end": {
+    "earliest": 1937.90137,
+    "latest": 1937.90411,
+    "best": 1937.90274,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q254599"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q254599",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Shanghai",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q699787",
+  "title": "Manila massacre",
+  "summary": "atrocities committed against Filipino civilians by Japanese troops at the Battle of Manila",
+  "field": "politics",
+  "date": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699787"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q699787",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Manila_massacre",
+    "manualEdits": false
+  }
+}

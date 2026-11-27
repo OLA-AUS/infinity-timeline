@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema/entity.schema.json",
+  "id": "e_wikidata",
+  "name": "Wikidata",
+  "kind": "publication",
+  "field": "technology",
+  "founded": {
+    "earliest": 2012.825137,
+    "latest": 2012.827869,
+    "best": 2012.826503,
+    "precision": "day",
+    "method": "documented",
+    "sources": []
+  },
+  "description": "Free, collaboratively edited knowledge base hosted by the Wikimedia Foundation. Imported dates come from here; they are community-edited and should be checked against primary sources."
+}

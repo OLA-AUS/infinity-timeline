@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q708253",
+  "title": "Colmar Pocket",
+  "summary": "battle in Alsace, France (1945)",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.106849,
+    "latest": 1945.109589,
+    "best": 1945.108219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708253"
+    ]
+  },
+  "end": {
+    "earliest": 1945.084932,
+    "latest": 1945.161644,
+    "best": 1945.123288,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708253"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q708253",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Colmar_Pocket",
+    "manualEdits": false
+  }
+}

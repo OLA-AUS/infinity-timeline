@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q74109",
+  "title": "World War II in Albania",
+  "summary": "involvement of Albania in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942,
+    "latest": 1943,
+    "best": 1942.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q74109"
+    ]
+  },
+  "end": {
+    "earliest": 1944,
+    "latest": 1945,
+    "best": 1944.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q74109"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q74109",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/World_War_II_in_Albania",
+    "manualEdits": false
+  }
+}

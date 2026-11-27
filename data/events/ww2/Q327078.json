@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q327078",
+  "title": "Battle of Uman",
+  "summary": "encirclement of the 6th and 12th Soviet armies during 1941 German offensive on the Eastern Front",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.534247,
+    "latest": 1941.536986,
+    "best": 1941.535616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q327078"
+    ]
+  },
+  "end": {
+    "earliest": 1941.6,
+    "latest": 1941.60274,
+    "best": 1941.60137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q327078"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q327078",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Uman",
+    "manualEdits": false
+  }
+}

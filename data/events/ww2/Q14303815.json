@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q14303815",
+  "title": "Battle of Castle Itter",
+  "summary": "battle year 1945 in which U.S. infantry and armour, Wehrmacht Heer, French prisoners and Austrian partisans took Castle Itter from the occupying Waffen SS",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.339726,
+    "latest": 1945.342466,
+    "best": 1945.341096,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q14303815"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q14303815",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Castle_Itter",
+    "manualEdits": false
+  }
+}

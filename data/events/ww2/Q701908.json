@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q701908",
+  "title": "Naval Battle of Vella Lavella",
+  "summary": "1943 naval battle of the Pacific campaign of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.761644,
+    "latest": 1943.764384,
+    "best": 1943.763014,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q701908"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q701908",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Vella_Lavella_(naval)",
+    "manualEdits": false
+  }
+}

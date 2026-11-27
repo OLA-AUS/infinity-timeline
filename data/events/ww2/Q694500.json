@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q694500",
+  "title": "Battle of Wizna",
+  "summary": "1939 early battle of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.682192,
+    "latest": 1939.684932,
+    "best": 1939.683562,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q694500"
+    ]
+  },
+  "end": {
+    "earliest": 1939.690411,
+    "latest": 1939.693151,
+    "best": 1939.691781,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q694500"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q694500",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Wizna",
+    "manualEdits": false
+  }
+}

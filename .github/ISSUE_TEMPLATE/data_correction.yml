@@ -1,0 +1,35 @@
+name: 📚 Correct a fact or source
+description: An event, person, organisation or source is wrong, missing, or badly cited.
+title: "Data: "
+labels: [data]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The quickest fix is a pull request: every imported item on the site has a **"Suggest an edit"** link that opens its file on GitHub. See CONTRIBUTING.md → *Editing data*.
+        Prefer to just tell us? Fill this in. **Please cite a real, checkable source** — corrections without a source can't change the data.
+  - type: input
+    id: item
+    attributes:
+      label: Which item?
+      description: Its title, the file path (e.g. `data/events/ww2/Q8641370.json`), or a Wikidata id.
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong, and what should it say?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: Title, author, publisher and year, and a link if there is one. Primary sources (archives, official records) are best.
+    validations:
+      required: true
+  - type: textarea
+    id: coi
+    attributes:
+      label: Conflicts of interest
+      description: Do you, your employer or your funders have a stake in this? Saying so doesn't disqualify you — it's shown as context, like everyone else's.

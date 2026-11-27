@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q194132",
+  "title": "Operation Torch",
+  "summary": "1942 Allied landing operations in French North Africa during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.873973,
+    "latest": 1942.876712,
+    "best": 1942.875342,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q194132"
+    ]
+  },
+  "end": {
+    "earliest": 1942.873973,
+    "latest": 1942.876712,
+    "best": 1942.875342,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q194132"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q194132",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Torch",
+    "manualEdits": false
+  }
+}

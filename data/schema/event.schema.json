@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "title": "Timeline event",
+  "description": "One event on the river. File name must be <id>.json (or <Wikidata id>.json for imports).",
+  "type": "object",
+  "required": ["id", "title", "summary", "field", "date"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "description": "One or two plain sentences. Don't paste text from Wikipedia (licence)." },
+    "field": { "enum": ["politics", "science", "medicine", "economics", "technology", "culture"], "description": "Which lane of the river it sits in." },
+    "date": { "$ref": "fuzzy-date.schema.json", "description": "When it happened (or began)." },
+    "end": { "$ref": "fuzzy-date.schema.json", "description": "When it ended, for things that lasted a while." },
+    "topicIds": { "type": "array", "items": { "type": "string" } },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["importedFrom"],
+      "properties": {
+        "importedFrom": { "enum": ["wikidata", "manual"] },
+        "qid": { "type": "string", "pattern": "^Q[0-9]+$" },
+        "retrievedAt": { "type": "string", "format": "date" },
+        "wikipedia": { "type": "string", "format": "uri" },
+        "manualEdits": { "type": "boolean", "description": "Set to true when you edit an imported file by hand, so the importer never overwrites your change." },
+        "conflictingValues": { "type": "array", "items": { "type": "string" }, "description": "Wikidata listed more than one value for this date." }
+      }
+    }
+  }
+}

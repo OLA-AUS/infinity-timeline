@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700032",
+  "title": "Battle of Savo Island",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.6,
+    "latest": 1942.60274,
+    "best": 1942.60137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700032"
+    ]
+  },
+  "end": {
+    "earliest": 1942.60274,
+    "latest": 1942.605479,
+    "best": 1942.60411,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700032"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700032",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Savo_Island",
+    "manualEdits": false
+  }
+}

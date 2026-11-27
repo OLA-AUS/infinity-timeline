@@ -1,0 +1,39 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q184425",
+  "title": "Pacific War",
+  "summary": "theater of World War II fought in the Pacific and Asia",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.931507,
+    "latest": 1941.936986,
+    "best": 1941.932877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q184425"
+    ]
+  },
+  "end": {
+    "earliest": 1945.668493,
+    "latest": 1945.671233,
+    "best": 1945.669863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q184425"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q184425",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Pacific_War",
+    "conflictingValues": [
+      "1941-12-07",
+      "1941-12-08"
+    ],
+    "manualEdits": false
+  }
+}

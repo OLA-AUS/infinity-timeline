@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q44700",
+  "title": "European Theater of World War II",
+  "summary": "huge area of heavy fighting across Europe",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.665753,
+    "latest": 1939.668493,
+    "best": 1939.667123,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q44700"
+    ]
+  },
+  "end": {
+    "earliest": 1945.347945,
+    "latest": 1945.350685,
+    "best": 1945.349315,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q44700"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q44700",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/European_theatre_of_World_War_II",
+    "manualEdits": false
+  }
+}

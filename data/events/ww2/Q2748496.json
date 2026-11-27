@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2748496",
+  "title": "Exercise Tiger",
+  "summary": "D-Day rehearsal in 1944",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.322404,
+    "latest": 1944.325137,
+    "best": 1944.32377,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2748496"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2748496",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Exercise_Tiger",
+    "manualEdits": false
+  }
+}

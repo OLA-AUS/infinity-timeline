@@ -1,0 +1,57 @@
+name: 📅 Dispute a date
+description: You think an event happened at a different time, or its date is less (or more) certain than shown.
+title: "Date dispute: "
+labels: [data, date-dispute]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dates are disputed like claims: each proposed date becomes a claim with its own evidence, and the river shows a glowing span while more than one is still standing.
+        A maintainer will turn this into a date-dispute topic. Opinions are welcome in the discussion, but **only evidence changes the outcome**.
+  - type: input
+    id: event
+    attributes:
+      label: Event
+      description: The event's title as shown on the river, or its file path.
+    validations:
+      required: true
+  - type: input
+    id: proposed
+    attributes:
+      label: Date you propose
+      description: As exact or as rough as the evidence allows.
+      placeholder: "e.g. 7 July 1937, or: sometime between 1436 and 1450"
+    validations:
+      required: true
+  - type: dropdown
+    id: precision
+    attributes:
+      label: How precisely is it known?
+      options: [To the day, To the month, To the year, To the decade, To the century, To the millennium]
+    validations:
+      required: true
+  - type: dropdown
+    id: method
+    attributes:
+      label: How was it worked out?
+      options:
+        - Written down at the time (dated document)
+        - Eyewitness accounts
+        - Archaeological finds
+        - Lab dating (for example radiocarbon)
+        - Historians’ estimate
+        - Other (explain below)
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Real, checkable sources for your date — and, ideally, why the current date is wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: falsify
+    attributes:
+      label: What would prove your date wrong?
+      description: Every claim here states what evidence would refute it.

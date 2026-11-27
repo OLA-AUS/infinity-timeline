@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q11274692",
+  "title": "Chichijima incident",
+  "summary": "Atrocity in the Pacific Theater of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.084932,
+    "latest": 1945.161644,
+    "best": 1945.123288,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q11274692"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q11274692",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Chichijima_incident",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q165549",
+  "title": "Battle of the Bzura",
+  "summary": "battle in the opening campaign of World War II during the 1939 German invasion of Poland",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.687671,
+    "latest": 1939.690411,
+    "best": 1939.689041,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q165549"
+    ]
+  },
+  "end": {
+    "earliest": 1939.715068,
+    "latest": 1939.717808,
+    "best": 1939.716438,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q165549"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q165549",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Bzura",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q691565",
+  "title": "Case Anton",
+  "summary": "1942 militaryoccupation of Vichy France during the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.857534,
+    "latest": 1942.860274,
+    "best": 1942.858904,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q691565"
+    ]
+  },
+  "end": {
+    "earliest": 1942.90411,
+    "latest": 1942.906849,
+    "best": 1942.905479,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q691565"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q691565",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Case_Anton",
+    "manualEdits": false
+  }
+}

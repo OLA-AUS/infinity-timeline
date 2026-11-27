@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1066650",
+  "title": "Battle of Los Angeles",
+  "summary": "anti-air shelling during WWII in Los Angeles, CA, against apparently nothing",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.150685,
+    "latest": 1942.153425,
+    "best": 1942.152055,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1066650"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1066650",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Los_Angeles",
+    "manualEdits": false
+  }
+}

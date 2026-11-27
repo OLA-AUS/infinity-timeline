@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q472100",
+  "title": "Bombing of Belgrade in 1941",
+  "summary": "German bombing of Belgrade, Yugoslavia during World War 2",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.260274,
+    "latest": 1941.263014,
+    "best": 1941.261644,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q472100"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q472100",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_bombing_of_Belgrade",
+    "manualEdits": false
+  }
+}

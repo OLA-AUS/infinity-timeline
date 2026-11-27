@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q702638",
+  "title": "Operation Tannenberg",
+  "summary": "Nazi extermination operation directed at Poles in early World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.665753,
+    "latest": 1939.747945,
+    "best": 1939.706849,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702638"
+    ]
+  },
+  "end": {
+    "earliest": 1940,
+    "latest": 1940.084699,
+    "best": 1940.04235,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q702638"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q702638",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Tannenberg",
+    "manualEdits": false
+  }
+}

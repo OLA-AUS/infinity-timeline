@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q572676",
+  "title": "St Nazaire Raid",
+  "summary": "1942 marine operation during ww2",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.235616,
+    "latest": 1942.238356,
+    "best": 1942.236986,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q572676"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q572676",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/St_Nazaire_Raid",
+    "manualEdits": false
+  }
+}

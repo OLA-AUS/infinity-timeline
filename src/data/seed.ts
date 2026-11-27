@@ -1,15 +1,22 @@
-// ⚠️ DEMO DATA. Event dates are real; every organisation, person, source, fine,
-// vote count, AI output and poll number below is a FICTIONAL placeholder that exists
-// only to demonstrate the mechanics. Replace with real, cited data before launch.
+// ⚠️ DEMO DATA. Event dates are real (but not yet cited — their `sources` lists are empty);
+// every organisation, person, source, fine, vote count, AI output and poll number below is a
+// FICTIONAL placeholder that exists only to demonstrate the mechanics. Replace with real,
+// cited data before launch. Real imported data lives in data/ (see CONTRIBUTING.md).
 import type { Claim, Dataset, Evidence, Source } from '../types';
+import { between, inMonth, inYear, onDay } from '../lib/dates';
 
+// Small helpers so each row below stays on one line.
+
+/** One piece of evidence: claim ← source, for/against, how relevant, and demo "well sourced" votes. */
 const ev = (
   id: string, claimId: string, sourceId: string, direction: 'for' | 'against',
   relevance: number, note: string, up = 20, down = 4,
 ): Evidence => ({ id, claimId, sourceId, direction, relevance, note, wellSourced: { up, down } });
 
+/** A demo source (always flagged as demo in the UI). */
 const src = (s: Omit<Source, 'demo'>): Source => ({ ...s, demo: true });
 
+/** A claim with empty child/evidence lists filled in (evidenceIds are back-filled at the bottom). */
 const claim = (c: Omit<Claim, 'childClaimIds' | 'evidenceIds'> & Partial<Pick<Claim, 'childClaimIds'>>): Claim => ({
   childClaimIds: [],
   evidenceIds: [],
@@ -17,23 +24,25 @@ const claim = (c: Omit<Claim, 'childClaimIds' | 'evidenceIds'> & Partial<Pick<Cl
 });
 
 export const seed: Dataset = {
+  // People and organisations. `founded` puts them on the river; click one to "jump" there.
   entities: [
-    { id: 'e_platform', name: 'Infinity Timeline Foundation (this platform)', kind: 'funder', field: 'culture', foundedAt: 2026.5, description: 'This platform. Its own funding sits on the timeline like everyone else’s.', demo: true },
-    { id: 'e_uni', name: 'Example University', kind: 'institution', field: 'science', foundedAt: 1850, description: 'Demo research university.', demo: true },
-    { id: 'e_press', name: 'Example University Press', kind: 'publication', field: 'culture', foundedAt: 1890, description: 'Demo academic publisher.', demo: true },
-    { id: 'e_found', name: 'Example Research Foundation', kind: 'funder', field: 'science', foundedAt: 1910, description: 'Demo charitable research funder.', demo: true },
-    { id: 'e_pharma', name: 'ExamplePharma Corp', kind: 'company', field: 'medicine', foundedAt: 1921, description: 'Demo pharmaceutical company with a penalty record.', demo: true },
-    { id: 'e_gov', name: 'Demo National Science Agency', kind: 'government', field: 'science', foundedAt: 1950, description: 'Demo public research funder.', demo: true },
-    { id: 'e_energy', name: 'Demo Energy Holdings', kind: 'company', field: 'economics', foundedAt: 1960, description: 'Demo energy company.', demo: true },
-    { id: 'e_tank', name: 'Demo Policy Institute', kind: 'institution', field: 'politics', foundedAt: 1975, description: 'Demo think tank. Funding only partly disclosed.', demo: true },
-    { id: 'e_histA', name: 'Dr A. Placeholder (historian)', kind: 'person', field: 'politics', foundedAt: 1952, description: 'Demo historian at Example University.', demo: true },
-    { id: 'e_histB', name: 'Prof B. Example (economic historian)', kind: 'person', field: 'economics', foundedAt: 1960, description: 'Demo economic historian, fellow at Demo Policy Institute.', demo: true },
-    { id: 'e_drC', name: 'Dr C. Sample (clinical researcher)', kind: 'person', field: 'medicine', foundedAt: 1968, description: 'Demo independent clinical researcher.', demo: true },
-    { id: 'e_drD', name: 'Dr D. Demo (industry researcher)', kind: 'person', field: 'medicine', foundedAt: 1972, description: 'Demo researcher employed by ExamplePharma.', demo: true },
-    { id: 'e_journo', name: 'E. Writer (independent journalist)', kind: 'person', field: 'culture', foundedAt: 1980, description: 'Demo reader-funded journalist.', demo: true },
-    { id: 'e_user', name: '@timeline_user (community member)', kind: 'person', field: 'culture', foundedAt: 1995, description: 'Demo community account.', demo: true },
+    { id: 'e_platform', name: 'Infinity Timeline Foundation (this platform)', kind: 'funder', field: 'culture', founded: inMonth(2026, 7, { method: 'community' }), description: 'This platform. Its own funding sits on the timeline like everyone else’s.', demo: true },
+    { id: 'e_uni', name: 'Example University', kind: 'institution', field: 'science', founded: inYear(1850), description: 'Demo research university.', demo: true },
+    { id: 'e_press', name: 'Example University Press', kind: 'publication', field: 'culture', founded: inYear(1890), description: 'Demo academic publisher.', demo: true },
+    { id: 'e_found', name: 'Example Research Foundation', kind: 'funder', field: 'science', founded: inYear(1910), description: 'Demo charitable research funder.', demo: true },
+    { id: 'e_pharma', name: 'ExamplePharma Corp', kind: 'company', field: 'medicine', founded: inYear(1921), description: 'Demo pharmaceutical company with a penalty record.', demo: true },
+    { id: 'e_gov', name: 'Demo National Science Agency', kind: 'government', field: 'science', founded: inYear(1950), description: 'Demo public research funder.', demo: true },
+    { id: 'e_energy', name: 'Demo Energy Holdings', kind: 'company', field: 'economics', founded: inYear(1960), description: 'Demo energy company.', demo: true },
+    { id: 'e_tank', name: 'Demo Policy Institute', kind: 'institution', field: 'politics', founded: inYear(1975), description: 'Demo think tank. Funding only partly disclosed.', demo: true },
+    { id: 'e_histA', name: 'Dr A. Placeholder (historian)', kind: 'person', field: 'politics', founded: inYear(1952), description: 'Demo historian at Example University.', demo: true },
+    { id: 'e_histB', name: 'Prof B. Example (economic historian)', kind: 'person', field: 'economics', founded: inYear(1960), description: 'Demo economic historian, fellow at Demo Policy Institute.', demo: true },
+    { id: 'e_drC', name: 'Dr C. Sample (clinical researcher)', kind: 'person', field: 'medicine', founded: inYear(1968), description: 'Demo independent clinical researcher.', demo: true },
+    { id: 'e_drD', name: 'Dr D. Demo (industry researcher)', kind: 'person', field: 'medicine', founded: inYear(1972), description: 'Demo researcher employed by ExamplePharma.', demo: true },
+    { id: 'e_journo', name: 'E. Writer (independent journalist)', kind: 'person', field: 'culture', founded: inYear(1980), description: 'Demo reader-funded journalist.', demo: true },
+    { id: 'e_user', name: '@timeline_user (community member)', kind: 'person', field: 'culture', founded: inYear(1995), description: 'Demo community account.', demo: true },
   ],
 
+  // Fines, settlements and retractions — these lower an entity's trust score.
   penalties: [
     { id: 'p1', entityId: 'e_pharma', type: 'criminal_fraud', amountUSD: 1_200_000_000, at: 2009.7, regulator: 'Demo Dept. of Justice', summary: 'Demo: off-label marketing fraud.' },
     { id: 'p2', entityId: 'e_pharma', type: 'civil_settlement', amountUSD: 2_300_000_000, at: 2012.5, regulator: 'Demo Dept. of Justice', summary: 'Demo: withheld safety data.' },
@@ -43,6 +52,7 @@ export const seed: Dataset = {
     { id: 'p6', entityId: 'e_energy', type: 'civil_settlement', amountUSD: 400_000_000, at: 2021.1, regulator: 'Demo State Attorneys', summary: 'Demo: misleading the public.' },
   ],
 
+  // Who pays whom. `disclosed: false` means it came out later, which costs extra trust.
   funding: [
     { funderId: 'e_gov', recipientId: 'e_uni', share: 0.5, disclosed: true },
     { funderId: 'e_found', recipientId: 'e_uni', share: 0.3, disclosed: true },
@@ -54,26 +64,31 @@ export const seed: Dataset = {
     { funderId: 'e_pharma', recipientId: 'e_drD', share: 1, disclosed: true },
   ],
 
+  // The glowing nodes on the river.
   events: [
-    { id: 'ev_writing', title: 'Earliest writing, Mesopotamia', at: -3200, field: 'culture', summary: 'Cuneiform emerges around 3200 BCE.', topicIds: [] },
-    { id: 'ev_print', title: 'Gutenberg’s printing press', at: 1440, field: 'technology', summary: 'Movable-type printing spreads across Europe.', topicIds: [] },
-    { id: 'ev_principia', title: 'Newton publishes Principia', at: 1687, field: 'science', summary: 'Laws of motion and universal gravitation.', topicIds: [] },
-    { id: 'ev_ww1', title: 'World War I begins', at: 1914.57, field: 'politics', summary: 'July 1914.', topicIds: [] },
-    { id: 'ev_penicillin', title: 'Penicillin discovered', at: 1928.7, field: 'medicine', summary: 'Alexander Fleming, 1928.', topicIds: [] },
-    { id: 'ev_ww2', title: 'World War II begins in Europe', at: 1939.67, field: 'politics', summary: 'Germany invades Poland, 1 September 1939.', topicIds: ['t_ukwin', 't_churchill'] },
-    { id: 'ev_ww2end', title: 'World War II ends', at: 1945.67, field: 'politics', summary: 'September 1945.', topicIds: [] },
-    { id: 'ev_india', title: 'Indian independence', at: 1947.62, field: 'politics', summary: 'August 1947.', topicIds: [] },
-    { id: 'ev_suez', title: 'Suez Crisis', at: 1956.83, field: 'politics', summary: '1956.', topicIds: [] },
-    { id: 'ev_moon', title: 'Apollo 11 Moon landing', at: 1969.55, field: 'technology', summary: 'July 1969.', topicIds: ['t_moon'] },
-    { id: 'ev_eec', title: 'UK joins the EEC', at: 1973.0, field: 'economics', summary: 'January 1973.', topicIds: [] },
-    { id: 'ev_www', title: 'World Wide Web proposed', at: 1989.2, field: 'technology', summary: 'March 1989.', topicIds: [] },
-    { id: 'ev_brexit', title: 'UK votes to leave the EU', at: 2016.47, field: 'politics', summary: 'June 2016.', topicIds: [] },
-    { id: 'ev_drugx', title: '[Demo] Drug X approved', at: 2018.2, field: 'medicine', summary: 'A fictional drug used to demo trust weighting.', topicIds: ['t_drugx'] },
-    { id: 'ev_covid', title: 'COVID-19 declared a pandemic', at: 2020.2, field: 'medicine', summary: 'March 2020.', topicIds: [] },
-    { id: 'ev_platform', title: 'Infinity Timeline launches', at: 2026.5, field: 'culture', summary: 'This platform — its funding is on the timeline too.', topicIds: [] },
+    // Uncertain dates: these two draw a glowing span on the river instead of a single point.
+    { id: 'ev_writing', title: 'Earliest writing, Mesopotamia', date: between(-3400, -3100, -3200, 'century', { method: 'archaeological' }), field: 'culture', summary: 'Cuneiform emerges in Sumer, usually dated to about 3400–3100 BCE.', topicIds: [] },
+    { id: 'ev_print', title: 'Gutenberg’s printing press', date: between(1436, 1451, 1440, 'decade'), field: 'technology', summary: 'Movable-type printing in Mainz; the exact year it first worked is not recorded.', topicIds: [] },
+    { id: 'ev_principia', title: 'Newton publishes Principia', date: onDay(1687, 7, 5), field: 'science', summary: 'Laws of motion and universal gravitation.', topicIds: [] },
+    { id: 'ev_ww1', title: 'World War I begins', date: onDay(1914, 7, 28), field: 'politics', summary: 'Austria-Hungary declares war on Serbia, 28 July 1914.', topicIds: [] },
+    { id: 'ev_penicillin', title: 'Penicillin discovered', date: inMonth(1928, 9), field: 'medicine', summary: 'Alexander Fleming notices mould killing bacteria, September 1928.', topicIds: [] },
+    // This event's date is itself disputed — see topic t_ww2_start below.
+    { id: 'ev_ww2', title: 'World War II begins', date: onDay(1939, 9, 1), field: 'politics', summary: 'Germany invades Poland, 1 September 1939 — the usual start date. Some historians start the war in Asia, earlier.', topicIds: ['t_ww2_start', 't_ukwin', 't_churchill'] },
+    { id: 'ev_ww2end', title: 'World War II ends', date: onDay(1945, 9, 2), field: 'politics', summary: 'Japan signs the Instrument of Surrender, 2 September 1945.', topicIds: [] },
+    { id: 'ev_india', title: 'Indian independence', date: onDay(1947, 8, 15), field: 'politics', summary: '15 August 1947.', topicIds: [] },
+    { id: 'ev_suez', title: 'Suez Crisis', date: onDay(1956, 10, 29), field: 'politics', summary: 'Israel invades Sinai on 29 October 1956; Britain and France follow.', topicIds: [] },
+    { id: 'ev_moon', title: 'Apollo 11 Moon landing', date: onDay(1969, 7, 20), field: 'technology', summary: '20 July 1969.', topicIds: ['t_moon'] },
+    { id: 'ev_eec', title: 'UK joins the EEC', date: onDay(1973, 1, 1), field: 'economics', summary: '1 January 1973.', topicIds: [] },
+    { id: 'ev_www', title: 'World Wide Web proposed', date: inMonth(1989, 3), field: 'technology', summary: 'Tim Berners-Lee’s proposal at CERN, March 1989.', topicIds: [] },
+    { id: 'ev_brexit', title: 'UK votes to leave the EU', date: onDay(2016, 6, 23), field: 'politics', summary: 'Referendum of 23 June 2016.', topicIds: [] },
+    { id: 'ev_drugx', title: '[Demo] Drug X approved', date: inMonth(2018, 3, { method: 'community' }), field: 'medicine', summary: 'A fictional drug used to demo trust weighting.', topicIds: ['t_drugx'] },
+    { id: 'ev_covid', title: 'COVID-19 declared a pandemic', date: onDay(2020, 3, 11), field: 'medicine', summary: 'WHO declaration, 11 March 2020.', topicIds: [] },
+    { id: 'ev_platform', title: 'Infinity Timeline launches', date: inMonth(2026, 7, { method: 'community' }), field: 'culture', summary: 'This platform — its funding is on the timeline too.', topicIds: [] },
   ],
 
   topics: [
+    // A date dispute: `dateOf` means the claims below each propose a date for ev_ww2.
+    { id: 't_ww2_start', eventId: 'ev_ww2', dateOf: 'ev_ww2', title: 'When did WW2 actually begin?', claimIds: ['c_start_1939', 'c_start_1937', 'c_start_1931'] },
     { id: 't_ukwin', eventId: 'ev_ww2', title: 'Did the UK “win” WW2 if it lost its empire?', claimIds: ['c_empire', 'c_lost'] },
     { id: 't_churchill', eventId: 'ev_ww2', title: 'Churchill: hero, villain, or both?', claimIds: ['c_leader', 'c_bengal', 'c_villain'] },
     { id: 't_moon', eventId: 'ev_moon', title: 'Was the Moon landing staged?', claimIds: ['c_staged'] },
@@ -81,6 +96,16 @@ export const seed: Dataset = {
   ],
 
   claims: [
+    // Date-dispute claims: each proposes a start date for WW2 and earns a status from evidence.
+    claim({ id: 'c_start_1939', topicId: 't_ww2_start', text: 'WW2 began on 1 September 1939, when Germany invaded Poland.', claimantId: 'e_histA', agree: { up: 1210, down: 160 },
+      proposedDate: onDay(1939, 9, 1, { sources: ['s24'] }) }),
+    claim({ id: 'c_start_1937', topicId: 't_ww2_start', text: 'WW2 began on 7 July 1937, when full-scale war between Japan and China broke out.', claimantId: 'e_histB', agree: { up: 380, down: 290 },
+      proposedDate: onDay(1937, 7, 7, { sources: ['s22', 's25'] }),
+      steelman: 'The Sino-Japanese war merged into the wider war without a break; starting the clock in Europe reflects a Eurocentric view.',
+      falsifiableBy: 'Evidence that participants at the time treated the Asian and European wars as separate conflicts until December 1941.' }),
+    claim({ id: 'c_start_1931', topicId: 't_ww2_start', text: 'WW2 really began with Japan’s invasion of Manchuria in September 1931.', claimantId: 'e_user', agree: { up: 95, down: 260 },
+      proposedDate: inMonth(1931, 9, { method: 'community', sources: ['s23'] }) }),
+
     claim({ id: 'c_empire', topicId: 't_ukwin', text: 'The British Empire largely dissolved in the decades after 1945.', claimantId: 'e_histA', agree: { up: 812, down: 41 } }),
     claim({ id: 'c_lost', topicId: 't_ukwin', text: 'The UK effectively lost WW2.', claimantId: 'e_user', agree: { up: 233, down: 590 },
       steelman: 'Britain ended the war bankrupt, dependent on US loans, and lost its empire and superpower status within a generation — by long-run outcomes it lost.',
@@ -104,6 +129,7 @@ export const seed: Dataset = {
       statusHistory: [{ at: 2019.1, status: 'Fringe' }, { at: 2021.5, status: 'Contested' }, { at: 2024.2, status: 'Established' }] }),
   ],
 
+  // Papers, books, documents and posts. All demo placeholders here.
   sources: [
     src({ id: 's1', title: '[Demo] The End of Empire, 1945–1980', type: 'book', publishedAt: 2005, authorIds: ['e_histA'], institutionId: 'e_press', funderIds: ['e_uni'] }),
     src({ id: 's2', title: '[Demo] Decolonisation timelines: a dataset', type: 'peer_reviewed', publishedAt: 2014, authorIds: ['e_histA'], institutionId: 'e_uni', funderIds: ['e_gov'] }),
@@ -125,8 +151,15 @@ export const seed: Dataset = {
     src({ id: 's18', title: '[Demo] Meta-analysis of Drug X outcomes', type: 'meta_analysis', publishedAt: 2023, authorIds: ['e_drC'], institutionId: 'e_uni', funderIds: ['e_gov'] }),
     src({ id: 's19', title: '[Demo] Leaked trial documents investigation', type: 'journalism', publishedAt: 2019, authorIds: ['e_journo'], funderIds: [] }),
     src({ id: 's20', title: '[Demo] Regulator inspection report on Drug X trial', type: 'primary_document', publishedAt: 2024, authorIds: [], funderIds: ['e_gov'] }),
+    // Sources for the "When did WW2 begin?" date dispute.
+    src({ id: 's21', title: '[Demo] Europe goes to war: the diplomacy of 1939', type: 'book', publishedAt: 2001, authorIds: ['e_histA'], institutionId: 'e_press', funderIds: ['e_uni'] }),
+    src({ id: 's22', title: '[Demo] The first front: China and the global war', type: 'peer_reviewed', publishedAt: 2013, authorIds: ['e_histB'], institutionId: 'e_uni', funderIds: ['e_gov'] }),
+    src({ id: 's23', title: '[Demo] Forum post: “It all started in Manchuria”', type: 'social_post', publishedAt: 2022, authorIds: ['e_user'], funderIds: [] }),
+    src({ id: 's24', title: '[Demo] Declarations of war, September 1939', type: 'primary_document', publishedAt: 1939.7, authorIds: [], funderIds: ['e_gov'] }),
+    src({ id: 's25', title: '[Demo] A military chronology of East Asia, 1931–1945', type: 'peer_reviewed', publishedAt: 2017, authorIds: ['e_histA'], institutionId: 'e_uni', funderIds: ['e_gov'] }),
   ],
 
+  // Evidence links a source to a claim. Arguments: id, claim, source, for/against, relevance 0..1, note, well-sourced up/down votes.
   evidence: [
     ev('x1', 'c_empire', 's1', 'for', 0.9, 'Narrative history of decolonisation.'),
     ev('x2', 'c_empire', 's2', 'for', 0.9, 'Dataset of independence dates.'),
@@ -166,8 +199,18 @@ export const seed: Dataset = {
     ev('x27', 'c_hidden', 's17', 'for', 0.8, 'Higher adverse-event rate on replication.'),
     ev('x28', 'c_hidden', 's20', 'for', 1, 'Regulator confirms under-reporting.', 60, 3),
     ev('x29', 'c_hidden', 's15', 'against', 0.6, 'Original trial reported few adverse events.', 5, 40),
+
+    // "When did WW2 begin?" — both main dates have real support, so both stay Contested.
+    ev('x30', 'c_start_1939', 's24', 'for', 1, 'Britain and France declare war on Germany within days.', 40, 2),
+    ev('x31', 'c_start_1939', 's21', 'for', 0.8, 'Standard European chronology.'),
+    ev('x32', 'c_start_1939', 's22', 'against', 0.8, 'The war in China was already under way and later merged with it.'),
+    ev('x33', 'c_start_1937', 's22', 'for', 0.9, 'Argues the Asian war is the same conflict.'),
+    ev('x34', 'c_start_1937', 's25', 'for', 0.8, 'Continuous fighting from 1937 to 1945.'),
+    ev('x35', 'c_start_1937', 's21', 'against', 0.8, 'Contemporaries saw separate regional wars until 1941.', 25, 6),
+    ev('x36', 'c_start_1931', 's23', 'for', 0.4, 'Opinion; no new evidence.', 5, 20),
   ],
 
+  // Saved AI answers about claims, with other users' attempts to reproduce them.
   aiSnapshots: [
     { id: 'ai1', claimId: 'c_lost', provider: 'Demo AI Lab A', model: 'demo-model-1', askedAt: '2025-03-14T09:12:00Z',
       prompts: ['Did the UK lose WW2?'], output: '[Demo output] No — the UK was among the victorious Allies, though the war left it economically weakened.',
@@ -186,6 +229,7 @@ export const seed: Dataset = {
       submittedBy: 'user12', reproductions: [{ by: 'user42', at: '2025-02-11T12:00:00Z', result: 'match' }] },
   ],
 
+  // Public opinion over time. FICTIONAL numbers — never present these as real polls.
   opinions: [
     { id: 'o1', topicId: 't_ukwin', title: '[DEMO DATA] Agree: “Britain won the war but lost the peace”', unit: '%', demo: true,
       points: [1950, 1957, 1965, 1975, 1985, 1995, 2005, 2016, 2020, 2025].map((at, i) => ({ at, value: [18, 31, 35, 44, 41, 38, 40, 52, 55, 58][i], source: 'Fictional demo poll' })),

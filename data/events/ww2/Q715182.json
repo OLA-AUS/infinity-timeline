@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q715182",
+  "title": "Battle of Salla",
+  "summary": "1939 battle of the Winter War",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.912329,
+    "latest": 1939.915068,
+    "best": 1939.913699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q715182"
+    ]
+  },
+  "end": {
+    "earliest": 1940.15847,
+    "latest": 1940.161202,
+    "best": 1940.159836,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q715182"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q715182",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Salla_(1939)",
+    "manualEdits": false
+  }
+}

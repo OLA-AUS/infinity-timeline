@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2219890",
+  "title": "Siege of Calais",
+  "summary": "1940 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.387978,
+    "latest": 1940.39071,
+    "best": 1940.389344,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2219890"
+    ]
+  },
+  "end": {
+    "earliest": 1940.398907,
+    "latest": 1940.401639,
+    "best": 1940.400273,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2219890"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2219890",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Siege_of_Calais_(1940)",
+    "manualEdits": false
+  }
+}

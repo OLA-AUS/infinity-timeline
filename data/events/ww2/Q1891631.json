@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1891631",
+  "title": "Battle for The Hague",
+  "summary": "1940 battle in the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.355191,
+    "latest": 1940.357923,
+    "best": 1940.356557,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1891631"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1891631",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Hague_(1940)",
+    "manualEdits": false
+  }
+}

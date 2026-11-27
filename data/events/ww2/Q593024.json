@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q593024",
+  "title": "Sétif and Guelma massacre",
+  "summary": "massacre in Algeria in 1945",
+  "field": "politics",
+  "date": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q593024"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q593024",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/S%C3%A9tif_and_Guelma_massacre",
+    "manualEdits": false
+  }
+}

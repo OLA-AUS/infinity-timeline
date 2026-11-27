@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q934266",
+  "title": "Battle of Kollaa",
+  "summary": "1939 battle of the Winter War",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.931507,
+    "latest": 1939.934247,
+    "best": 1939.932877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q934266"
+    ]
+  },
+  "end": {
+    "earliest": 1940.196721,
+    "latest": 1940.199454,
+    "best": 1940.198087,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q934266"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q934266",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Kollaa",
+    "manualEdits": false
+  }
+}

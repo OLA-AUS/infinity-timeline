@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q155103",
+  "title": "Siege of Budapest",
+  "summary": "Soviet siege of Budapest 1944-1945",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.978142,
+    "latest": 1944.980874,
+    "best": 1944.979508,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q155103"
+    ]
+  },
+  "end": {
+    "earliest": 1945.117808,
+    "latest": 1945.120548,
+    "best": 1945.119178,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q155103"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q155103",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Siege_of_Budapest",
+    "manualEdits": false
+  }
+}

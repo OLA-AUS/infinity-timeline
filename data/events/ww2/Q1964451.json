@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1964451",
+  "title": "Operation Archery",
+  "summary": "1941 British Combined Operations raid during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.986301,
+    "latest": 1941.989041,
+    "best": 1941.987671,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1964451"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1964451",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Archery",
+    "manualEdits": false
+  }
+}

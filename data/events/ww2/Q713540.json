@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q713540",
+  "title": "comfort woman",
+  "summary": "military sexual slavery system designed and implemented by Japan Empire from early 1930s until the end of World War II, or the victims who were forced into sexual slavery by the Japanese military",
+  "field": "politics",
+  "date": {
+    "earliest": 1930,
+    "latest": 1940,
+    "best": 1935,
+    "precision": "decade",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q713540"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q713540",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Comfort_women",
+    "manualEdits": false
+  }
+}

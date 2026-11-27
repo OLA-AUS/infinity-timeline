@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q859612",
+  "title": "Channel Dash",
+  "summary": "1942 German naval operation during the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.117808,
+    "latest": 1942.120548,
+    "best": 1942.119178,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q859612"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q859612",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Channel_Dash",
+    "manualEdits": false
+  }
+}

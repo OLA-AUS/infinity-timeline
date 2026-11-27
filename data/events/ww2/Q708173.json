@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q708173",
+  "title": "Dodecanese Campaign",
+  "summary": "1943 campaign of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.684932,
+    "latest": 1943.687671,
+    "best": 1943.686301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708173"
+    ]
+  },
+  "end": {
+    "earliest": 1943.890411,
+    "latest": 1943.893151,
+    "best": 1943.891781,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q708173"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q708173",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Dodecanese_campaign",
+    "manualEdits": false
+  }
+}

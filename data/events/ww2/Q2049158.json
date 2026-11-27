@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2049158",
+  "title": "USS Panay incident",
+  "summary": "Japanese attack on a US gunboat in 1937",
+  "field": "politics",
+  "date": {
+    "earliest": 1937.945205,
+    "latest": 1937.947945,
+    "best": 1937.946575,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2049158"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2049158",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/USS_Panay_incident",
+    "manualEdits": false
+  }
+}

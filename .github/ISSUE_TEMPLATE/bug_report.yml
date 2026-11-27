@@ -1,0 +1,29 @@
+name: 🐞 Report a bug
+description: Something on the site is broken or behaves strangely.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+      placeholder: "1. Opened the WW2 claim map\n2. Pinched to zoom\n3. The map jumped back to the centre"
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options: [Desktop or laptop, Phone, Tablet]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "e.g. Safari on iOS, Chrome on Windows"
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or console errors
+      description: Drag images in here. For errors, open the browser's developer console and copy any red lines.

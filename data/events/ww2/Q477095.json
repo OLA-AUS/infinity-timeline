@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q477095",
+  "title": "Battle of Suomussalmi",
+  "summary": "1939 battle fought between Finnish and Soviet forces in the Winter War",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.931507,
+    "latest": 1939.934247,
+    "best": 1939.932877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q477095"
+    ]
+  },
+  "end": {
+    "earliest": 1940.019126,
+    "latest": 1940.021858,
+    "best": 1940.020492,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q477095"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q477095",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Suomussalmi",
+    "manualEdits": false
+  }
+}

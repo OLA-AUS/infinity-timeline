@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q328357",
+  "title": "Belgrade offensive",
+  "summary": "1944 Second World War battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.896175,
+    "latest": 1944.898907,
+    "best": 1944.897541,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q328357"
+    ]
+  },
+  "end": {
+    "earliest": 1944.896175,
+    "latest": 1944.898907,
+    "best": 1944.897541,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q328357"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q328357",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Belgrade_offensive",
+    "manualEdits": false
+  }
+}

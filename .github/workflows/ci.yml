@@ -1,0 +1,46 @@
+# Checks every pull request — code changes and data edits alike — before it can be merged.
+# Data problems show up as red notes on the exact file in the pull request's "Files changed" tab.
+name: Check pull request
+
+on:
+  pull_request: # main itself is checked by the deploy workflow
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history, so we can list which data files changed
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check the data files
+        run: npm run validate:data
+      - name: Run tests
+        run: npm test
+      - name: Build (same settings as the live site)
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+      - name: Summarise data changes for reviewers
+        if: github.event_name == 'pull_request'
+        run: |
+          changed=$(git diff --name-status "origin/${{ github.base_ref }}"...HEAD -- data/ || true)
+          {
+            echo "## Data changes in this pull request"
+            if [ -z "$changed" ]; then
+              echo "No files in \`data/\` changed."
+            else
+              echo "| Change | File |"
+              echo "|---|---|"
+              echo "$changed" | awk '{ c = ($1=="A") ? "added" : ($1=="D") ? "removed" : "edited"; print "| " c " | `" $NF "` |" }'
+              echo
+              echo "Reviewers: check each changed date has a source, and that removed files are on an exclude list with a reason."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

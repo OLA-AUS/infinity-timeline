@@ -1,7 +1,12 @@
-// Trust scoring. Every score returns a breakdown so the UI can "Explain" it.
-// See docs/TRUST_MODEL.md.
+// Trust scoring: how much weight to give a person, organisation or source.
+// See docs/TRUST_MODEL.md for the reasoning behind every number here.
+//
+// The golden rule: every score returns its `factors` — a list of "this added +x,
+// that took away −y" — so the UI can show an "Explain" breakdown. If you add a new
+// influence on trust, add it as a factor too. No hidden weights.
 import type { Dataset, Entity, PenaltyType, Source, SourceType, Year } from '../types';
 
+/** One line of an "Explain" breakdown: what it is, and how many points it added or removed. */
 export interface Factor {
   label: string;
   delta: number;
@@ -12,13 +17,14 @@ export interface TrustResult {
   factors: Factor[];
 }
 
+/** Every tunable knob. Changing the defaults is a governance decision (docs/GOVERNANCE.md). */
 export interface TrustOptions {
-  now: Year;
-  baseline: number;
-  halfLifeYears: number;
+  now: Year; // "today", so old penalties can fade
+  baseline: number; // where everyone starts (50/100)
+  halfLifeYears: number; // a penalty counts half as much after this many years
   damping: number; // how much funders' trust bleeds into recipients
-  maxDepth: number;
-  unknownFundingPenalty: number;
+  maxDepth: number; // how many funding hops to follow
+  unknownFundingPenalty: number; // points lost when we don't know who paid for a source
 }
 
 export const DEFAULT_TRUST: TrustOptions = {
@@ -30,6 +36,7 @@ export const DEFAULT_TRUST: TrustOptions = {
   unknownFundingPenalty: 3,
 };
 
+/** How seriously each kind of penalty counts. Fraud counts more than a warning. */
 export const PENALTY_WEIGHT: Record<PenaltyType, number> = {
   criminal_fraud: 1.5,
   civil_settlement: 1.0,
@@ -38,12 +45,14 @@ export const PENALTY_WEIGHT: Record<PenaltyType, number> = {
   retraction: 1.2,
 };
 
+/** How much each kind of source is worth on its own (1 = best). Multiplies source trust. */
 export const SOURCE_TYPE_QUALITY: Record<SourceType, number> = {
   meta_analysis: 1.0,
   rct: 0.95,
   primary_document: 0.9,
   peer_reviewed: 0.85,
   book: 0.7,
+  reference_work: 0.6, // encyclopedias / Wikidata: useful, but check the primary source
   journalism: 0.6,
   preprint: 0.55,
   op_ed: 0.35,
@@ -53,6 +62,7 @@ export const SOURCE_TYPE_QUALITY: Record<SourceType, number> = {
 const clamp = (n: number, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, n));
 const round = (n: number) => Math.round(n * 10) / 10;
 
+/** 1 for something that happened today, 0.5 after one half-life, 0.25 after two... */
 export function recencyDecay(at: Year, opts: TrustOptions): number {
   const yearsAgo = Math.max(0, opts.now - at);
   return Math.pow(0.5, yearsAgo / opts.halfLifeYears);
@@ -64,7 +74,10 @@ export function penaltySeverity(amountUSD: number, type: PenaltyType, at: Year, 
   return base * PENALTY_WEIGHT[type] * recencyDecay(at, opts) * 2;
 }
 
-/** An entity's own trust, before funders are blended in. */
+/**
+ * An entity's own trust, before funders are blended in:
+ * baseline − penalties − undisclosed funding − retracted work, clamped to 0–100.
+ */
 export function ownTrust(entity: Entity, data: Dataset, opts: TrustOptions = DEFAULT_TRUST): TrustResult {
   const factors: Factor[] = [{ label: 'Baseline', delta: opts.baseline }];
 
@@ -102,10 +115,12 @@ export function effectiveTrust(
   if (!entity) return { score: opts.baseline, factors: [{ label: 'Unknown entity', delta: opts.baseline }] };
 
   const own = ownTrust(entity, data, opts);
+  // Funders we're not already visiting (that's the cycle protection: A funds B funds A).
   const edges = data.funding.filter((f) => f.recipientId === entityId && !visiting.has(f.funderId));
   if (depth >= opts.maxDepth || edges.length === 0) return own;
 
   visiting.add(entityId);
+  // Average the funders' trust, weighted by how much of the money each one gave.
   const totalShare = edges.reduce((a, e) => a + (e.share ?? 1 / edges.length), 0) || 1;
   let funderAvg = 0;
   for (const e of edges) {
@@ -122,7 +137,11 @@ export function effectiveTrust(
   };
 }
 
-/** Source trust combines authors, institution, funders, type, COI and retraction. */
+/**
+ * Source trust: a weighted average of the people behind it (authors 35%, institution 25%,
+ * funders 40%), scaled by the source type's quality, then adjusted for unknown funding,
+ * conflicts of interest and retraction.
+ */
 export function sourceTrust(source: Source, data: Dataset, opts: TrustOptions = DEFAULT_TRUST): TrustResult {
   const parts: { label: string; score: number; weight: number }[] = [];
   for (const a of source.authorIds) {
@@ -165,6 +184,7 @@ export function sourceTrust(source: Source, data: Dataset, opts: TrustOptions = 
   return { score: round(clamp(score)), factors };
 }
 
+/** 1_200_000_000 → "1.2B". */
 export function formatMoney(n: number): string {
   if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
   if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;

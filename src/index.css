@@ -1,3 +1,6 @@
+/* All styles for the app. Sections: base · HUD · 3D labels · claim map · dates · panel · mobile.
+   Colours that mean something (status, field, disputed) are defined in TypeScript
+   (src/lib/status.ts, src/lib/time.ts) so the 3D scene and the page always match. */
 :root {
   --bg: #05070f;
   --panel: rgba(12, 17, 32, 0.94);
@@ -37,7 +40,14 @@ button:hover { background: #24304d; }
 .ev-label em { color: #f5b83d; font-style: normal; font-weight: 400; }
 .en-label { white-space: nowrap; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #1d1a08ee; border: 1px solid #ffe06688; }
 .en-label span { color: var(--muted); }
+.ev-label em.disputed { color: #f5b83d; font-weight: 600; }
+.ev-label.imported { font-size: 12px; border-color: #ff7a5966; }
 .tick { color: #4d5875; font-size: 22px; font-weight: 700; white-space: nowrap; }
+/* Legend swatches for uncertain / disputed date spans on the river. */
+.lanes i.span-swatch { width: 22px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, transparent, #9fd3ff, transparent); }
+.lanes i.span-swatch.disputed { background: repeating-linear-gradient(90deg, #f5b83d 0 4px, #f5b83d55 4px 8px); }
+.toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; text-transform: none; }
+.toggle input { accent-color: var(--accent); margin: 0; }
 
 /* Claim map */
 .map-overlay { z-index: 10; position: absolute; inset: 0; background: radial-gradient(ellipse at center, #0c1428f2, #05070ff8); display: flex; flex-direction: column; animation: fadein 0.35s ease; }
@@ -47,13 +57,18 @@ button:hover { background: #24304d; }
 .crumbs button { font-size: 12px; background: transparent; }
 .crumbs button.active { background: #24304d; border-color: var(--accent); }
 .map-body { flex: 1; display: grid; grid-template-columns: 1fr 400px; min-height: 0; }
-.map-svg { width: 100%; height: 100%; }
-.map-node { cursor: pointer; }
+/* The map canvas: an SVG you can drag and pinch. touch-action: none hands gestures to our code. */
+.map-canvas { position: relative; min-height: 0; min-width: 0; overflow: hidden; }
+.map-svg { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.map-svg:active { cursor: grabbing; }
+.map-node { cursor: pointer; outline: none; }
 .map-node circle { transition: transform 0.2s; transform-box: fill-box; transform-origin: center; }
-.map-node:hover circle { transform: scale(1.08); }
-.node-text { display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 11px; line-height: 1.25; }
-.node-text small { margin-top: 2px; font-size: 10px; text-transform: capitalize; }
-.node-text.center { height: 100%; justify-content: center; font-size: 11.5px; }
+.map-node:hover circle, .map-node:focus-visible circle { transform: scale(1.08); }
+.map-node:focus-visible rect { stroke: var(--accent); stroke-width: 2; }
+.node-text { fill: var(--text); pointer-events: none; }
+.zoom-controls { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; }
+.zoom-controls button { width: 36px; height: 36px; padding: 0; font-size: 18px; line-height: 1; background: #1a2238dd; }
+.map-help { position: absolute; bottom: 6px; left: 0; right: 0; margin: 0; text-align: center; font-size: 11px; color: var(--muted); pointer-events: none; }
 .map-side { overflow-y: auto; padding: 16px; border-left: 1px solid var(--line); background: #080c18cc; }
 .map-side h4, .panel h4 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; }
@@ -85,10 +100,29 @@ button:hover { background: #24304d; }
 .demo-flag.red { color: #ff5c6c; border-color: #ff5c6c; }
 .demo-flag.amber { color: #ffcc00; border-color: #ffcc00; }
 
+/* Dates: the "When" box beside events, and proposed dates on claims */
+.date-box { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px 10px; margin: 12px 0; }
+.date-box.disputed { border-color: #f5b83d88; box-shadow: 0 0 18px #f5b83d22 inset; }
+.date-box h4 { margin-top: 4px !important; }
+.date-main { font-size: 18px; font-weight: 700; }
+.date-facts { list-style: none; padding: 0; margin: 6px 0; font-size: 12.5px; color: #c9d2e6; }
+.date-facts li { margin: 2px 0; }
+.date-facts a { margin-right: 8px; }
+.contenders { list-style: none; padding: 0; margin: 6px 0; font-size: 12.5px; }
+.contenders li { margin: 4px 0; }
+.contenders small { color: var(--muted); }
+.status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.date-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; font-size: 13px; }
+.pill { font-size: 10px; border-radius: 999px; padding: 1px 7px; margin-left: 6px; vertical-align: 1px; letter-spacing: 0.04em; }
+.pill.amber { color: #05070f; background: #f5b83d; }
+.small { font-size: 12.5px; }
+.amber { color: #f5b83d; }
+
 /* Source / entity panel */
 .panel { position: absolute; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100%; background: var(--panel); border-left: 1px solid var(--line); padding: 18px; overflow-y: auto; z-index: 20; animation: slidein 0.25s ease; backdrop-filter: blur(8px); }
 @keyframes slidein { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 .panel .close { position: absolute; top: 12px; right: 12px; }
+.map-header .close { white-space: nowrap; align-self: flex-start; }
 .panel h3 { margin: 4px 40px 6px 0; }
 .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 .panel section a { display: inline-block; margin-right: 10px; }
@@ -108,8 +142,12 @@ ul.plain li { margin-bottom: 4px; }
   .year { font-size: 30px; }
   .brand { font-size: 14px; }
   .demo-tag { display: none; }
-  .map-body { grid-template-columns: 1fr; grid-template-rows: 55% 45%; }
-  .map-side { border-left: none; border-top: 1px solid var(--line); }
+  .map-body { grid-template-columns: 1fr; grid-template-rows: 60% 40%; }
+  .map-side { border-left: none; border-top: 1px solid var(--line); font-size: 15px; }
+  .zoom-controls button { width: 44px; height: 44px; font-size: 22px; } /* thumb-sized */
+  .map-help { font-size: 13px; }
+  .crumbs button { font-size: 13px; padding: 6px 10px; }
+  .date-main { font-size: 20px; }
   .panel { width: 100%; top: 30%; border-left: none; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; }
 }
 

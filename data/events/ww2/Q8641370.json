@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q8641370",
+  "title": "Operation Overlord",
+  "summary": "1944 Allied liberation of German-occupied France during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.428962,
+    "latest": 1944.431694,
+    "best": 1944.430328,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q8641370"
+    ]
+  },
+  "end": {
+    "earliest": 1944.647541,
+    "latest": 1944.663934,
+    "best": 1944.648907,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q8641370"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q8641370",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Overlord",
+    "manualEdits": false
+  }
+}

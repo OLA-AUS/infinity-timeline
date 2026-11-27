@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q490035",
+  "title": "Greek Resistance",
+  "summary": "World War II resistance movement",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.246575,
+    "latest": 1941.328767,
+    "best": 1941.287671,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q490035"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q490035",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Greek_resistance",
+    "manualEdits": false
+  }
+}

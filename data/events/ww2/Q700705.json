@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700705",
+  "title": "Battle of Saipan",
+  "summary": "1944 battle of the Pacific campaign of World War II on the island of Saipan in the Mariana Islands",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.453552,
+    "latest": 1944.456284,
+    "best": 1944.454918,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700705"
+    ]
+  },
+  "end": {
+    "earliest": 1944.519126,
+    "latest": 1944.521858,
+    "best": 1944.520492,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700705"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700705",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Saipan",
+    "manualEdits": false
+  }
+}

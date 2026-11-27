@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1970005",
+  "title": "Battle of Keren",
+  "summary": "1941 battle in Africa",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.09589,
+    "latest": 1941.09863,
+    "best": 1941.09726,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1970005"
+    ]
+  },
+  "end": {
+    "earliest": 1941.246575,
+    "latest": 1941.249315,
+    "best": 1941.247945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1970005"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1970005",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Keren",
+    "manualEdits": false
+  }
+}

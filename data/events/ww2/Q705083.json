@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q705083",
+  "title": "Raid at Cabanatuan",
+  "summary": "rescue of Allied prisoners of World War II in Cabanatuan, Philippines",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.079452,
+    "latest": 1945.082192,
+    "best": 1945.080822,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q705083"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q705083",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Raid_at_Cabanatuan",
+    "manualEdits": false
+  }
+}

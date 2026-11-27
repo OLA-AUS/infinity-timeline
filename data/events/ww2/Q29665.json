@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q29665",
+  "title": "Einsatzgruppen Trial",
+  "summary": "ninth in the series of twelve Nuremberg Military Tribunals",
+  "field": "politics",
+  "date": {
+    "earliest": 1947.70411,
+    "latest": 1947.706849,
+    "best": 1947.705479,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q29665"
+    ]
+  },
+  "end": {
+    "earliest": 1948.273224,
+    "latest": 1948.275956,
+    "best": 1948.27459,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q29665"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q29665",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Einsatzgruppen_trial",
+    "manualEdits": false
+  }
+}

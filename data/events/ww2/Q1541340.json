@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1541340",
+  "title": "Battle of Cape Spartivento",
+  "summary": "1940 naval battle during the battle of the Mediterranean",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.904372,
+    "latest": 1940.907104,
+    "best": 1940.905738,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1541340"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1541340",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Cape_Spartivento",
+    "manualEdits": false
+  }
+}

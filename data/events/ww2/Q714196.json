@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714196",
+  "title": "Spring 1945 offensive in Italy",
+  "summary": "1945 Allied attack into the Lombardy Plain during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.260274,
+    "latest": 1945.263014,
+    "best": 1945.261644,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714196"
+    ]
+  },
+  "end": {
+    "earliest": 1945.331507,
+    "latest": 1945.334247,
+    "best": 1945.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714196"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714196",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Spring_1945_offensive_in_Italy",
+    "manualEdits": false
+  }
+}

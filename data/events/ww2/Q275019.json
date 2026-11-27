@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q275019",
+  "title": "Battle of Smolensk",
+  "summary": "recapture of the city by the Soviet 39th, 43rd and 10th Guards armies",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.59726,
+    "latest": 1943.6,
+    "best": 1943.59863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q275019"
+    ]
+  },
+  "end": {
+    "earliest": 1943.750685,
+    "latest": 1943.753425,
+    "best": 1943.752055,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q275019"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q275019",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Smolensk_operation",
+    "manualEdits": false
+  }
+}

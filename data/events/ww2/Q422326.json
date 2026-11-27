@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q422326",
+  "title": "Operation Bernhard",
+  "summary": "exercise by the Nazis to forge British bank notes",
+  "field": "politics",
+  "date": {
+    "earliest": 1942,
+    "latest": 1943,
+    "best": 1942.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q422326"
+    ]
+  },
+  "end": {
+    "earliest": 1945,
+    "latest": 1946,
+    "best": 1945.5,
+    "precision": "year",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q422326"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q422326",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Bernhard",
+    "manualEdits": false
+  }
+}

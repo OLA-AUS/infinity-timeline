@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q134301",
+  "title": "Katyn massacre",
+  "summary": "Soviet massacre of Polish military officers and intelligentsia in 1940",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.248634,
+    "latest": 1940.330601,
+    "best": 1940.289617,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q134301"
+    ]
+  },
+  "end": {
+    "earliest": 1940.330601,
+    "latest": 1940.415301,
+    "best": 1940.372951,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q134301"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q134301",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Katyn_massacre",
+    "manualEdits": false
+  }
+}

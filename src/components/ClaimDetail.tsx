@@ -1,7 +1,11 @@
+// The side panel for one claim: its earned status (and why), its evidence with
+// "well sourced" voting, the separate "do you agree?" opinion vote, steelman,
+// falsifiability, status history and AI snapshots.
 import type { Dataset } from '../types';
 import { claimStatus, STATUS_COLOR } from '../lib/status';
-import { formatYear } from '../lib/time';
+import { formatDate, formatYear } from '../lib/dates';
 import { AISnapshots } from './AISnapshots';
+import { DateFacts } from './DateExplain';
 
 interface Props {
   data: Dataset;
@@ -24,6 +28,7 @@ export function ClaimDetail({ data, claimId, onOpenSource, onOpenEntity, onVote 
         Claimed by <a onClick={() => claimant && onOpenEntity(claimant.id)}>{claimant?.name}</a>
       </p>
 
+      {/* Status comes from evidence only. The bar shows weighted support vs opposition. */}
       <section className="status-box" style={{ borderColor: STATUS_COLOR[st.status] }}>
         <div className="status-pill" style={{ background: STATUS_COLOR[st.status] }}>{st.status}</div>
         <p>{st.reason}</p>
@@ -34,6 +39,16 @@ export function ClaimDetail({ data, claimId, onOpenSource, onOpenEntity, onVote 
         <small>Weighted support {st.support.toFixed(2)} vs opposition {st.oppose.toFixed(2)} — status comes from evidence only.</small>
       </section>
 
+      {/* Claims in a date dispute propose a date; show how sure that proposal is. */}
+      {c.proposedDate && (
+        <section className="date-box">
+          <h4>Proposed date</h4>
+          <div className="date-main">{formatDate(c.proposedDate)}</div>
+          <DateFacts date={c.proposedDate} data={data} onOpenSource={onOpenSource} />
+        </section>
+      )}
+
+      {/* Each row: direction, source, the weight maths, and the well-sourced vote buttons. */}
       <section>
         <h4>Evidence — is it well sourced?</h4>
         <table className="ev-table">
@@ -49,8 +64,8 @@ export function ClaimDetail({ data, claimId, onOpenSource, onOpenEntity, onVote 
                     <small>trust {Math.round(w.sourceTrust)} × relevance {w.evidence.relevance} × votes ×{w.voteFactor.toFixed(2)} = <b>{w.weight.toFixed(2)}</b></small>
                   </td>
                   <td className="votes">
-                    <button onClick={() => onVote('well_sourced', w.evidence.id, 1)}>👍 {w.evidence.wellSourced.up}</button>
-                    <button onClick={() => onVote('well_sourced', w.evidence.id, -1)}>👎 {w.evidence.wellSourced.down}</button>
+                    <button onClick={() => onVote('well_sourced', w.evidence.id, 1)} aria-label="Well sourced">👍 {w.evidence.wellSourced.up}</button>
+                    <button onClick={() => onVote('well_sourced', w.evidence.id, -1)} aria-label="Not well sourced">👎 {w.evidence.wellSourced.down}</button>
                   </td>
                 </tr>
               );
@@ -59,6 +74,7 @@ export function ClaimDetail({ data, claimId, onOpenSource, onOpenEntity, onVote 
         </table>
       </section>
 
+      {/* Opinion is a separate signal: shown and graphed, but never changes status. */}
       <section>
         <h4>Public opinion — do you agree?</h4>
         <div className="agree-row">
@@ -76,6 +92,7 @@ export function ClaimDetail({ data, claimId, onOpenSource, onOpenEntity, onVote 
         <section><h4>What would prove it wrong?</h4><p>{c.falsifiableBy}</p></section>
       )}
 
+      {/* Past statuses plus today's, so you can see how the evidence has swung. */}
       {c.statusHistory && (
         <section>
           <h4>How the status has swung</h4>

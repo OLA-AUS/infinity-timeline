@@ -1,0 +1,55 @@
+# OPTIONAL: publishes the site to GitHub Pages. The live site is hosted on Render, which
+# builds `main` by itself, so this only runs when started by hand (Actions tab → this
+# workflow → "Run workflow"). Useful for a fork, or as a backup mirror.
+# Before the first run: repo Settings → Pages → "Build and deployment" → Source: GitHub Actions.
+# To deploy on every push to main instead, add under `on:`
+#   push:
+#     branches: [main]
+name: Deploy to GitHub Pages (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write # publish to Pages
+  id-token: write # prove to Pages that this workflow is allowed to publish
+
+# Never run two deploys at once; let a running deploy finish rather than cancelling it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check the data files
+        run: npm run validate:data
+      - name: Run tests
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          # Project sites live under /<repo-name>/, so asset URLs need that prefix.
+          BASE_PATH: /${{ github.event.repository.name }}/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

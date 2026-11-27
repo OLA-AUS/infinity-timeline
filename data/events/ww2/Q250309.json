@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q250309",
+  "title": "Battle of Tarawa",
+  "summary": "battle in the Pacific Theater of World War II, at the Tarawa Atoll in the Gilbert Islands",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.884932,
+    "latest": 1943.887671,
+    "best": 1943.886301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q250309"
+    ]
+  },
+  "end": {
+    "earliest": 1943.893151,
+    "latest": 1943.89589,
+    "best": 1943.894521,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q250309"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q250309",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Tarawa",
+    "manualEdits": false
+  }
+}

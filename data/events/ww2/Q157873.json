@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q157873",
+  "title": "Third Battle of Kharkiv",
+  "summary": "1943 series of battles on the Eastern Front of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.134247,
+    "latest": 1943.136986,
+    "best": 1943.135616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q157873"
+    ]
+  },
+  "end": {
+    "earliest": 1943.2,
+    "latest": 1943.20274,
+    "best": 1943.20137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q157873"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q157873",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Third_Battle_of_Kharkov",
+    "manualEdits": false
+  }
+}

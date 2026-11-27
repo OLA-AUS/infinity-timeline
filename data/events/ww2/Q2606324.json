@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2606324",
+  "title": "Raid on Alexandria",
+  "summary": "Italian frogman raid on British warships in Alexandria in 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.964384,
+    "latest": 1941.967123,
+    "best": 1941.965753,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2606324"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2606324",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Raid_on_Alexandria_(1941)",
+    "manualEdits": false
+  }
+}

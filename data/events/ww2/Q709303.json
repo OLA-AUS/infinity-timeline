@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709303",
+  "title": "Battle of Changsha",
+  "summary": "1942 battle of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.038356,
+    "latest": 1942.041096,
+    "best": 1942.039726,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709303"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709303",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Changsha_(1941%E2%80%931942)",
+    "manualEdits": false
+  }
+}

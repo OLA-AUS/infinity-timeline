@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1497996",
+  "title": "Battle of Tulagi and Gavutu–Tanambogo",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.59726,
+    "latest": 1942.6,
+    "best": 1942.59863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1497996"
+    ]
+  },
+  "end": {
+    "earliest": 1942.60274,
+    "latest": 1942.605479,
+    "best": 1942.60411,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1497996"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1497996",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Tulagi_and_Gavutu%E2%80%93Tanambogo",
+    "manualEdits": false
+  }
+}

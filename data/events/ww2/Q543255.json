@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q543255",
+  "title": "Battle of Taranto",
+  "summary": "1940 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.860656,
+    "latest": 1940.863388,
+    "best": 1940.862022,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q543255"
+    ]
+  },
+  "end": {
+    "earliest": 1940.863388,
+    "latest": 1940.86612,
+    "best": 1940.864754,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q543255"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q543255",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Taranto",
+    "manualEdits": false
+  }
+}

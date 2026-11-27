@@ -6,7 +6,11 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "validate:data": "node scripts/validate-data.mjs",
+    "import:ww2": "node scripts/import-wikidata-ww2.mjs",
+    "check": "npm run validate:data && npm test && npm run build",
+    "date": "node scripts/make-date.mjs"
   },
   "license": "AGPL-3.0-or-later",
   "dependencies": {
@@ -26,5 +30,8 @@
     "vitest": "^2.1.9"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
 }

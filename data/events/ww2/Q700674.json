@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q700674",
+  "title": "Operation Cobra",
+  "summary": "1944 World War II battle in France",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.562842,
+    "latest": 1944.565574,
+    "best": 1944.564208,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700674"
+    ]
+  },
+  "end": {
+    "earliest": 1944.579235,
+    "latest": 1944.581967,
+    "best": 1944.580601,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q700674"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q700674",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Cobra",
+    "manualEdits": false
+  }
+}

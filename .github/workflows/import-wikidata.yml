@@ -1,0 +1,59 @@
+# Re-runs the Wikidata WW2 importer once a month and opens a pull request with any changes,
+# so imported data is reviewed like every other edit. Never pushes to main directly.
+#
+# One-time setup:
+#   • Settings → Actions → General → Workflow permissions →
+#     tick "Allow GitHub Actions to create and approve pull requests".
+#   • Optional: Settings → Secrets and variables → Actions → Variables →
+#     WIKIDATA_USER_AGENT = "your-project/1.0 (contact@example.org)" (Wikimedia asks for contact details).
+# Note: pull requests opened by this workflow don't trigger other workflows (a GitHub rule),
+# so the checks run here, before the pull request is opened.
+name: Import from Wikidata
+
+on:
+  schedule:
+    - cron: '0 3 1 * *' # 03:00 UTC on the 1st of each month
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: How many events to import
+        default: '250'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Import
+        run: npm run import:ww2 -- --limit "${{ github.event.inputs.limit || '250' }}"
+        env:
+          WIKIDATA_USER_AGENT: ${{ vars.WIKIDATA_USER_AGENT }}
+      - name: Check
+        run: npm run validate:data && npm test
+      - name: Open a pull request if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain data/)" ]; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          branch="data/wikidata-ww2-$(date -u +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data/
+          git commit -m "Data: refresh WW2 events from Wikidata"
+          git push -u origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "Data: refresh WW2 events from Wikidata ($(date -u +%Y-%m-%d))" \
+            --body "Automatic monthly re-import from Wikidata (\`npm run import:ww2\`). Files marked \`manualEdits: true\` were left alone. Please spot-check changed dates against their Wikidata items before merging."

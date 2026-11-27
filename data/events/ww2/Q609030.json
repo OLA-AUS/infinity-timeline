@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q609030",
+  "title": "Battle of Peleliu",
+  "summary": "1944 battle between the United States and the Empire of Japan in the Pacific Theater of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.904372,
+    "latest": 1944.907104,
+    "best": 1944.905738,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q609030"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q609030",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Peleliu",
+    "manualEdits": false
+  }
+}

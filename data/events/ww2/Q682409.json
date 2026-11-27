@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q682409",
+  "title": "Siege of Odesa 1941",
+  "summary": "1941 siege",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.6,
+    "latest": 1941.60274,
+    "best": 1941.60137,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q682409"
+    ]
+  },
+  "end": {
+    "earliest": 1941.789041,
+    "latest": 1941.791781,
+    "best": 1941.790411,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q682409"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q682409",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Siege_of_Odessa",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q695943",
+  "title": "Battle of Voronezh",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.487671,
+    "latest": 1942.490411,
+    "best": 1942.489041,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q695943"
+    ]
+  },
+  "end": {
+    "earliest": 1942.558904,
+    "latest": 1942.561644,
+    "best": 1942.560274,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q695943"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q695943",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Voronezh_(1942)",
+    "manualEdits": false
+  }
+}

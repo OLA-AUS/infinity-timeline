@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q7879625",
+  "title": "Battle of the Seelow Heights",
+  "summary": "1945 engagement between German and Soviet forces during World War Two",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.287671,
+    "latest": 1945.290411,
+    "best": 1945.289041,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q7879625"
+    ]
+  },
+  "end": {
+    "earliest": 1945.29589,
+    "latest": 1945.29863,
+    "best": 1945.29726,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q7879625"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q7879625",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Seelow_Heights",
+    "manualEdits": false
+  }
+}

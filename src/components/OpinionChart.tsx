@@ -1,6 +1,9 @@
+// A small line chart of public opinion over time, with related events marked as
+// dashed lines. It shows correlation only — causal claims belong in the claim map.
 import type { Dataset, OpinionSeries } from '../types';
 import { formatYear } from '../lib/time';
 
+// Chart size and padding, in SVG units (the SVG scales to fit its column).
 const W = 340;
 const H = 180;
 const P = { l: 30, r: 10, t: 14, b: 24 };
@@ -9,10 +12,11 @@ export function OpinionChart({ series, data }: { series: OpinionSeries; data: Da
   const xs = series.points.map((p) => p.at);
   const x0 = Math.min(...xs);
   const x1 = Math.max(...xs);
+  // Map a year / percentage to chart coordinates.
   const sx = (x: number) => P.l + ((x - x0) / Math.max(1, x1 - x0)) * (W - P.l - P.r);
   const sy = (y: number) => H - P.b - (y / 100) * (H - P.t - P.b);
   const d = series.points.map((p, i) => `${i ? 'L' : 'M'}${sx(p.at)},${sy(p.value)}`).join(' ');
-  const events = series.linkedEventIds.map((id) => data.events.find((e) => e.id === id)!).filter((e) => e && e.at >= x0 && e.at <= x1);
+  const events = series.linkedEventIds.map((id) => data.events.find((e) => e.id === id)!).filter((e) => e && e.date.best >= x0 && e.date.best <= x1);
 
   return (
     <section className="chart">
@@ -28,8 +32,8 @@ export function OpinionChart({ series, data }: { series: OpinionSeries; data: Da
         ))}
         {events.map((e) => (
           <g key={e.id}>
-            <line x1={sx(e.at)} x2={sx(e.at)} y1={P.t} y2={H - P.b} stroke="#f5b83d" strokeDasharray="3 3" strokeOpacity={0.7} />
-            <text x={sx(e.at) + 2} y={P.t + 8} fontSize="8" fill="#f5b83d">{e.title.slice(0, 18)}</text>
+            <line x1={sx(e.date.best)} x2={sx(e.date.best)} y1={P.t} y2={H - P.b} stroke="#f5b83d" strokeDasharray="3 3" strokeOpacity={0.7} />
+            <text x={sx(e.date.best) + 2} y={P.t + 8} fontSize="8" fill="#f5b83d">{e.title.slice(0, 18)}</text>
           </g>
         ))}
         <path d={d} fill="none" stroke="#7aa2ff" strokeWidth={2.5} />

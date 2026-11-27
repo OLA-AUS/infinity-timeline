@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2238977",
+  "title": "German occupation of the Channel Islands",
+  "summary": "1940–1945 German occupation of the Channel Islands",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.494536,
+    "latest": 1940.497268,
+    "best": 1940.495902,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2238977"
+    ]
+  },
+  "end": {
+    "earliest": 1945.350685,
+    "latest": 1945.353425,
+    "best": 1945.352055,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2238977"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2238977",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_occupation_of_the_Channel_Islands",
+    "manualEdits": false
+  }
+}

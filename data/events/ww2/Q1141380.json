@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1141380",
+  "title": "Battle of Wake Island",
+  "summary": "1941 battle of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.934247,
+    "latest": 1941.936986,
+    "best": 1941.935616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1141380"
+    ]
+  },
+  "end": {
+    "earliest": 1941.975342,
+    "latest": 1941.978082,
+    "best": 1941.976712,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1141380"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1141380",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Wake_Island",
+    "manualEdits": false
+  }
+}

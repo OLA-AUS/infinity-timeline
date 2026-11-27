@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q770698",
+  "title": "Syria–Lebanon campaign",
+  "summary": "1941 Allied invasion of Vichy French-controlled Syria and Lebanon",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.432877,
+    "latest": 1941.435616,
+    "best": 1941.434247,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q770698"
+    ]
+  },
+  "end": {
+    "earliest": 1941.531507,
+    "latest": 1941.534247,
+    "best": 1941.532877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q770698"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q770698",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Syria%E2%80%93Lebanon_campaign",
+    "manualEdits": false
+  }
+}

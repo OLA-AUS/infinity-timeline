@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1361210",
+  "title": "Battle of Christmas Island",
+  "summary": "1942 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.243836,
+    "latest": 1942.246575,
+    "best": 1942.245205,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1361210"
+    ]
+  },
+  "end": {
+    "earliest": 1942.246575,
+    "latest": 1942.249315,
+    "best": 1942.247945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1361210"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1361210",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Christmas_Island",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q327061",
+  "title": "Battle of Białystok–Minsk",
+  "summary": "1941 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.517808,
+    "latest": 1941.520548,
+    "best": 1941.519178,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q327061"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q327061",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Bia%C5%82ystok%E2%80%93Minsk",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q705222",
+  "title": "Petsamo–Kirkenes Offensive",
+  "summary": "military offensive during World War II, mounted by the Red Army against the Wehrmacht in 1944 in the Petsamo region",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.765027,
+    "latest": 1944.76776,
+    "best": 1944.766393,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q705222"
+    ]
+  },
+  "end": {
+    "earliest": 1944.830601,
+    "latest": 1944.833333,
+    "best": 1944.831967,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q705222"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q705222",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Petsamo%E2%80%93Kirkenes_offensive",
+    "manualEdits": false
+  }
+}

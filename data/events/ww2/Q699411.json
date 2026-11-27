@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q699411",
+  "title": "Battle of the Barents Sea",
+  "summary": "1942 battle between warships of Nazi Germany's Kriegsmarine and British ships escorting convoy JW 51B to Kola Inlet in the USSR",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.99726,
+    "latest": 1943,
+    "best": 1942.99863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q699411"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q699411",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_the_Barents_Sea",
+    "manualEdits": false
+  }
+}

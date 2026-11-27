@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1419973",
+  "title": "Battle of the Sutjeska",
+  "summary": "1943 battle during World War II, major part of Operation Schwarz",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.367123,
+    "latest": 1943.369863,
+    "best": 1943.368493,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1419973"
+    ]
+  },
+  "end": {
+    "earliest": 1943.454795,
+    "latest": 1943.457534,
+    "best": 1943.456164,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1419973"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1419973",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Schwarz",
+    "manualEdits": false
+  }
+}

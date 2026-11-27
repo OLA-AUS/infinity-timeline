@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q524272",
+  "title": "South-East Asian theater of World War II",
+  "summary": "campaigns of the Pacific War in Burma, Ceylon, India, Thailand, Indochina, the Philippines, Malaya and Singapore",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.934247,
+    "latest": 1941.936986,
+    "best": 1941.935616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q524272"
+    ]
+  },
+  "end": {
+    "earliest": 1945.687671,
+    "latest": 1945.690411,
+    "best": 1945.689041,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q524272"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q524272",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/South-East_Asian_theatre_of_World_War_II",
+    "manualEdits": false
+  }
+}

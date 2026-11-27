@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q304403",
+  "title": "Operation Biting",
+  "summary": "1942 British Combined Operations raid during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.156164,
+    "latest": 1942.158904,
+    "best": 1942.157534,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q304403"
+    ]
+  },
+  "end": {
+    "earliest": 1942.158904,
+    "latest": 1942.161644,
+    "best": 1942.160274,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q304403"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q304403",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Biting",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q167002",
+  "title": "Operation Greif",
+  "summary": "battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1944.956284,
+    "latest": 1944.959016,
+    "best": 1944.95765,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q167002"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q167002",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Greif",
+    "manualEdits": false
+  }
+}

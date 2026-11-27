@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source.schema.json",
+  "title": "Source",
+  "description": "A book, paper, archive record, article or dataset that backs something up. File name must be <id>.json. Only real, checkable sources — never invent one.",
+  "type": "object",
+  "required": ["id", "title", "type", "publishedAt", "authorIds", "funderIds"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "type": { "enum": ["meta_analysis", "rct", "peer_reviewed", "book", "preprint", "journalism", "op_ed", "social_post", "primary_document", "reference_work"] },
+    "publishedAt": { "type": "number", "description": "Year published (decimal years allowed)." },
+    "authorIds": { "type": "array", "items": { "type": "string" }, "description": "Entity ids in data/entities/." },
+    "institutionId": { "type": "string" },
+    "funderIds": { "type": "array", "items": { "type": "string" }, "description": "Entity ids. Empty means funding unknown, which the trust score flags." },
+    "conflictOfInterest": { "type": "string", "description": "Fill in if a funder benefits from the conclusion." },
+    "retracted": { "type": "boolean" },
+    "url": { "type": "string", "format": "uri" }
+  }
+}

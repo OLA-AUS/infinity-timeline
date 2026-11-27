@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q18245647",
+  "title": "German declaration of war against the United States",
+  "summary": "official declaration of war by the German Empire on the United States",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.942466,
+    "latest": 1941.945205,
+    "best": 1941.943836,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q18245647"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q18245647",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_declaration_of_war_on_the_United_States",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q641205",
+  "title": "1941 Iraqi coup d'état",
+  "summary": "coup d'état",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.246575,
+    "latest": 1941.249315,
+    "best": 1941.247945,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q641205"
+    ]
+  },
+  "end": {
+    "earliest": 1941.331507,
+    "latest": 1941.334247,
+    "best": 1941.332877,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q641205"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q641205",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/1941_Iraqi_coup_d%27%C3%A9tat",
+    "manualEdits": false
+  }
+}

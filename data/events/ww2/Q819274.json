@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q819274",
+  "title": "German occupation of Norway",
+  "summary": "Nazi occupation of Norway during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.270492,
+    "latest": 1940.273224,
+    "best": 1940.271858,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q819274"
+    ]
+  },
+  "end": {
+    "earliest": 1945.347945,
+    "latest": 1945.350685,
+    "best": 1945.349315,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q819274"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q819274",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/German_occupation_of_Norway",
+    "manualEdits": false
+  }
+}

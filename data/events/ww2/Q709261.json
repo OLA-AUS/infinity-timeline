@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q709261",
+  "title": "Hundred Regiments Offensive",
+  "summary": "1940 military offensive",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.63388,
+    "latest": 1940.636612,
+    "best": 1940.635246,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709261"
+    ]
+  },
+  "end": {
+    "earliest": 1940.92623,
+    "latest": 1940.928962,
+    "best": 1940.927596,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q709261"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q709261",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Hundred_Regiments_Offensive",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q569454",
+  "title": "Second Happy Time",
+  "summary": "1942 Informal name for a phase in the battle of the Atlantic",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.035616,
+    "latest": 1942.038356,
+    "best": 1942.036986,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q569454"
+    ]
+  },
+  "end": {
+    "earliest": 1942.663014,
+    "latest": 1942.665753,
+    "best": 1942.664384,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q569454"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q569454",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Second_Happy_Time",
+    "manualEdits": false
+  }
+}

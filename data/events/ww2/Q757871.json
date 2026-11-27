@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q757871",
+  "title": "Indian Ocean raid",
+  "summary": "1942 raid of Allied shipping by the Imperial Japanese Navy",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.243836,
+    "latest": 1942.246575,
+    "best": 1942.245205,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q757871"
+    ]
+  },
+  "end": {
+    "earliest": 1942.271233,
+    "latest": 1942.273973,
+    "best": 1942.272603,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q757871"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q757871",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Indian_Ocean_raid",
+    "manualEdits": false
+  }
+}

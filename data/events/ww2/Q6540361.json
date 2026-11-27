@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q6540361",
+  "title": "surrender of Japan",
+  "summary": "end of World War II, 2 September 1945",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.668493,
+    "latest": 1945.671233,
+    "best": 1945.669863,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q6540361"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q6540361",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Surrender_of_Japan",
+    "manualEdits": false
+  }
+}

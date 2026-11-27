@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q379433",
+  "title": "Operation Ten-Go",
+  "summary": "1945 Japanese naval operation in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1945.263014,
+    "latest": 1945.265753,
+    "best": 1945.264384,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q379433"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q379433",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Kikusui_I",
+    "manualEdits": false
+  }
+}

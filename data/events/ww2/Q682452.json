@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q682452",
+  "title": "Siege of Malta",
+  "summary": "1942 military campaign in the Mediterranean Theatre of the Second World War",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.442623,
+    "latest": 1940.445355,
+    "best": 1940.443989,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q682452"
+    ]
+  },
+  "end": {
+    "earliest": 1942.884932,
+    "latest": 1942.887671,
+    "best": 1942.886301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q682452"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q682452",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Siege_of_Malta_(World_War_II)",
+    "manualEdits": false
+  }
+}

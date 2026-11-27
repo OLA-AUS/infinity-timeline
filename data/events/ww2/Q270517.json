@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q270517",
+  "title": "Dieppe Raid",
+  "summary": "1942 landing operation in World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.630137,
+    "latest": 1942.632877,
+    "best": 1942.631507,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q270517"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q270517",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Dieppe_Raid",
+    "manualEdits": false
+  }
+}

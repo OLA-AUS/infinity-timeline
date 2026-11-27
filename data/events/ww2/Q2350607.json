@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2350607",
+  "title": "Rumbula massacre",
+  "summary": "Nazi massacres of Jews in Riga, Latvia, in late 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.912329,
+    "latest": 1941.915068,
+    "best": 1941.913699,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2350607"
+    ]
+  },
+  "end": {
+    "earliest": 1941.934247,
+    "latest": 1941.936986,
+    "best": 1941.935616,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2350607"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2350607",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Rumbula_massacre",
+    "manualEdits": false
+  }
+}

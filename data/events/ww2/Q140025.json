@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q140025",
+  "title": "Japanese invasion of French Indochina",
+  "summary": "1940 battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.734973,
+    "latest": 1940.737705,
+    "best": 1940.736339,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q140025"
+    ]
+  },
+  "end": {
+    "earliest": 1940.734973,
+    "latest": 1940.737705,
+    "best": 1940.736339,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q140025"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q140025",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Japanese_invasion_of_French_Indochina",
+    "manualEdits": false
+  }
+}

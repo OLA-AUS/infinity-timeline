@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q713006",
+  "title": "Battle of Corregidor",
+  "summary": "1942 culmination of the Japanese invasion of the Philippines during World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.991781,
+    "latest": 1941.994521,
+    "best": 1941.993151,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q713006"
+    ]
+  },
+  "end": {
+    "earliest": 1942.342466,
+    "latest": 1942.345205,
+    "best": 1942.343836,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q713006"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q713006",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Corregidor",
+    "manualEdits": false
+  }
+}

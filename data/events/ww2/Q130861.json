@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q130861",
+  "title": "Battle of Kursk",
+  "summary": "World War II battle that took place in 1943",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.506849,
+    "latest": 1943.509589,
+    "best": 1943.508219,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q130861"
+    ]
+  },
+  "end": {
+    "earliest": 1943.641096,
+    "latest": 1943.643836,
+    "best": 1943.642466,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q130861"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q130861",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Kursk",
+    "manualEdits": false
+  }
+}

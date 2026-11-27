@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q626796",
+  "title": "Battle of Taierzhuang",
+  "summary": "1938 battle between China and Japan",
+  "field": "politics",
+  "date": {
+    "earliest": 1938.224658,
+    "latest": 1938.227397,
+    "best": 1938.226027,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q626796"
+    ]
+  },
+  "end": {
+    "earliest": 1938.263014,
+    "latest": 1938.265753,
+    "best": 1938.264384,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q626796"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q626796",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Battle_of_Taierzhuang",
+    "manualEdits": false
+  }
+}

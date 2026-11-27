@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q2033079",
+  "title": "Operation Cottage",
+  "summary": "1943 Allied military campaign during World War 2",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.619178,
+    "latest": 1943.621918,
+    "best": 1943.620548,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q2033079"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q2033079",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Operation_Cottage",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q218678",
+  "title": "North African campaign",
+  "summary": "194–1943 military campaign of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1940.439891,
+    "latest": 1940.442623,
+    "best": 1940.441257,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q218678"
+    ]
+  },
+  "end": {
+    "earliest": 1943.369863,
+    "latest": 1943.372603,
+    "best": 1943.371233,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q218678"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q218678",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/North_African_campaign",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q714253",
+  "title": "Air Raid on Bari",
+  "summary": "attack by German bombers on Allied forces in Bari, Italy in WW II",
+  "field": "politics",
+  "date": {
+    "earliest": 1943.917808,
+    "latest": 1943.920548,
+    "best": 1943.919178,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q714253"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q714253",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Air_raid_on_Bari",
+    "manualEdits": false
+  }
+}

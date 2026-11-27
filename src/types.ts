@@ -1,8 +1,46 @@
-// Core data model. See docs/DATA_MODEL.md.
+// The shapes of every piece of data in the app. If you are new, start here.
+// The prose version of this file is docs/DATA_MODEL.md — keep the two in sync.
 
-/** Time is a decimal year. Negative = BCE. e.g. 1939.67 ≈ 1 Sep 1939 */
+/**
+ * A moment in time as a decimal year. Negative numbers are BCE.
+ * Example: 1939.67 is roughly 1 September 1939 (two-thirds of the way through 1939).
+ * We use plain numbers so time maths (distances, sorting, scaling) stays simple.
+ */
 export type Year = number;
 
+/** How finely a date is actually known. "day" = we know the exact day; "century" = only the century. */
+export type DatePrecision = 'day' | 'month' | 'year' | 'decade' | 'century' | 'millennium';
+
+/**
+ * How a date was worked out. Shown to readers so they can judge it themselves.
+ * Add new methods here (and a description in src/lib/dates.ts) rather than overloading old ones.
+ */
+export type DateMethod =
+  | 'documented' // written down at the time (a dated letter, treaty, newspaper)
+  | 'contemporary_accounts' // eyewitness accounts that roughly agree
+  | 'archaeological' // dated from digs, layers or artefacts
+  | 'radiocarbon' // carbon-14 or another lab dating technique
+  | 'scholarly_estimate' // historians' best estimate from indirect clues
+  | 'wikidata' // copied from Wikidata by an importer — check it against a primary source
+  | 'community'; // proposed by an editor here, still to be backed by a source
+
+/**
+ * A date that admits how sure we are.
+ * - `best` is the single most likely moment — it is where the event sits on the river.
+ * - `earliest`/`latest` bound the honest range. When they are far apart the river draws a glowing span.
+ * - `sources` are Source ids that back this date up. Empty means "nobody has cited this yet".
+ * Rule: earliest <= best <= latest. The data validator (scripts/validate-data.mjs) checks this.
+ */
+export interface FuzzyDate {
+  earliest: Year;
+  latest: Year;
+  best: Year;
+  precision: DatePrecision;
+  method: DateMethod;
+  sources: string[];
+}
+
+/** The parallel strands ("lanes") of the river. Each event and entity lives in one lane. */
 export type Field =
   | 'politics'
   | 'science'
@@ -15,18 +53,20 @@ export const FIELDS: Field[] = ['politics', 'science', 'medicine', 'economics', 
 
 export type EntityKind = 'person' | 'institution' | 'company' | 'government' | 'funder' | 'publication';
 
+/** Anyone or anything that can make a claim, write a source, or fund someone. */
 export interface Entity {
   id: string;
   name: string;
   kind: EntityKind;
   field: Field;
-  foundedAt: Year; // born / founded — its position on the river
+  founded: FuzzyDate; // born / founded — its position on the river
   description: string;
-  demo?: boolean;
+  demo?: boolean; // true = fictional placeholder; the UI says so
 }
 
 export type PenaltyType = 'criminal_fraud' | 'civil_settlement' | 'regulatory_fine' | 'warning' | 'retraction';
 
+/** A fine, settlement, warning or retraction against an entity. Lowers its trust score. */
 export interface Penalty {
   id: string;
   entityId: string;
@@ -38,6 +78,7 @@ export interface Penalty {
   url?: string;
 }
 
+/** "Funder paid recipient." Trust flows (damped) along these edges. See docs/TRUST_MODEL.md §2. */
 export interface FundingEdge {
   funderId: string;
   recipientId: string;
@@ -47,26 +88,50 @@ export interface FundingEdge {
   to?: Year;
 }
 
+/** Where an event came from, when it was loaded from a file in data/ rather than the demo seed. */
+export interface EventProvenance {
+  importedFrom: 'wikidata' | 'manual';
+  qid?: string; // Wikidata item id, e.g. "Q8641370"
+  retrievedAt?: string; // ISO date the importer ran
+  wikipedia?: string; // English Wikipedia article, if any
+  /** Set to true when a person edits the file by hand, so the importer won't overwrite it. */
+  manualEdits?: boolean;
+  /** Wikidata itself listed more than one value for this date. The span covers all of them. */
+  conflictingValues?: string[];
+  /** Repo-relative path of the JSON file (added by the loader, not stored in the file). */
+  file?: string;
+}
+
+/** Something that happened. A glowing node on the river. */
 export interface TimelineEvent {
   id: string;
   title: string;
-  at: Year;
+  date: FuzzyDate; // when it happened (or began)
+  end?: FuzzyDate; // when it finished, for things that lasted a while (a battle, a war)
   field: Field;
   summary: string;
-  topicIds: string[];
+  topicIds: string[]; // debates hanging off this event
+  provenance?: EventProvenance;
 }
 
+/**
+ * A debate hanging off an event ("Did the UK win WW2?").
+ * If `dateOf` is set, the debate is about *when* that event happened, and its
+ * claims each propose a date (see Claim.proposedDate).
+ */
 export interface Topic {
   id: string;
   eventId: string;
   title: string;
   claimIds: string[];
+  dateOf?: string; // event id whose date this topic disputes
 }
 
 export type Stance = 'supports' | 'opposes' | 'refines';
 
 export type ClaimStatus = 'Established' | 'Contested' | 'Fringe' | 'Disproven' | 'Later confirmed';
 
+/** A statement someone made. Its status is *earned* from evidence — see src/lib/status.ts. */
 export interface Claim {
   id: string;
   topicId: string;
@@ -81,10 +146,23 @@ export interface Claim {
   agree: { up: number; down: number }; // public opinion — never moves status
   statusHistory?: { at: Year; status: ClaimStatus }[];
   edits?: EditEvent[];
+  /** For date-dispute topics: the date this claim says the event happened. */
+  proposedDate?: FuzzyDate;
 }
 
-export type SourceType = 'meta_analysis' | 'rct' | 'peer_reviewed' | 'book' | 'preprint' | 'journalism' | 'op_ed' | 'social_post' | 'primary_document';
+export type SourceType =
+  | 'meta_analysis'
+  | 'rct'
+  | 'peer_reviewed'
+  | 'book'
+  | 'preprint'
+  | 'journalism'
+  | 'op_ed'
+  | 'social_post'
+  | 'primary_document'
+  | 'reference_work'; // encyclopedias and knowledge bases such as Wikidata
 
+/** A paper, book, article, dataset or post that evidence points to. */
 export interface Source {
   id: string;
   title: string;
@@ -99,6 +177,7 @@ export interface Source {
   demo?: boolean;
 }
 
+/** Links a source to a claim: "this source supports / opposes this claim, this much". */
 export interface Evidence {
   id: string;
   claimId: string;
@@ -109,6 +188,7 @@ export interface Evidence {
   wellSourced: { up: number; down: number }; // moves status
 }
 
+/** A saved, timestamped answer from an AI model about a claim, which others can try to reproduce. */
 export interface AISnapshot {
   id: string;
   claimId: string;
@@ -121,6 +201,7 @@ export interface AISnapshot {
   reproductions: { by: string; at: string; result: 'match' | 'partial' | 'differs' }[];
 }
 
+/** Public opinion over time for a topic (polls, on-site votes). Shown, never used to decide truth. */
 export interface OpinionSeries {
   id: string;
   topicId: string;
@@ -131,6 +212,7 @@ export interface OpinionSeries {
   demo?: boolean;
 }
 
+/** One entry in the append-only edit log. Nothing is ever deleted; edits are added. */
 export interface EditEvent {
   id: string;
   userId: string;
@@ -138,6 +220,7 @@ export interface EditEvent {
   summary: string;
 }
 
+/** Everything the app knows, in one bundle. Seed data and repo data files are merged into this. */
 export interface Dataset {
   entities: Entity[];
   penalties: Penalty[];

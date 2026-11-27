@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1505845",
+  "title": "Arctic convoys of World War II",
+  "summary": "Allied oceangoing convoys",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.580822,
+    "latest": 1941.665753,
+    "best": 1941.623288,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1505845"
+    ]
+  },
+  "end": {
+    "earliest": 1945.328767,
+    "latest": 1945.413699,
+    "best": 1945.371233,
+    "precision": "month",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1505845"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1505845",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Arctic_convoys_of_World_War_II",
+    "manualEdits": false
+  }
+}

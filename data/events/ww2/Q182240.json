@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q182240",
+  "title": "Siege of Warsaw",
+  "summary": "1939 battle during WWII",
+  "field": "politics",
+  "date": {
+    "earliest": 1939.684932,
+    "latest": 1939.687671,
+    "best": 1939.686301,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q182240"
+    ]
+  },
+  "end": {
+    "earliest": 1939.739726,
+    "latest": 1939.742466,
+    "best": 1939.741096,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q182240"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q182240",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Siege_of_Warsaw_(1939)",
+    "manualEdits": false
+  }
+}

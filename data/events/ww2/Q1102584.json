@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1102584",
+  "title": "Iași pogrom",
+  "summary": "series of pogroms against the Jewish community of Iași in 1941",
+  "field": "politics",
+  "date": {
+    "earliest": 1941.490411,
+    "latest": 1941.493151,
+    "best": 1941.491781,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1102584"
+    ]
+  },
+  "end": {
+    "earliest": 1941.509589,
+    "latest": 1941.512329,
+    "best": 1941.510959,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1102584"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1102584",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Ia%C8%99i_pogrom",
+    "manualEdits": false
+  }
+}

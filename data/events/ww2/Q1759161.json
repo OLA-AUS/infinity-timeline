@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q1759161",
+  "title": "Solomon Islands Campaign",
+  "summary": "1942 major campaign of the Pacific War of World War II",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.054795,
+    "latest": 1942.057534,
+    "best": 1942.056164,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1759161"
+    ]
+  },
+  "end": {
+    "earliest": 1945.635616,
+    "latest": 1945.638356,
+    "best": 1945.636986,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q1759161"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q1759161",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Solomon_Islands_campaign",
+    "manualEdits": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema/event.schema.json",
+  "id": "wd_Q696438",
+  "title": "Naval Battle of Guadalcanal",
+  "summary": "1942 naval battle",
+  "field": "politics",
+  "date": {
+    "earliest": 1942.865753,
+    "latest": 1942.868493,
+    "best": 1942.867123,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696438"
+    ]
+  },
+  "end": {
+    "earliest": 1942.871233,
+    "latest": 1942.873973,
+    "best": 1942.872603,
+    "precision": "day",
+    "method": "wikidata",
+    "sources": [
+      "wikidata:Q696438"
+    ]
+  },
+  "topicIds": [],
+  "provenance": {
+    "importedFrom": "wikidata",
+    "qid": "Q696438",
+    "retrievedAt": "2026-11-27",
+    "wikipedia": "https://en.wikipedia.org/wiki/Naval_Battle_of_Guadalcanal",
+    "manualEdits": false
+  }
+}
