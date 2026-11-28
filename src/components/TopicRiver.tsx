@@ -13,7 +13,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import type { Dataset, LinkType } from '../types';
-import { FIELD_COLOR } from '../lib/time';
+import { colorOf } from '../lib/time';
 import { formatShort } from '../lib/dates';
 import { resolveEventDate } from '../lib/dateDispute';
 import { LINK_WORDS, type TopicRiver as TopicRiverModel } from '../lib/related';
@@ -139,7 +139,7 @@ export function TopicScene({ data, river, pos, mobile, onPick, onBranch }: Topic
           <group key={stop.eventId} position={p}>
             <mesh>
               <sphereGeometry args={[r, 24, 24]} />
-              <meshStandardMaterial color={FIELD_COLOR[ev.field]} emissive={isCurrent ? '#ffe066' : FIELD_COLOR[ev.field]} emissiveIntensity={isCurrent ? 1.6 : 0.9} />
+              <meshStandardMaterial color={colorOf(ev)} emissive={isCurrent ? '#ffe066' : colorOf(ev)} emissiveIntensity={isCurrent ? 1.6 : 0.9} />
             </mesh>
             {isAnchor && (
               <mesh rotation={[Math.PI / 2, 0, 0]}>

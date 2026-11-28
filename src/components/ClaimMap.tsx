@@ -11,6 +11,10 @@
 // and the map's centre switches to the nearest event with a soft fade. Events linked to
 // the centre appear as bubbles too; tapping one makes it the new centre and swaps in its
 // own topic river. The breadcrumb shows the trail of events you've moved through.
+//
+// Personal events (from your spaces, only on this device) also show their people, stories
+// and sources as bubbles, and the side panel lets you add stories, link the event to world
+// history and propose dates (PersonalEventPanel.tsx). A story bubble opens the story itself.
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { Claim, Dataset } from '../types';
 import { claimStatus, STATUS_COLOR } from '../lib/status';
@@ -20,15 +24,16 @@ import { resolveEventDate } from '../lib/dateDispute';
 import { DEFAULT_LAYOUT, layoutBounds, layoutStar, type Placed } from '../lib/forceLayout';
 import { usePanZoom, type View } from '../lib/usePanZoom';
 import { directLinks, LINK_WORDS, type Edge, type TopicRiver as TopicRiverModel } from '../lib/related';
-import { FIELD_COLOR } from '../lib/time';
+import { colorOf } from '../lib/time';
 import { ClaimDetail } from './ClaimDetail';
 import { EventLinks } from './EventLinks';
 import { TopicStrip } from './TopicStrip';
 import { DateExplain } from './DateExplain';
 import { OpinionChart } from './OpinionChart';
+import { PersonalEventPanel, type PersonalControls } from './PersonalEventPanel';
 
 /** One step of the breadcrumb trail: what kind of thing is in the middle, and its id. */
-export type Focus = { kind: 'event' | 'topic' | 'claim'; id: string };
+export type Focus = { kind: 'event' | 'topic' | 'claim' | 'story'; id: string };
 
 /** One event in the trail of centres you've visited, and how you got there. */
 export interface TrailStep {
@@ -63,6 +68,8 @@ interface Props {
   onVote: (kind: 'agree' | 'well_sourced', id: string, value: 1 | -1) => void;
   mobile: boolean;
   topic?: TopicControls;
+  /** Editing personal events (only when the spaces are loaded). */
+  personal?: PersonalControls;
 }
 
 /** A child bubble before layout. */
@@ -88,7 +95,7 @@ const MAX_LINES = 3;
 /** At most this many linked-event bubbles around an event, strongest first. */
 const MAX_LINK_BUBBLES = 6;
 
-export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEntity, onVote, mobile, topic }: Props) {
+export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEntity, onVote, mobile, topic, personal }: Props) {
   const focus = path[path.length - 1];
   const push = (f: Focus) => setPath([...path, f]);
   const sz = mobile ? SIZES.mobile : SIZES.desktop;
@@ -129,6 +136,20 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
           onClick: () => push({ kind: 'topic', id: t.id }),
         });
       }
+      // A personal event: its people, stories and sources hang off it too.
+      if (ev.space) {
+        for (const id of ev.peopleIds ?? []) {
+          const p = data.entities.find((x) => x.id === id);
+          if (p) kids.push({ key: `person-${id}`, label: p.name, sub: 'person', color: ev.space.color, size: 26, onClick: () => onOpenEntity(id) });
+        }
+        for (const st of (data.stories ?? []).filter((s) => s.eventId === ev.id)) {
+          kids.push({ key: st.id, label: `“${st.text}”`, sub: `story · told by ${st.toldBy}`, color: '#ffb3d9', size: 30, onClick: () => push({ kind: 'story', id: st.id }) });
+        }
+        for (const id of ev.date.sources) {
+          const s = data.sources.find((x) => x.id === id);
+          if (s) kids.push({ key: `src-${id}`, label: s.title, sub: `source · trust ${Math.round(sourceTrust(s, data).score)}`, color: '#3ddc97', size: 24, onClick: () => onOpenSource(id) });
+        }
+      }
       // Events linked to this one. Tapping one makes it the centre and swaps the topic river.
       if (topic) {
         for (const e of directLinks(ev.id, topic.graph).slice(0, MAX_LINK_BUBBLES)) {
@@ -139,13 +160,16 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
             key: `link-${e.linkId}`,
             label: other.title,
             sub: `${words} · ${formatShort(resolveEventDate(other, data).date)}`,
-            color: FIELD_COLOR[other.field],
+            color: colorOf(other),
             dotted: true,
             size: 26 + 16 * e.strength, // bigger = stronger link
             onClick: () => topic.onSwitchEvent(other.id, 'click'),
           });
         }
       }
+    } else if (focus.kind === 'story') {
+      const st = (data.stories ?? []).find((s) => s.id === focus.id)!;
+      center = { label: `“${st.text}”`, sub: `told by ${st.toldBy}`, color: '#ffb3d9' };
     } else if (focus.kind === 'topic') {
       const t = data.topics.find((x) => x.id === focus.id)!;
       center = { label: t.title, sub: t.dateOf ? 'date dispute' : 'debate', color: t.dateOf ? '#f5b83d' : '#7aa2ff' };
@@ -220,12 +244,14 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
   const crumbLabel = (f: Focus) =>
     f.kind === 'event' ? data.events.find((e) => e.id === f.id)?.title
       : f.kind === 'topic' ? data.topics.find((t) => t.id === f.id)?.title
+      : f.kind === 'story' ? `Story · ${(data.stories ?? []).find((s) => s.id === f.id)?.toldBy ?? ''}`
       : data.claims.find((c) => c.id === f.id)?.text;
 
   const topicId = focus.kind === 'topic' ? focus.id : focus.kind === 'claim' ? data.claims.find((c) => c.id === focus.id)?.topicId : undefined;
   const series = data.opinions.filter((o) => o.topicId === topicId);
   const focusEvent = focus.kind === 'event' ? data.events.find((e) => e.id === focus.id) : undefined;
   const focusTopic = focus.kind === 'topic' ? data.topics.find((t) => t.id === focus.id) : undefined;
+  const focusStory = focus.kind === 'story' ? (data.stories ?? []).find((s) => s.id === focus.id) : undefined;
   const dateTopicEvent = focusTopic?.dateOf ? data.events.find((e) => e.id === focusTopic.dateOf) : undefined;
 
   return (
@@ -309,7 +335,7 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
                   </g>
                 );
               })}
-              {children.length === 0 && (
+              {children.length === 0 && focus.kind !== 'story' && (
                 <text y={sz.centerR + 40} textAnchor="middle" fill="#8892a6" fontSize={sz.font}>No forks yet — add the first claim.</text>
               )}
              </g>
@@ -344,10 +370,21 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
         <aside className="map-side">
           {focus.kind === 'claim' ? (
             <ClaimDetail data={data} claimId={focus.id} onOpenSource={onOpenSource} onOpenEntity={onOpenEntity} onVote={onVote} />
+          ) : focusStory ? (
+            <div className="hint">
+              <div className="kicker">Story · personal · only on this device</div>
+              <blockquote className="story big">“{focusStory.text}”</blockquote>
+              <p className="muted">
+                Told by {focusStory.toldById ? <a onClick={() => onOpenEntity(focusStory.toldById!)}>{focusStory.toldBy}</a> : focusStory.toldBy}
+                {focusStory.toldOn ? `, ${formatDate(focusStory.toldOn)}` : ''} · written down {new Date(focusStory.recordedAt).toLocaleDateString()}
+              </p>
+              <p className="small muted">A story is a memory, not evidence: it never changes a date by itself. To dispute a date, propose it and add sources.</p>
+            </div>
           ) : (
             <div className="hint">
               <h3>{center.label}</h3>
               {focusEvent && <p className="muted">{focusEvent.summary}</p>}
+              {focusEvent?.space && personal && <PersonalEventPanel data={data} event={focusEvent} personal={personal} onOpenStory={(id) => push({ kind: 'story', id })} />}
               {focusEvent && topic && (
                 <EventLinks
                   data={data}

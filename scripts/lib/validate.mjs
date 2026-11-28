@@ -28,6 +28,18 @@ function unknownKeys(obj, allowed, where) {
     .map((k) => `${where}: unknown field "${k}" (typo? allowed: ${allowed.filter((a) => a !== '$schema').join(', ')})`);
 }
 
+/**
+ * Personal spaces (Family, Work…) live only in one person's browser, and their ids start with
+ * "p:" (src/lib/personal.ts). None may ever appear in data/ — a link or source pointing at one
+ * would mean private data had leaked into a pull request.
+ */
+export function personalIdErrors(obj, where = '') {
+  if (typeof obj === 'string') return obj.startsWith('p:') ? [`${where || 'value'} is a personal-space id ("${obj}"). Personal spaces stay on one device and can't be added to data/.`] : [];
+  if (Array.isArray(obj)) return obj.flatMap((x, i) => personalIdErrors(x, `${where}[${i}]`));
+  if (obj && typeof obj === 'object') return Object.entries(obj).flatMap(([k, v]) => personalIdErrors(v, where ? `${where}.${k}` : k));
+  return [];
+}
+
 /** A FuzzyDate: { earliest, latest, best, precision, method, sources }. */
 export function checkFuzzyDate(d, where) {
   if (!d || typeof d !== 'object') return [`${where} is missing or not an object`];
@@ -81,6 +93,7 @@ export function checkEvent(ev, fileBase) {
   const expected = [ev.id, p?.qid].filter(Boolean);
   if (fileBase && !expected.includes(fileBase)) errs.push(`file name should be ${expected.map((e) => e + '.json').join(' or ')}`);
   errs.push(...unknownKeys(ev, EVENT_KEYS, 'event'));
+  errs.push(...personalIdErrors(ev));
   return errs;
 }
 
@@ -94,6 +107,7 @@ export function checkEntity(en, fileBase) {
   errs.push(...checkFuzzyDate(en.founded, 'founded'));
   if (fileBase && fileBase !== en.id) errs.push(`file name should be ${en.id}.json`);
   errs.push(...unknownKeys(en, ENTITY_KEYS, 'entity'));
+  errs.push(...personalIdErrors(en));
   return errs;
 }
 
@@ -108,6 +122,7 @@ export function checkSource(s, fileBase) {
   if (s.url !== undefined && !/^https?:\/\//.test(s.url)) errs.push('url must start with http:// or https://');
   if (fileBase && fileBase !== s.id) errs.push(`file name should be ${s.id}.json`);
   errs.push(...unknownKeys(s, SOURCE_KEYS, 'source'));
+  errs.push(...personalIdErrors(s));
   return errs;
 }
 

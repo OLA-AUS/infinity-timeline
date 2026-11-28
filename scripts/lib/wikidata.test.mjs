@@ -2,7 +2,7 @@
 // shaped like the real SPARQL results (no network needed).
 import { describe, expect, it } from 'vitest';
 import { filterEvents, groupDetails, itemToEvent, mergeValues, parseExcludeList, relationsToLinks, valueToRange, ymdToYear } from './wikidata.mjs';
-import { checkEvent, checkReferences } from './validate.mjs';
+import { checkEvent, checkReferences, personalIdErrors } from './validate.mjs';
 
 const lit = (value) => ({ type: 'literal', value });
 const uri = (q) => ({ type: 'uri', value: `http://www.wikidata.org/entity/${q}` });
@@ -103,6 +103,12 @@ describe('filtering', () => {
 });
 
 describe('validator', () => {
+  it('rejects any personal-space id, so private data can never reach data/', () => {
+    expect(personalIdErrors({ links: [{ to: 'p:space-1:event-2', type: 'part_of' }] })[0]).toContain('links[0].to is a personal-space id');
+    expect(personalIdErrors({ date: { sources: ['ok_source', 'p:space-1:src-3'] } })).toHaveLength(1);
+    expect(personalIdErrors({ id: 'ww2', links: [{ to: 'ev_ww1' }] })).toEqual([]);
+  });
+
   const good = {
     id: 'battle_x',
     title: 'Battle X',

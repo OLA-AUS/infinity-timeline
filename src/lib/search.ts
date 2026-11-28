@@ -63,13 +63,13 @@ export function search(data: Dataset, query: string, { fields, limit = 20 }: Sea
     const s = score(ev.title, ev.summary, words);
     if (!s) continue;
     const date = resolveEventDate(ev, data).date;
-    results.push({ kind: 'event', id: ev.id, title: ev.title, detail: `${formatDate(date)} · event`, field: ev.field, date, score: s + (importance.get(ev.id)?.score ?? 0) / 100 });
+    results.push({ kind: 'event', id: ev.id, title: ev.title, detail: `${formatDate(date)} · ${ev.space ? `${ev.space.name} (only on this device)` : 'event'}`, field: ev.field, date, score: s + (importance.get(ev.id)?.score ?? 0) / 100 });
   }
 
   for (const en of data.entities) {
     if (!allowed(en.field)) continue;
     const s = score(en.name, en.description, words);
-    if (s) results.push({ kind: 'entity', id: en.id, title: en.name, detail: `${en.kind} · founded ${formatDate(en.founded)}`, field: en.field, date: en.founded, score: s });
+    if (s) results.push({ kind: 'entity', id: en.id, title: en.name, detail: en.space ? `person · ${en.space.name}${en.space.undated ? '' : ` · born ${formatDate(en.founded)}`}` : `${en.kind} · founded ${formatDate(en.founded)}`, field: en.field, date: en.founded, score: s });
   }
 
   for (const c of data.claims) {

@@ -4,6 +4,7 @@
 import type { Dataset } from '../types';
 import { effectiveTrust, formatMoney, sourceTrust, type TrustResult } from '../lib/trust';
 import { formatShort, formatYear } from '../lib/dates';
+import { isPersonal } from '../lib/personal';
 
 export type PanelTarget = { kind: 'source' | 'entity'; id: string };
 
@@ -44,7 +45,8 @@ export function SourcePanel({ data, target, onOpen, onJump, onClose }: Props) {
     return (
       <div className="panel">
         <button className="close" onClick={onClose}>✕</button>
-        <div className="kicker">Source · {s.type.replace('_', ' ')} · {formatYear(s.publishedAt)}</div>
+        <div className="kicker">Source · {s.type.replace('_', ' ')} · {Number.isFinite(s.publishedAt) ? formatYear(s.publishedAt) : 'undated'}</div>
+        {isPersonal(s.id) && <div className="demo-flag personal">Personal source · only on this device</div>}
         <h3>{s.title}</h3>
         {s.demo && <div className="demo-flag">Demo placeholder source</div>}
         {s.retracted && <div className="demo-flag red">Retracted</div>}
@@ -69,11 +71,12 @@ export function SourcePanel({ data, target, onOpen, onJump, onClose }: Props) {
   return (
     <div className="panel">
       <button className="close" onClick={onClose}>✕</button>
-      <div className="kicker">{e.kind} · {e.field} · founded {formatShort(e.founded)}</div>
+      <div className="kicker">{e.space ? `person · ${e.space.name}${e.space.undated ? '' : ` · born ${formatShort(e.founded)}`}` : `${e.kind} · ${e.field} · founded ${formatShort(e.founded)}`}</div>
+      {e.space && <div className="demo-flag personal">Personal space · only on this device</div>}
       <h3>{e.name}</h3>
       <p className="muted">{e.description}</p>
       {e.demo && <div className="demo-flag">Demo placeholder entity</div>}
-      <button className="jump" onClick={() => onJump(e.id)}>⤳ Jump on timeline to {formatYear(e.founded.best)}</button>
+      {!e.space?.undated && <button className="jump" onClick={() => onJump(e.id)}>⤳ Jump on timeline to {formatYear(e.founded.best)}</button>}
       <TrustBreakdown r={effectiveTrust(e.id, data)} />
 
       {penalties.length > 0 && (
