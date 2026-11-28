@@ -6,6 +6,10 @@
 //      "well sourced" votes. "Agree" votes never change strength (same rule as claims).
 //   2. Shared entities: two events whose debates involve the same people or organisations
 //      (claimants, authors, institutions, funders). A loose connection, worth less.
+//   3. Shared people (personal spaces): two events that list the same person in `peopleIds`
+//      ("Grandad enlists", "Grandad marries Nan"). A strong connection, so one person's
+//      events form a topic river of their life. World events don't have peopleIds, so this
+//      never changes their rivers.
 //
 // From an "anchor" event we walk outwards. A path's score is the product of its steps'
 // strengths, minus a little for every extra hop. The relevance slider (0 = direct, 1 = loose)
@@ -28,13 +32,23 @@ export const LINK_WORDS: Record<LinkType, { out: string; in: string }> = {
 };
 
 /** Starting strength by who drew the link, before sources and votes. */
-export const LINK_BASE: Record<EventLink['origin'], number> = { curated: 0.75, wikidata: 0.7, community: 0.5 };
+export const LINK_BASE: Record<EventLink['origin'], number> = { curated: 0.75, wikidata: 0.7, community: 0.5, personal: 0.6 };
+const DRAWN_BY: Record<EventLink['origin'], string> = {
+  curated: 'Drawn by a curator',
+  wikidata: 'Drawn by Wikidata',
+  community: 'Drawn by an editor',
+  personal: 'Drawn by you (personal space, only on this device)',
+};
 /** Each source adds a little, up to a cap. */
 const SOURCE_BONUS = 0.05;
 const SOURCE_BONUS_MAX = 0.15;
 /** Strength of a "shared entity" connection: per shared entity, capped. */
 const SHARED_ENTITY_EACH = 0.15;
 const SHARED_ENTITY_MAX = 0.35;
+/** Strength of a "same person" connection between personal events: one person, plus a bit per extra person. */
+const SHARED_PERSON_FIRST = 0.6;
+const SHARED_PERSON_EACH = 0.1;
+const SHARED_PERSON_MAX = 0.8;
 /** Each hop beyond the first multiplies the score by this, so far-off events fade. */
 const HOP_DECAY = 0.75;
 
@@ -47,7 +61,7 @@ export interface LinkStrength {
 export function linkStrength(link: EventLink): LinkStrength {
   const factors: Factor[] = [];
   const base = LINK_BASE[link.origin];
-  factors.push({ label: `Drawn by ${link.origin === 'curated' ? 'a curator' : link.origin === 'wikidata' ? 'Wikidata' : 'an editor'}`, delta: base });
+  factors.push({ label: DRAWN_BY[link.origin], delta: base });
   const bonus = Math.min(SOURCE_BONUS_MAX, link.sources.length * SOURCE_BONUS);
   if (bonus) factors.push({ label: `${link.sources.length} source${link.sources.length > 1 ? 's' : ''}`, delta: round(bonus) });
   const vf = wellSourcedFactor(link.wellSourced.up, link.wellSourced.down);
@@ -119,6 +133,30 @@ export function buildGraph(data: Dataset): Map<string, Edge[]> {
       graph.get(withPeople[i].id)!.push({ to: withPeople[j].id, strength, reason: `${reason} with ${title(withPeople[j].id)}` });
       graph.get(withPeople[j].id)!.push({ to: withPeople[i].id, strength, reason: `${reason} with ${title(withPeople[i].id)}` });
     }
+  }
+  // Shared people — only events with peopleIds (personal spaces). Grouped by person, so we
+  // only compare events that have someone in common.
+  const byPerson = new Map<string, string[]>();
+  for (const e of data.events) for (const p of e.peopleIds ?? []) byPerson.set(p, [...(byPerson.get(p) ?? []), e.id]);
+  const shared = new Map<string, { a: string; b: string; people: string[] }>(); // each pair → who they share
+  for (const [person, evs] of byPerson) {
+    for (let i = 0; i < evs.length; i++) {
+      for (let j = i + 1; j < evs.length; j++) {
+        const [a, b] = evs[i] < evs[j] ? [evs[i], evs[j]] : [evs[j], evs[i]];
+        const key = `${a}|${b}`;
+        const pair = shared.get(key) ?? { a, b, people: [] };
+        pair.people.push(person);
+        shared.set(key, pair);
+      }
+    }
+  }
+  const nameOf = (id: string) => data.entities.find((x) => x.id === id)?.name ?? 'someone';
+  for (const { a, b, people } of shared.values()) {
+    const n = people.length;
+    const strength = Math.min(SHARED_PERSON_MAX, SHARED_PERSON_FIRST + (n - 1) * SHARED_PERSON_EACH);
+    const who = n === 1 ? nameOf(people[0]) : `${n} people`;
+    graph.get(a)!.push({ to: b, strength, reason: `shares ${who} with ${title(b)}` });
+    graph.get(b)!.push({ to: a, strength, reason: `shares ${who} with ${title(a)}` });
   }
   return graph;
 }

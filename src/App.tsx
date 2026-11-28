@@ -14,6 +14,10 @@
 // gliding changes it, and whichever stop is nearest becomes the map's centre. Clicking a
 // linked bubble or a branch point makes a new anchor. `trail` records each centre you've
 // visited and how, for the breadcrumb.
+//
+// Personal spaces: `world` is the public data (seed + data/ files). The spaces on this device
+// (IndexedDB, src/lib/usePersonalSpaces.ts) are merged on top of it as extra lanes, so `data`
+// is what everything else sees. Votes on personal items are saved back into their space.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { seed } from './data/seed';
 import { loadRepoData, mergeDatasets } from './data/repoData';
@@ -25,6 +29,11 @@ import { buildGraph, topicRiver, type TopicRiver } from './lib/related';
 import { SourcePanel, type PanelTarget } from './components/SourcePanel';
 import { Breadcrumb, OverviewBar, ScaleBar } from './components/TimeNav';
 import { SearchBar } from './components/SearchBar';
+import { SpacesPanel } from './components/SpacesPanel';
+import { usePersonalSpaces } from './lib/usePersonalSpaces';
+import { votePersonal, withSpaces } from './lib/personal';
+import { personalLaneOffset } from './lib/time';
+import type { SpaceTag } from './types';
 import { FIELD_COLOR } from './lib/time';
 import { resolveEventDate } from './lib/dateDispute';
 import { formatForWindow, makeScale, SCALE_LEVELS, type ScaleLevel } from './lib/timeScale';
@@ -61,7 +70,16 @@ const stopOf = (r: TopicRiver, id: string) => {
 export default function App() {
   // Demo seed + real data files from data/, merged once at start-up.
   const initial = useMemo(() => mergeDatasets(seed, loadRepoData()), []);
-  const [data, setData] = useState<Dataset>(initial);
+  const [world, setWorld] = useState<Dataset>(initial);
+  // Personal spaces, only on this device, merged in as extra lanes.
+  const personal = usePersonalSpaces();
+  const data = useMemo(() => withSpaces(world, personal.spaces), [world, personal.spaces]);
+  const laneTags = useMemo<SpaceTag[]>(() => personal.spaces.filter((s) => !s.hidden).map((s, lane) => ({ id: s.id, name: s.name, color: s.color, lane })), [personal.spaces]);
+  const [spacesOpen, setSpacesOpen] = useState(false);
+  // The lane the camera has been sent to from the legend (a space id), or null = follow the highlight.
+  const [laneFocus, setLaneFocus] = useState<string | null>(null);
+  const focusTag = laneTags.find((l) => l.id === laneFocus);
+  const sideFocus = focusTag ? personalLaneOffset(focusTag.lane) : laneFocus === 'world' ? 0 : null;
   const [view, setView] = useState<ViewRequest>({ change: { stack: FULL_RIVER, anchor: { camera: true } }, seq: 0 });
   const stack = view.change.stack;
   const window_ = currentWindow(stack);
@@ -139,6 +157,7 @@ export default function App() {
   /** Fly to a date, with the scale its precision deserves, and highlight `id`. */
   const flyTo = useCallback((date: FuzzyDate, id: string) => {
     setHighlight(id);
+    setLaneFocus(null); // let the camera follow the highlighted item's lane
     const lvl = levelForPrecision(date.precision);
     apply(lvl === 'full' ? { stack: FULL_RIVER, anchor: { at: date.best } } : chooseLevel(FULL_RIVER, lvl, date.best, date.best));
   }, [apply]);
@@ -276,19 +295,23 @@ export default function App() {
   // Note the two separate signals: "agree" only touches the claim's opinion counts;
   // "well sourced" touches the evidence, which is what moves a claim's status.
   const vote = useCallback((kind: 'agree' | 'well_sourced', id: string, value: 1 | -1) => {
-    setData((d) => {
+    const mine = votePersonal(personal.spaces, id, kind, value, kind === 'agree' ? 1 : 10, new Date().toISOString());
+    if (mine) return personal.put(mine);
+    setWorld((d) => {
       const key = value === 1 ? 'up' : 'down';
       if (kind === 'agree') {
         return { ...d, claims: d.claims.map((c) => (c.id === id ? { ...c, agree: { ...c.agree, [key]: c.agree[key] + 1 } } : c)) };
       }
       return { ...d, evidence: d.evidence.map((e) => (e.id === id ? { ...e, wellSourced: { ...e.wellSourced, [key]: e.wellSourced[key] + 10 } } : e)) };
     });
-  }, []);
+  }, [personal]);
 
   // Votes on links between events. Same two signals: only "well sourced" changes link strength.
   const voteLink = useCallback((id: string, kind: 'agree' | 'well_sourced', value: 1 | -1) => {
+    const mine = votePersonal(personal.spaces, id, kind, value, kind === 'agree' ? 1 : 10, new Date().toISOString());
+    if (mine) return personal.put(mine);
     const key = value === 1 ? 'up' : 'down';
-    setData((d) => ({
+    setWorld((d) => ({
       ...d,
       links: d.links.map((l) => {
         if (l.id !== id) return l;
@@ -297,7 +320,29 @@ export default function App() {
           : { ...l, wellSourced: { ...l.wellSourced, [key]: l.wellSourced[key] + 10 } };
       }),
     }));
-  }, []);
+  }, [personal]);
+
+  // "Show" on a personal event: it may have only just been added, so wait until it's in the data.
+  const [showPending, setShowPending] = useState<string | null>(null);
+  useEffect(() => {
+    if (!showPending) return;
+    const ev = data.events.find((e) => e.id === showPending);
+    if (!ev) return;
+    setShowPending(null);
+    setSpacesOpen(false);
+    setPath(null);
+    flyTo(resolveEventDate(ev, data).date, ev.id);
+  }, [showPending, data, flyTo]);
+
+  // If the event in the middle of the map disappears (a personal event removed, or its space
+  // hidden), close the map rather than show something that isn't there.
+  useEffect(() => {
+    if (path && !data.events.some((e) => e.id === path[0].id)) {
+      setPath(null);
+      setAnchor(null);
+      setTrail([]);
+    }
+  }, [data, path]);
 
   return (
     <div className="app">
@@ -320,6 +365,8 @@ export default function App() {
         onCollapse={() => apply(collapse(stack))}
         onStep={stepScale}
         topic={path && river ? { data, river, pos: topicPos, mobile, onPick: goToStop, onBranch: (id) => switchTo(id, 'branch') } : undefined}
+        spaces={laneTags}
+        sideFocus={sideFocus}
       />
 
       {/* The main river's header. Hidden while a claim map is open: the map has its own header,
@@ -328,6 +375,9 @@ export default function App() {
         <header className="hud">
           <div className="hud-left">
             <div className="brand">∞ Infinity Timeline <span className="demo-tag">prototype · demo data</span></div>
+            <button className="spaces-btn" onClick={() => setSpacesOpen((o) => !o)} aria-expanded={spacesOpen}>
+              🔒 My spaces{personal.spaces.length ? ` (${personal.spaces.length})` : ''}
+            </button>
             <Breadcrumb labels={crumbs(stack)} onGoTo={(i) => apply(goToStep(stack, i))} />
           </div>
           <SearchBar data={data} mobile={mobile} onPick={onPick} />
@@ -345,6 +395,13 @@ export default function App() {
             {FIELDS.map((f) => <span key={f}><i style={{ background: FIELD_COLOR[f] }} />{f}</span>)}
             <span><i className="span-swatch" />uncertain date</span>
             <span><i className="span-swatch disputed" />disputed date</span>
+            {/* Personal lanes: tap one to slide over to it (on phones they're off to the side). */}
+            {laneTags.map((l) => (
+              <button key={l.id} className={`lane-chip ${laneFocus === l.id ? 'on' : ''}`} onClick={() => setLaneFocus(laneFocus === l.id ? 'world' : l.id)} title={`${l.name} — only on this device`}>
+                <i style={{ background: l.color }} />{l.name}
+              </button>
+            ))}
+            {laneTags.length > 0 && laneFocus && laneFocus !== 'world' && <button className="lane-chip" onClick={() => setLaneFocus('world')}>↩ World</button>}
             {importedCount > 0 && (
               <label className="toggle">
                 <input type="checkbox" checked={showImported} onChange={(e) => setShowImported(e.target.checked)} />
@@ -387,6 +444,7 @@ export default function App() {
           onOpenEntity={(id) => setPanel({ kind: 'entity', id })}
           onVote={vote}
           mobile={mobile}
+          personal={personal.loaded ? { spaces: personal.spaces, onUpdate: personal.update } : undefined}
           topic={river ? {
             river,
             graph,
@@ -400,6 +458,19 @@ export default function App() {
             onTrailJump: trailJump,
             onVoteLink: voteLink,
           } : undefined}
+        />
+      )}
+
+      {spacesOpen && !path && (
+        <SpacesPanel
+          spaces={personal.spaces}
+          storageError={personal.storageError}
+          onAdd={personal.add}
+          onUpdate={personal.update}
+          onRemove={personal.remove}
+          onShowEvent={setShowPending}
+          onGoToLane={(id) => { setLaneFocus(id); if (mobile) setSpacesOpen(false); }}
+          onClose={() => setSpacesOpen(false)}
         />
       )}
 

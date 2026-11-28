@@ -62,6 +62,22 @@ export interface Entity {
   founded: FuzzyDate; // born / founded — its position on the river
   description: string;
   demo?: boolean; // true = fictional placeholder; the UI says so
+  /** Set only for people in a personal space (src/lib/personal.ts). Never in data/ files. */
+  space?: SpaceTag;
+}
+
+/**
+ * Marks something that comes from one of the user's personal spaces (Family, Friends, Work…).
+ * Personal data lives only in this browser (IndexedDB) and is merged in at run time; it never
+ * reaches the site build or a server. See docs/PERSONAL_SPACES.md.
+ */
+export interface SpaceTag {
+  id: string; // the space's id
+  name: string; // e.g. "Family"
+  color: string; // the lane's colour
+  lane: number; // 0 = the first personal lane beside the main river
+  /** A person with no known birth date: listed in the space, but not drawn on the river. */
+  undated?: boolean;
 }
 
 export type PenaltyType = 'criminal_fraud' | 'civil_settlement' | 'regulatory_fine' | 'warning' | 'retraction';
@@ -119,6 +135,10 @@ export interface TimelineEvent {
    * The loader turns these into EventLink records in Dataset.links.
    */
   links?: EventLinkSpec[];
+  /** People involved (entity ids). Events sharing a person are related — e.g. Grandad's life. */
+  peopleIds?: string[];
+  /** Set only for events in a personal space. They get their own lane and stay on this device. */
+  space?: SpaceTag;
 }
 
 /**
@@ -151,7 +171,7 @@ export interface EventLink {
   type: LinkType;
   note?: string;
   sources: string[];
-  origin: 'curated' | 'wikidata' | 'community'; // who drew it: hand-picked, importer, or an editor
+  origin: 'curated' | 'wikidata' | 'community' | 'personal'; // who drew it: hand-picked, importer, an editor, or you (a personal space, only on this device)
   claimantId?: string; // entity that proposed the link, if known
   wellSourced: { up: number; down: number }; // moves strength
   agree: { up: number; down: number }; // public opinion — never moves strength
@@ -264,6 +284,20 @@ export interface EditEvent {
   summary: string;
 }
 
+/**
+ * A memory told about an event (personal spaces' story mode): what was said, who told it, and when.
+ * Stories are testimony, not evidence — they never change a date or a status by themselves.
+ */
+export interface Story {
+  id: string;
+  eventId: string;
+  text: string;
+  toldBy: string; // the teller's name as written
+  toldById?: string; // their entity id, if they are a person in the space
+  toldOn?: FuzzyDate; // when it was told ("Christmas 2019"), if known
+  recordedAt: string; // ISO timestamp when it was typed in
+}
+
 /** Everything the app knows, in one bundle. Seed data and repo data files are merged into this. */
 export interface Dataset {
   entities: Entity[];
@@ -277,4 +311,6 @@ export interface Dataset {
   aiSnapshots: AISnapshot[];
   opinions: OpinionSeries[];
   links: EventLink[];
+  /** Personal stories (only from personal spaces on this device). */
+  stories?: Story[];
 }

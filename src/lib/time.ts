@@ -3,7 +3,7 @@
 // Time is log-scaled: the further back you go, the more each step of the river is
 // squeezed. That lets 5,000 years fit on screen while recent decades still get room.
 // "s" in this file means "distance along the river" — bigger s = more recent.
-import type { Field, Year } from '../types';
+import type { Field, SpaceTag, Year } from '../types';
 import { FIELDS } from '../types';
 
 const ANCHOR = 2031; // a few years after "now" so the present isn't infinitely stretched
@@ -24,6 +24,20 @@ export const riverX = (s: number) => Math.sin(s * 0.03) * 6;
 
 /** Sideways offset of each field's lane from the river's centre line. */
 export const laneOffset = (field: Field) => (FIELDS.indexOf(field) - (FIELDS.length - 1) / 2) * 2.2;
+
+/**
+ * Personal spaces run in their own lanes alongside the main river, on its right bank:
+ * the first starts a little beyond the last field lane, then one every PERSONAL_LANE_GAP.
+ */
+export const PERSONAL_LANE_START = 9.2;
+export const PERSONAL_LANE_GAP = 2.4;
+export const personalLaneOffset = (lane: number) => PERSONAL_LANE_START + lane * PERSONAL_LANE_GAP;
+
+/** Where an event or person sits sideways: its field's lane, or its personal space's lane. */
+export const laneX = (item: { field: Field; space?: SpaceTag }) => (item.space ? personalLaneOffset(item.space.lane) : laneOffset(item.field));
+
+/** An event's or person's colour: its field's colour, or its personal space's. */
+export const colorOf = (item: { field: Field; space?: SpaceTag }) => item.space?.color ?? FIELD_COLOR[item.field];
 
 /** 3D point for a year in a lane. The river runs away from the camera along −z. */
 export const position = (year: Year, field: Field, y = 0): [number, number, number] => {

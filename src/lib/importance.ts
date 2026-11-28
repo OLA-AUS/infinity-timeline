@@ -9,6 +9,7 @@
 //              +  2 × sources              (distinct sources backing its date)
 //              +  4 × log2(1 + sitelinks)  (Wikipedia language editions, for Wikidata imports)
 //              + 25 if hand-picked         (curated landmark events in the seed — always shown)
+//              + 25 if it is yours         (an event in one of your personal spaces — always shown)
 //
 // It measures how much there is to explore here, not how much the event "mattered" to
 // history. Changing these weights is a governance decision, like the trust weights.
@@ -21,7 +22,7 @@ export interface ImportanceResult {
   factors: Factor[];
 }
 
-export const IMPORTANCE_WEIGHTS = { debate: 10, link: 3, source: 2, sitelinks: 4, curated: 25 };
+export const IMPORTANCE_WEIGHTS = { debate: 10, link: 3, source: 2, sitelinks: 4, curated: 25, personal: 25 };
 
 /**
  * The minimum importance for an event to get its own bubble at each level of the scale bar.
@@ -41,7 +42,8 @@ export function eventImportance(ev: TimelineEvent, data: Dataset): ImportanceRes
   if (sources) factors.push({ label: `${sources} source${sources > 1 ? 's' : ''} for its date`, delta: sources * w.source });
   const sitelinks = ev.provenance?.sitelinks;
   if (sitelinks) factors.push({ label: `In ${sitelinks} Wikipedia language editions`, delta: round(Math.log2(1 + sitelinks) * w.sitelinks) });
-  if (!ev.provenance) factors.push({ label: 'Hand-picked landmark event', delta: w.curated });
+  if (ev.space) factors.push({ label: `Your own event (${ev.space.name} personal space)`, delta: w.personal });
+  else if (!ev.provenance) factors.push({ label: 'Hand-picked landmark event', delta: w.curated });
   if (!factors.length) factors.push({ label: 'Nothing links here yet', delta: 0 });
   return { score: round(factors.reduce((a, f) => a + f.delta, 0)), factors };
 }

@@ -20,6 +20,7 @@ You fly along a river of time. Hit an event — "WW2 begins" — and dive into i
 | `docs/TRUST_MODEL.md` | How sources/evidence are weighted (funding, fines, retractions, track record) |
 | `docs/DATA_MODEL.md` | Entities, claims, evidence, funding graph, versions, AI snapshots |
 | `docs/GOVERNANCE.md` | Anti-capture rules, moderation, the few hard lines |
+| `docs/PERSONAL_SPACES.md` | Personal spaces (Family / Friends / Work): on-device storage today, and the plan for encrypted sync, invites, consent rules and paid media |
 | `docs/ROADMAP.md` | Phased plan from prototype to platform |
 | `docs/IDEAS.md` | Parking lot of future ideas |
 | `CONTRIBUTING.md` | How to suggest ideas, edit data through pull requests, and the code style |
@@ -71,6 +72,16 @@ In the claim map, **drag** to move, **pinch or Ctrl+scroll** to zoom, and tap a 
 - **Trail:** the breadcrumb shows each event you've moved through (*WW2 begins → Operation Sea Lion ⑂ Bengal famine ↪ WW2 ends*).
 - **Getting back:** **Back to main river** lands you on the main river at the event you were on.
 - **Voting on links:** links are voted on like claims. "Well sourced" changes a link's strength; "agree" is opinion only. Try the demo chain: *WW2 begins → Battle of Britain → Bengal famine → WW2 ends → Indian independence → Suez Crisis*.
+
+**Personal spaces.** **🔒 My spaces** (top left) makes private timelines, such as Family, Friends, Work or your own. They're stored **only in this browser**: no server, no account, no analytics. See [docs/PERSONAL_SPACES.md](docs/PERSONAL_SPACES.md).
+- **Lanes:** each space is its own lane beside the main river, with a toggle to show or hide it. On phones, tap its chip in the legend to slide over to it.
+- **Behaves like any event:** personal events cluster, fan out, expand and follow the scale bar like public ones.
+- **Dates:** type them the way you'd say them (*around 1920*, *May 1962*, *Christmas 2019*); vague ones glow as spans.
+- **Disputed dates:** when two people remember different dates (*Uncle Ray says 1962, Mum says 1964*), each is a proposal that only evidence can settle, exactly as on public events.
+- **Links to world history:** link a personal event to a world event (*Grandad enlists → part of → World War II begins*), and it appears in that event's topic river. Only on your device.
+- **Mind maps:** open a personal event to see its people, stories and sources, and glide along the life of anyone in it.
+- **Story mode:** keep memories, with who told them and when.
+- **Import and export:** import a family tree from a GEDCOM file, and export or import a space as a file.
 
 > ⚠️ All seed data in `src/data/seed.ts` is **demo data**. Sources, organisations, fines and poll numbers are fictional placeholders to show the mechanics — replace with real, cited data. Real data lives in `data/`.
 

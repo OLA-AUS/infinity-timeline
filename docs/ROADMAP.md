@@ -25,6 +25,10 @@
 - Importers: Wikidata (events/entities), OpenAlex (papers, authors, funders), public enforcement records (penalties)
 - ~500 hand-checked entities and claims
 
+## Personal spaces
+- ✅ Version 1: Family / Friends / Work / custom spaces stored only on the device (IndexedDB). Each is a lane beside the river that clusters, expands and links to world history; fuzzy dates; date disputes decided by evidence; story mode; mind maps and life rivers; GEDCOM import; file export / import
+- Next: end-to-end encrypted sync, invite links with viewer / contributor / editor roles, revocation, consent rules for publishing (living people hidden unless they approve; minors always private), paid encrypted media storage — see [PERSONAL_SPACES.md](PERSONAL_SPACES.md)
+
 ## Phase 2 — Community
 - Open editing with versioning and "view as of date"
 - Reputation per field, brigading detection, vote cluster visualisation

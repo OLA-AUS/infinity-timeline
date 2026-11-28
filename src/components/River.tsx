@@ -8,6 +8,9 @@
 //                  and everything outside an expanded window
 //   • Spans      — glowing ranges for uncertain and disputed dates (RiverSpans.tsx)
 //   • Entities   — small diamonds where people and organisations were born or founded
+//   • Personal lanes — each visible personal space (Family, Work…) gets its own lane on the
+//                  river's right bank (src/lib/personal.ts). Its events are ordinary events, so
+//                  they cluster, fan out, expand and follow the scale bar like any other.
 //
 // Time scale (src/lib/timeScale.ts, src/lib/viewStack.ts): the scale bar in the header
 // picks Full river · Period · Years · Months · Weeks · Days. Any level other than the full
@@ -32,9 +35,9 @@ import { Html, Line, Stars } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import * as THREE from 'three';
-import type { Dataset, TimelineEvent } from '../types';
+import type { Dataset, SpaceTag, TimelineEvent } from '../types';
 import { FIELDS } from '../types';
-import { FIELD_COLOR, laneOffset, riverX } from '../lib/time';
+import { colorOf, FIELD_COLOR, laneOffset, laneX, PERSONAL_LANE_GAP, personalLaneOffset, riverX } from '../lib/time';
 import { formatShort, formatYear } from '../lib/dates';
 import { resolveEventDate, type ResolvedDate } from '../lib/dateDispute';
 import { importanceMap, LOD_THRESHOLD } from '../lib/importance';
@@ -79,6 +82,10 @@ interface Props {
   onStep: (dir: 1 | -1) => void;
   /** When set, show this topic river instead of the main river (a claim map is open). */
   topic?: TopicProps;
+  /** Visible personal spaces, in lane order — each is drawn as its own lane. */
+  spaces: SpaceTag[];
+  /** Slide the camera sideways to this offset (e.g. a personal lane on a phone); null = automatic. */
+  sideFocus: number | null;
 }
 
 /** Years that get a big faint label beside the full river. */
@@ -101,23 +108,28 @@ const inside = (w: TimeWindow | null, t: number) => !w || (t >= w.start && t < w
  * The water and one coloured line per field lane. Inside a window: a brighter, wider stretch.
  * Outside it: a dark veil over the water and lanes, so the squeezed rest of history fades back.
  */
-function Lanes({ scale }: { scale: TimeScale }) {
+function Lanes({ scale, spaces }: { scale: TimeScale; spaces: SpaceTag[] }) {
   const from = scale.sMin - 10;
   const to = scale.sMax + 30;
-  const { lanes, water, bright, veils } = useMemo(() => {
+  const { lanes, water, bright, veils, personalWater } = useMemo(() => {
     const xAt = (s: number) => meander(scale.toYear(s)); // sideways position comes from the year
-    const lanes = FIELDS.map((f) => {
+    const line = (offset: number) => {
       const pts: [number, number, number][] = [];
-      for (let s = from; s <= to; s += 2) pts.push([xAt(s) + laneOffset(f), 0, -s]);
-      return { f, pts };
-    });
-    const ribbon = (s0: number, s1: number, half: number, y: number, step: number) => {
+      for (let s = from; s <= to; s += 2) pts.push([xAt(s) + offset, 0, -s]);
+      return pts;
+    };
+    const lanes = [
+      ...FIELDS.map((f) => ({ key: f, color: FIELD_COLOR[f], pts: line(laneOffset(f)), personal: false })),
+      ...spaces.map((sp) => ({ key: sp.id, color: sp.color, pts: line(personalLaneOffset(sp.lane)), personal: true })),
+    ];
+    // A ribbon of water from `left` to `right` of the river's centre line (half-width if one number).
+    const ribbon = (s0: number, s1: number, half: number, y: number, step: number, right = half) => {
       const verts: number[] = [];
       const idx: number[] = [];
       let i = 0;
       for (let s = s0; s <= s1 + 1e-6; s += step, i++) {
         const x = xAt(s);
-        verts.push(x - half, y, -s, x + half, y, -s);
+        verts.push(x - half, y, -s, x + right, y, -s);
         if (i > 0) {
           const a = (i - 1) * 2;
           idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
@@ -131,33 +143,79 @@ function Lanes({ scale }: { scale: TimeScale }) {
     const w = scale.window;
     const a = w ? scale.toS(w.start) : 0;
     const b = w ? scale.toS(w.end) : 0;
+    // Personal lanes sit on their own strip of water beside the main river, with a gap.
+    const edge = spaces.length ? personalLaneOffset(spaces.length - 1) + PERSONAL_LANE_GAP / 2 : 0;
+    const far = Math.max(9, edge + 0.5);
     return {
       lanes,
       water: ribbon(from, to, 8, -0.4, 1),
-      bright: w ? ribbon(a, b, 10.5, -0.38, 0.5) : null,
-      veils: w ? [ribbon(from, a, 9, 0.05, 1), ribbon(b, to, 9, 0.05, 1)] : [],
+      personalWater: spaces.length ? ribbon(from, to, -(personalLaneOffset(0) - PERSONAL_LANE_GAP / 2), -0.4, 1, edge) : null,
+      bright: w ? ribbon(a, b, 10.5, -0.38, 0.5, Math.max(10.5, edge + 0.5)) : null,
+      veils: w ? [ribbon(from, a, 9, 0.05, 1, far), ribbon(b, to, 9, 0.05, 1, far)] : [],
     };
-  }, [scale, from, to]);
-  useEffect(() => () => { water.dispose(); bright?.dispose(); veils.forEach((v) => v.dispose()); }, [water, bright, veils]);
+  }, [scale, from, to, spaces]);
+  useEffect(() => () => { water.dispose(); personalWater?.dispose(); bright?.dispose(); veils.forEach((v) => v.dispose()); }, [water, personalWater, bright, veils]);
   return (
     <group>
       <mesh geometry={water}>
         <meshBasicMaterial color="#123063" transparent opacity={0.35} side={THREE.DoubleSide} />
       </mesh>
+      {personalWater && (
+        <mesh geometry={personalWater}>
+          <meshBasicMaterial color="#2a2448" transparent opacity={0.4} side={THREE.DoubleSide} />
+        </mesh>
+      )}
       {bright && (
         <mesh geometry={bright}>
           <meshBasicMaterial color="#2f6bff" transparent opacity={0.32} side={THREE.DoubleSide} depthWrite={false} />
         </mesh>
       )}
-      {lanes.map(({ f, pts }) => (
-        <Line key={f} points={pts} color={FIELD_COLOR[f]} lineWidth={1.5} transparent opacity={0.55} />
+      {lanes.map(({ key, color, pts, personal }) => (
+        <Line key={key} points={pts} color={color} lineWidth={personal ? 2.2 : 1.5} transparent opacity={personal ? 0.75 : 0.55} />
       ))}
+      <LaneNames scale={scale} spaces={spaces} />
       {veils.map((v, i) => (
         <mesh key={i} geometry={v} renderOrder={2}>
           <meshBasicMaterial color="#05070f" transparent opacity={0.6} side={THREE.DoubleSide} depthWrite={false} />
         </mesh>
       ))}
     </group>
+  );
+}
+
+/**
+ * Each personal lane's name ("Family"), floating on the lane a little ahead of the camera so
+ * it's always in view as you travel. Moved every frame, not re-rendered.
+ */
+function LaneNames({ scale, spaces }: { scale: TimeScale; spaces: SpaceTag[] }) {
+  const { camera } = useThree();
+  const groups = useRef<(THREE.Group | null)[]>([]);
+  const v = useMemo(() => new THREE.Vector3(), []);
+  useFrame(() => {
+    spaces.forEach((sp, i) => {
+      // The nearest point ahead on the lane that's on screen (where the river bends, the
+      // stretch just ahead of the camera can be off to the side).
+      let at: [number, number, number] | null = null;
+      for (const ahead of [9, 14, 20, 28, 38, 50]) {
+        const s = Math.min(scale.sMax + 20, -camera.position.z + ahead);
+        const year = scale.toYear(s);
+        at = [meander(year) + personalLaneOffset(sp.lane), 0.15, -s];
+        v.set(...at).project(camera);
+        if (v.z < 1 && Math.abs(v.x) < 0.8 && Math.abs(v.y) < 0.8) break;
+      }
+      if (at) groups.current[i]?.position.set(...at);
+    });
+  });
+  return (
+    <>
+      {spaces.map((sp, i) => (
+        <group key={sp.id} ref={(g) => { groups.current[i] = g; }}>
+          <Html center distanceFactor={16} zIndexRange={[4, 0]} style={{ pointerEvents: 'none' }}>
+            <div className="lane-name" style={{ borderColor: sp.color, color: sp.color }}>{sp.name}</div>
+          </Html>
+        </group>
+      ))}
+    </>
   );
 }
 
@@ -291,7 +349,7 @@ function EventNode({ ev, resolved, scale, onClick, highlighted, selected, showLa
   const hasMap = debates > 0;
   const imported = ev.provenance?.importedFrom === 'wikidata';
   const radius = hasMap ? 0.5 : imported ? 0.26 : 0.32;
-  const pos = place(scale, resolved.date.best, ev.field, 0.6);
+  const pos = place(scale, resolved.date.best, laneX(ev), 0.6);
 
   useFrame(({ camera, size, clock }, dt) => {
     // Magnifier: bigger the closer the cursor is (screen distance), eased so it feels smooth.
@@ -316,7 +374,7 @@ function EventNode({ ev, resolved, scale, onClick, highlighted, selected, showLa
       <group ref={group}>
         <mesh ref={sphere}>
           <sphereGeometry args={[radius, 24, 24]} />
-          <meshStandardMaterial color={FIELD_COLOR[ev.field]} emissive={highlighted || selected ? '#ffe066' : FIELD_COLOR[ev.field]} emissiveIntensity={highlighted || selected ? 2 : hasMap ? 1.6 : 0.8} />
+          <meshStandardMaterial color={colorOf(ev)} emissive={highlighted || selected ? '#ffe066' : colorOf(ev)} emissiveIntensity={highlighted || selected ? 2 : hasMap ? 1.6 : 0.8} />
         </mesh>
         {hasMap && (
           <mesh rotation={[Math.PI / 2, 0, 0]}>
@@ -328,7 +386,7 @@ function EventNode({ ev, resolved, scale, onClick, highlighted, selected, showLa
       </group>
       {(showLabel || near || highlighted || selected) && (
         <Html position={[0, radius * mag.current + 0.6, 0]} center distanceFactor={14} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
-          <div className={`ev-label ${hasMap ? 'has-map' : ''} ${highlighted || selected ? 'highlighted' : ''} ${imported ? 'imported' : ''}`}>
+          <div className={`ev-label ${hasMap ? 'has-map' : ''} ${highlighted || selected ? 'highlighted' : ''} ${imported ? 'imported' : ''} ${ev.space ? 'personal' : ''}`} style={ev.space ? { borderColor: ev.space.color } : undefined}>
             <span>{formatShort(resolved.date)}</span> {ev.title}
             {resolved.disputed && <em className="disputed"> · date disputed</em>}
             {hasMap && <em> · {debates} debate{debates > 1 ? 's' : ''}</em>}
@@ -367,7 +425,7 @@ function FaintDots({ events, faint, outside, resolved, scale, mobile, onSelect }
   const points = useMemo(
     () =>
       events.map((ev) => {
-        const [x, , z] = place(scale, resolved.get(ev.id)!.date.best, ev.field, 0);
+        const [x, , z] = place(scale, resolved.get(ev.id)!.date.best, laneX(ev), 0);
         return new THREE.Vector3(x + (hash01(ev.id) - 0.5) * 1.2, 0.15 + hash01(ev.id, 7) * 1.1, z);
       }),
     [events, resolved, scale],
@@ -382,7 +440,7 @@ function FaintDots({ events, faint, outside, resolved, scale, mobile, onSelect }
       const out = outside.has(ev.id);
       const sc = out ? 0.7 : faint.has(ev.id) ? 1 : 0;
       mesh.setMatrixAt(i, m.makeScale(sc, sc, sc).setPosition(points[i]));
-      mesh.setColorAt(i, color.set(FIELD_COLOR[ev.field]).multiplyScalar(out ? 0.3 : 1));
+      mesh.setColorAt(i, color.set(colorOf(ev)).multiplyScalar(out ? 0.3 : 1));
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -428,15 +486,15 @@ function EntityNode({ en, scale, onOpen, highlighted, mobile, outside: out }: {
 }) {
   const [hover, setHover] = useState(false);
   return (
-    <group position={place(scale, en.founded.best, en.field, -0.1)}>
+    <group position={place(scale, en.founded.best, laneX(en), -0.1)}>
       <mesh scale={highlighted ? 2.2 : hover ? 1.5 : 1}>
         <octahedronGeometry args={[0.22]} />
-        <meshStandardMaterial color="#ffffff" emissive={highlighted ? '#ffe066' : '#8899aa'} emissiveIntensity={highlighted ? 2 : 0.6} transparent opacity={out ? 0.2 : 1} />
+        <meshStandardMaterial color={en.space?.color ?? '#ffffff'} emissive={highlighted ? '#ffe066' : en.space?.color ?? '#8899aa'} emissiveIntensity={highlighted ? 2 : 0.6} transparent opacity={out ? 0.2 : 1} />
       </mesh>
       {!out && <HitArea radius={0.3} minPx={mobile ? MIN_TAP_RADIUS.mobile : MIN_TAP_RADIUS.desktop} onClick={onOpen} onOver={() => setHover(true)} onOut={() => setHover(false)} />}
       {!out && (hover || highlighted) && (
         <Html position={[0, 0.7, 0]} center distanceFactor={14} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}>
-          <div className="en-label">{en.name} <span>· founded {formatShort(en.founded)}</span></div>
+          <div className="en-label">{en.name} <span>· {en.space ? 'born' : 'founded'} {formatShort(en.founded)}</span></div>
         </Html>
       )}
     </group>
@@ -506,7 +564,7 @@ function FanRing({ events, resolved, at, onPick, onExpand }: {
               onClick={() => onPick(ev.id)}
               title={ev === first ? 'Earliest' : ev === last ? 'Latest' : undefined}
             >
-              <i style={{ background: FIELD_COLOR[ev.field] }} />
+              <i style={{ background: colorOf(ev) }} />
               <span><small>{formatShort(resolved.get(ev.id)!.date)}</small> {ev.title}</span>
             </button>
           );
@@ -572,8 +630,11 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
 
   // Slide the camera towards the highlighted item's lane: most of the way on phones, a little on desktop.
   const byId = useMemo(() => new Map(data.events.map((e) => [e.id, e])), [data.events]);
-  const focusField = highlightId ? (byId.get(highlightId)?.field ?? data.entities.find((e) => e.id === highlightId)?.field) : undefined;
-  const sidewaysTarget = focusField ? laneOffset(focusField) * (mobile ? 0.8 : 0.3) : 0;
+  // A personal lane is beyond a phone's screen, so on phones the camera goes all the way to it.
+  // `sideFocus` (a lane chosen in the legend) wins over the highlighted item.
+  const focusItem = highlightId ? (byId.get(highlightId) ?? data.entities.find((e) => e.id === highlightId)) : undefined;
+  const autoSide = focusItem ? laneX(focusItem) * (mobile ? (focusItem.space ? 1 : 0.8) : 0.3) : 0;
+  const sidewaysTarget = props.sideFocus ?? autoSide;
 
   /** Put the camera where `pose` says, for the scale currently drawn, and report the time there. */
   const applyCamera = () => {
@@ -650,7 +711,7 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
     const offscreen: string[] = [];
     for (const ev of events) {
       if (outside.has(ev.id)) continue; // drawn as dim dots, never bubbles
-      tmp.set(...place(scale, resolved.get(ev.id)!.date.best, ev.field, 0.6));
+      tmp.set(...place(scale, resolved.get(ev.id)!.date.best, laneX(ev), 0.6));
       up.copy(tmp).setY(tmp.y + 1);
       const dist = camera.position.distanceTo(tmp);
       tmp.project(camera);
@@ -689,7 +750,7 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
 
   // ---- Fan-out rings and the bubble menu ----
   const cursor = useRef<{ x: number; y: number } | null>(null);
-  const posOf = (id: string) => place(display, resolved.get(id)!.date.best, byId.get(id)!.field, 0.6);
+  const posOf = (id: string) => place(display, resolved.get(id)!.date.best, laneX(byId.get(id)!), 0.6);
 
   const bubbleClick = (id: string) => {
     const stack = overlapping(planRef.current, id);
@@ -751,7 +812,7 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
       <ambientLight intensity={0.4} />
       <pointLight position={[0, 10, 0]} intensity={1} />
       <Stars radius={150} depth={60} count={3000} factor={4} fade speed={0.5} />
-      <Lanes scale={display} />
+      <Lanes scale={display} spaces={props.spaces} />
       <Particles />
       <Ticks scale={display} />
       <EndCaps scale={display} mobile={mobile} onContinue={props.onContinue} onCollapse={props.onCollapse} />
@@ -763,14 +824,14 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
         return (
           <group key={id}>
             <EventNode ev={ev} resolved={r} scale={display} onClick={() => bubbleClick(id)} highlighted={highlightId === id} selected={selectedId === id} showLabel={showLabel} mobile={mobile} cursor={cursor} />
-            {spanVisible(r.date, display) && <UncertaintySpan resolved={r} field={ev.field} y={0.6} scale={display} dim={!!ev.provenance} />}
+            {spanVisible(r.date, display) && <UncertaintySpan resolved={r} lane={laneX(ev)} color={colorOf(ev)} y={0.6} scale={display} dim={!!ev.provenance} />}
           </group>
         );
       })}
 
       <FaintDots events={events} faint={faint} outside={outside} resolved={resolved} scale={display} mobile={mobile} onSelect={(id) => { setFan(null); onSelect(id); }} />
 
-      {data.entities.map((en) => (
+      {data.entities.filter((en) => !en.space?.undated /* no birth date: nowhere to draw them */).map((en) => (
         <EntityNode key={en.id} en={en} scale={display} onOpen={() => onOpenEntity(en.id)} highlighted={highlightId === en.id} mobile={mobile} outside={!inside(win, en.founded.best)} />
       ))}
 

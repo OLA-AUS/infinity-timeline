@@ -76,9 +76,23 @@ In data files a link is written inside the event it starts from: `"links": [{ "t
 ## Topic rivers
 `src/lib/related.ts`. An anchor event's **topic river** is the anchor plus the events related enough to it, in date order.
 - **The graph:** events are joined by links (both directions) and by **shared entities** — the people and organisations involved in both events' debates (claimants, authors, institutions, funders). Shared entities are a loose connection: 0.15 each, capped at 0.35.
+- **Shared people (personal spaces):** events listing the same person in `peopleIds` are joined strongly (0.6 for one person, +0.1 each extra, capped at 0.8), so one person's events form a river of their life. World events have no `peopleIds`, so their rivers don't change.
 - **Scoring:** a path's score is the product of its step strengths, × 0.75 for each hop after the first.
 - **Relevance slider (0–1):** sets the weakest score shown (0.6 down to 0.1) and the number of hops walked (1, 2 or 3).
 - **Branch points:** a stop that has related events *not* on the current river is a branch point (another topic river crosses there).
+
+## Personal spaces
+Private timelines (Family, Friends, Work, custom) stored only in the browser (IndexedDB). Full detail: [PERSONAL_SPACES.md](PERSONAL_SPACES.md).
+
+- **Model:** `src/lib/personal.ts` defines `PersonalSpace` → people, events, sources, stories, links and date proposals, plus an append-only `log`.
+- **On the river:** `withSpaces(world, spaces)` turns each visible space into ordinary records with ids `p:<space>:<item>` and a `SpaceTag` (`{ id, name, color, lane }`) on events and people:
+  - **Lanes:** the tag gives each space its own lane (`laneX`, `colorOf` in `src/lib/time.ts`).
+  - **Date disputes:** proposals become a date-dispute **Topic** + **Claims** + **Evidence**, so `resolveEventDate` and `claimStatus` treat them exactly like public ones.
+  - **Links:** personal links become `EventLink`s with `origin: 'personal'` (base strength 0.6).
+  - **Stories:** stories go into `Dataset.stories`.
+- **Never in `data/`:** no `p:` id may appear in a data file; the validator rejects it.
+- **Dates typed by people:** `src/lib/dateInput.ts` reads "around 1920", "1918..1922", "May 1962", "Christmas 2019" and GEDCOM's `ABT` / `BEF` / `BET … AND` into FuzzyDates.
+- **GEDCOM:** `src/lib/gedcom.ts` imports family trees.
 
 ## Signals
 - **Vote** — `{ userId, targetId, kind: 'agree' | 'well_sourced', value: +1 | -1, at }`

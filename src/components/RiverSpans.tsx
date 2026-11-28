@@ -11,7 +11,7 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import type { Field, FuzzyDate } from '../types';
-import { FIELD_COLOR, laneOffset } from '../lib/time';
+import { laneOffset } from '../lib/time';
 import { meander } from '../lib/cameraAnchor';
 import type { TimeScale } from '../lib/timeScale';
 import type { ResolvedDate } from '../lib/dateDispute';
@@ -24,9 +24,10 @@ export const DISPUTED_COLOR = '#f5b83d';
 /**
  * 3D point for a year in a lane, using the current scale. The sideways wiggle depends only
  * on the year (see cameraAnchor.ts), so expanding time never moves anything sideways.
+ * The lane is a field, or a sideways offset already worked out (laneX() — e.g. a personal lane).
  */
-export function place(scale: TimeScale, year: number, field: Field, y = 0): [number, number, number] {
-  return [meander(year) + laneOffset(field), y, -scale.toS(year)];
+export function place(scale: TimeScale, year: number, lane: Field | number, y = 0): [number, number, number] {
+  return [meander(year) + (typeof lane === 'number' ? lane : laneOffset(lane)), y, -scale.toS(year)];
 }
 
 /** True if a date's range is long enough, at this zoom, to draw as a span. */
@@ -79,13 +80,13 @@ function spanMaterial(color: string, best: number, disputed: boolean, opacity: n
 }
 
 /** A flat strip lying on the water along a lane, from one year to another. */
-function bandGeometry(scale: TimeScale, from: number, to: number, field: Field, y: number, width: number) {
+function bandGeometry(scale: TimeScale, from: number, to: number, lane: Field | number, y: number, width: number) {
   const verts: number[] = [];
   const uvs: number[] = [];
   const idx: number[] = [];
   const steps = 24;
   for (let k = 0; k <= steps; k++) {
-    const [x, , z] = place(scale, from + ((to - from) * k) / steps, field, y);
+    const [x, , z] = place(scale, from + ((to - from) * k) / steps, lane, y);
     verts.push(x - width / 2, y, z, x + width / 2, y, z);
     uvs.push(k / steps, 0, k / steps, 1);
     if (k > 0) {
@@ -101,16 +102,16 @@ function bandGeometry(scale: TimeScale, from: number, to: number, field: Field, 
 }
 
 /** A glowing tube and band from the earliest to the latest possible date. */
-export function UncertaintySpan({ resolved, field, y, scale, dim = false }: { resolved: ResolvedDate; field: Field; y: number; scale: TimeScale; dim?: boolean }) {
+export function UncertaintySpan({ resolved, lane, color: laneColor, y, scale, dim = false }: { resolved: ResolvedDate; lane: Field | number; color: string; y: number; scale: TimeScale; dim?: boolean }) {
   const { date, disputed } = resolved;
-  const color = disputed ? DISPUTED_COLOR : FIELD_COLOR[field];
+  const color = disputed ? DISPUTED_COLOR : laneColor;
 
   const { core, halo, band, materials } = useMemo(() => {
     // Sample points along the lane so the tube follows the river's curve.
     const pts: THREE.Vector3[] = [];
     for (let k = 0; k <= 12; k++) {
       const yr = date.earliest + ((date.latest - date.earliest) * k) / 12;
-      pts.push(new THREE.Vector3(...place(scale, yr, field, y)));
+      pts.push(new THREE.Vector3(...place(scale, yr, lane, y)));
     }
     const curve = new THREE.CatmullRomCurve3(pts);
     const s0 = scale.toS(date.earliest);
@@ -123,10 +124,10 @@ export function UncertaintySpan({ resolved, field, y, scale, dim = false }: { re
     return {
       core: new THREE.TubeGeometry(curve, 48, 0.12, 8, false),
       halo: new THREE.TubeGeometry(curve, 48, dim ? 0.25 : 0.45, 12, false),
-      band: bandGeometry(scale, date.earliest, date.latest, field, -0.3, dim ? 0.8 : 2),
+      band: bandGeometry(scale, date.earliest, date.latest, lane, -0.3, dim ? 0.8 : 2),
       materials,
     };
-  }, [date.earliest, date.latest, date.best, field, y, color, disputed, dim, scale]);
+  }, [date.earliest, date.latest, date.best, lane, y, color, disputed, dim, scale]);
 
   // Free GPU memory when the span goes away or changes.
   useEffect(() => () => {
@@ -150,7 +151,7 @@ export function UncertaintySpan({ resolved, field, y, scale, dim = false }: { re
         resolved.contenders
           .filter((c) => c.status === 'Contested')
           .map((c) => (
-            <mesh key={c.claim.id} position={place(scale, c.date.best, field, -0.15)}>
+            <mesh key={c.claim.id} position={place(scale, c.date.best, lane, -0.15)}>
               <sphereGeometry args={[0.2, 12, 12]} />
               <meshBasicMaterial color={STATUS_COLOR[c.status]} />
             </mesh>
