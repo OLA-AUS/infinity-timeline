@@ -273,6 +273,17 @@ export default function App() {
     if (openPath) window.setTimeout(() => openMap(id, openPath), 1100);
   }, [data, flyTo, openMap]);
 
+  /** Open a claim inside its event's map, via its parent claims (so the breadcrumb makes sense). */
+  const openClaim = useCallback((claimId: string, eventId: string) => {
+    const chain: Focus[] = [];
+    for (let c = data.claims.find((x) => x.id === claimId); c; c = c.parentClaimId ? data.claims.find((x) => x.id === c!.parentClaimId) : undefined) {
+      chain.unshift({ kind: 'claim', id: c.id });
+    }
+    const claim = data.claims.find((x) => x.id === claimId);
+    if (!claim) return;
+    flyToEvent(eventId, [{ kind: 'event', id: eventId }, { kind: 'topic', id: claim.topicId }, ...chain]);
+  }, [data, flyToEvent]);
+
   /** A search result was picked. */
   const onPick = useCallback((r: SearchResult) => {
     setPanel(null);
@@ -282,14 +293,8 @@ export default function App() {
       setPanel({ kind: 'entity', id: r.id });
       return;
     }
-    // A claim: fly to its event, then open the map at the claim (via its parent claims).
-    const chain: Focus[] = [];
-    for (let c = data.claims.find((x) => x.id === r.id); c; c = c.parentClaimId ? data.claims.find((x) => x.id === c!.parentClaimId) : undefined) {
-      chain.unshift({ kind: 'claim', id: c.id });
-    }
-    const claim = data.claims.find((x) => x.id === r.id)!;
-    flyToEvent(r.eventId!, [{ kind: 'event', id: r.eventId! }, { kind: 'topic', id: claim.topicId }, ...chain]);
-  }, [data, flyToEvent, jumpToEntity]);
+    openClaim(r.id, r.eventId!); // a claim: fly to its event, then open the map at the claim
+  }, [flyToEvent, jumpToEntity, openClaim]);
 
   // Local demo voting. In production this posts to the API and is logged in the edit history.
   // Note the two separate signals: "agree" only touches the claim's opinion counts;
@@ -369,26 +374,23 @@ export default function App() {
         sideFocus={sideFocus}
       />
 
-      {/* The main river's header. Hidden while a claim map is open: the map has its own header,
-          and the overlay is see-through so the topic river shows behind it. */}
+      {/* The main river's header: brand and the big date on one line, the scale bar under it,
+          and the breadcrumb of expanded periods (only when there is one). Kept slim and
+          see-through so the river gets the room. Hidden while a claim map is open: the map has
+          its own header, and the overlay is see-through so the topic river shows behind it. */}
       {!path && (
         <header className="hud">
-          <div className="hud-left">
+          <div className="hud-top">
             <div className="brand">∞ Infinity Timeline <span className="demo-tag">prototype · demo data</span></div>
-            <button className="spaces-btn" onClick={() => setSpacesOpen((o) => !o)} aria-expanded={spacesOpen}>
-              🔒 My spaces{personal.spaces.length ? ` (${personal.spaces.length})` : ''}
-            </button>
-            <Breadcrumb labels={crumbs(stack)} onGoTo={(i) => apply(goToStep(stack, i))} />
-          </div>
-          <SearchBar data={data} mobile={mobile} onPick={onPick} />
-          <div className="hud-right">
-            {/* The time at the camera, and the scale bar right under it. */}
             <div className="year" aria-live="polite">{formatForWindow(year, window_)}</div>
-            <ScaleBar level={level} periodAvailable={periodAvailable(stack)} onChoose={chooseScale} />
           </div>
+          <ScaleBar level={level} periodAvailable={periodAvailable(stack)} onChoose={chooseScale} />
+          <Breadcrumb labels={crumbs(stack)} onGoTo={(i) => apply(goToStep(stack, i))} />
         </header>
       )}
 
+      {/* Bottom: the legend, a thin "where am I in all of history" bar, then the search dock.
+          The search dock also holds what used to sit here (hot debates, help text). */}
       {!path && (
         <footer className="hud-bottom">
           <div className="lanes">
@@ -410,27 +412,34 @@ export default function App() {
             )}
           </div>
           <OverviewBar window={window_} year={year} onTravel={(y) => setTargetS(sFor(scale, y))} />
-          <input
-            className="scrubber"
-            type="range"
-            min={scale.sMin}
-            max={scale.sMax}
-            step={0.25}
-            value={Math.max(scale.sMin, Math.min(scale.sMax, targetS))}
-            onChange={(e) => setTargetS(Number(e.target.value))}
-            aria-label="Travel through time"
-          />
-          <div className="chips">
-            <span className="muted">Explore debates:</span>
-            {data.events.filter((e) => e.topicIds.length).map((e) => (
-              <button key={e.id} onClick={() => flyToEvent(e.id, [{ kind: 'event', id: e.id }])}>{e.title}</button>
-            ))}
+          {/* On big screens a fine slider for travelling inside the current window; phones swipe the river instead. */}
+          {!mobile && (
+            <input
+              className="scrubber"
+              type="range"
+              min={scale.sMin}
+              max={scale.sMax}
+              step={0.25}
+              value={Math.max(scale.sMin, Math.min(scale.sMax, targetS))}
+              onChange={(e) => setTargetS(Number(e.target.value))}
+              aria-label="Travel through time"
+            />
+          )}
+          <div className="dock-row">
+            <button className="spaces-btn" onClick={() => setSpacesOpen((o) => !o)} aria-expanded={spacesOpen} aria-label="My spaces (private, on this device)">
+              🔒{mobile ? '' : ' My spaces'}{personal.spaces.length ? ` ${personal.spaces.length}` : ''}
+            </button>
+            <SearchBar
+              data={data}
+              mobile={mobile}
+              onPick={onPick}
+              onOpenEvent={(id) => flyToEvent(id, [{ kind: 'event', id }])}
+              onOpenClaim={openClaim}
+              help={mobile
+                ? 'Swipe the river to travel · pick a scale at the top · tap overlapping bubbles to list them and expand their period'
+                : 'Scroll or drag to travel · pick a scale under the date (or + / −) · click overlapping bubbles to fan them out and expand them · ◆ = people & organisations · press / to search'}
+            />
           </div>
-          <p className="help">
-            {mobile
-              ? 'Swipe to travel · pick a scale at the top · tap overlapping bubbles to fan them out and expand them'
-              : 'Scroll or drag to travel · pick a scale under the date (or + / −) · click overlapping bubbles to fan them out and expand them · ◆ = people & organisations'}
-          </p>
         </footer>
       )}
 

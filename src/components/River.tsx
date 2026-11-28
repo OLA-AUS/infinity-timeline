@@ -33,7 +33,7 @@
 // river instead (TopicRiver.tsx), with only the events related to the map's subject.
 import { Html, Line, Stars } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
+import { type MutableRefObject, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import type { Dataset, SpaceTag, TimelineEvent } from '../types';
 import { FIELDS } from '../types';
@@ -574,6 +574,138 @@ function FanRing({ events, resolved, at, onPick, onExpand }: {
   );
 }
 
+/**
+ * Phones: the overlapping events as a curved list you can scroll, like the big-screen ring
+ * but able to hold any number of events. Every event hangs off the count bubble at the left
+ * edge; rows swing furthest out in the middle of the screen and tuck back in towards the top
+ * and bottom, so the arc "rolls" as you scroll.
+ *
+ * The yellow "Expand these N events" box sits in the middle of the list (same style as on big
+ * screens) and starts centred on screen, so it's the first thing you see.
+ *
+ * The river stays locked while this is open; ✕, a tap on empty space, picking an event or
+ * expanding closes it.
+ */
+function FanSheet({ data, ids, onClose, onPick, onExpand }: {
+  data: Dataset;
+  ids: string[]; // already sorted by date
+  onClose: () => void;
+  onPick: (id: string) => void;
+  onExpand: () => void;
+}) {
+  const events = ids.map((id) => data.events.find((e) => e.id === id)).filter((e): e is TimelineEvent => !!e);
+  const dates = events.map((e) => resolveEventDate(e, data).date);
+  const sheet = useRef<HTMLDivElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  const rows = useRef<(HTMLDivElement | null)[]>([]);
+  // Where each row sits right now: how far out along the arc (x) and its middle (y), in sheet pixels.
+  const [layout, setLayout] = useState<{ w: number; h: number; rows: { x: number; y: number; d: number }[] }>({ w: 0, h: 0, rows: [] });
+
+  // The expand box goes in the middle of the list.
+  const mid = Math.floor(events.length / 2);
+  type Row = { kind: 'event'; i: number } | { kind: 'expand' };
+  const order: Row[] = [
+    ...events.slice(0, mid).map((_, i): Row => ({ kind: 'event', i })),
+    { kind: 'expand' },
+    ...events.slice(mid).map((_, i): Row => ({ kind: 'event', i: i + mid })),
+  ];
+  const expandRow = mid;
+
+  const HUB_X = 18; // the count bubble, half off the left edge like the ring's hub
+
+  // Work out every row's place on the arc from where it is on screen.
+  const measure = useCallback(() => {
+    const el = sheet.current;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    const h = box.height;
+    const w = box.width;
+    const reach = Math.min(w * 0.22, 120); // how far the middle of the arc swings out
+    const next = rows.current.map((r) => {
+      if (!r) return { x: HUB_X + 28, y: -999, d: 9 };
+      const rb = r.getBoundingClientRect();
+      const y = rb.top - box.top + rb.height / 2;
+      const d = (y - h / 2) / (h / 2); // -1 at the top of the screen, 0 in the middle, 1 at the bottom
+      const x = HUB_X + 28 + reach * Math.sqrt(Math.max(0, 1 - Math.min(1, d * d)));
+      return { x, y, d };
+    });
+    setLayout({ w, h, rows: next });
+  }, []);
+
+  // Start with the expand box in the middle of the screen.
+  useLayoutEffect(() => {
+    const sc = scroller.current;
+    const row = rows.current[expandRow];
+    if (sc && row) sc.scrollTop = row.offsetTop + row.offsetHeight / 2 - sc.clientHeight / 2;
+    measure();
+  }, [expandRow, measure]);
+
+  // Re-measure on scroll (once per frame) and when the screen size changes.
+  useEffect(() => {
+    let frame = 0;
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; measure(); });
+    };
+    const sc = scroller.current;
+    sc?.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      sc?.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      cancelAnimationFrame(frame);
+    };
+  }, [measure]);
+
+  if (!events.length) return null;
+  const from = formatShort(dates[0]);
+  const to = formatShort(dates[dates.length - 1]);
+  const hubY = layout.h / 2;
+  // A tap on empty space (not a pill) closes the list.
+  const closeIfEmpty = (e: React.MouseEvent) => {
+    const t = e.target as HTMLElement;
+    if (t === e.currentTarget || t.classList.contains('fs-row') || t.classList.contains('fs-pad')) onClose();
+  };
+
+  return (
+    <div ref={sheet} className="fan-sheet" role="dialog" aria-label={`${events.length} overlapping events`}>
+      {/* Lines from the hub to every row that's on screen. */}
+      <svg className="fs-lines" width={layout.w} height={layout.h} aria-hidden>
+        {layout.rows.map((r, i) =>
+          Math.abs(r.d) < 1.15 ? <line key={i} x1={HUB_X} y1={hubY} x2={r.x + 14} y2={r.y} className={order[i]?.kind === 'expand' ? 'to-expand' : ''} /> : null,
+        )}
+      </svg>
+      <div className="fs-hub" style={{ left: HUB_X, top: hubY }} aria-hidden>{events.length}</div>
+
+      <div ref={scroller} className="fs-scroll" onClick={closeIfEmpty}>
+        <div className="fs-pad" />
+        {order.map((row, k) => {
+          const pos = layout.rows[k];
+          const x = pos?.x ?? HUB_X + 28;
+          const style = { transform: `translateX(${x}px)`, maxWidth: Math.max(160, layout.w - x - 12), opacity: pos ? Math.max(0.25, 1 - Math.max(0, Math.abs(pos.d) - 0.85) * 2) : 1 };
+          return (
+            <div key={row.kind === 'expand' ? 'expand' : events[row.i].id} className="fs-row" ref={(el) => { rows.current[k] = el; }}>
+              {row.kind === 'expand' ? (
+                <button className="fan-expand fs-expand" style={style} onClick={onExpand}>
+                  ⤢ Expand these {events.length} events
+                  <small>{from} – {to}</small>
+                </button>
+              ) : (
+                <button className="fan-item" style={style} onClick={() => onPick(events[row.i].id)}>
+                  <i style={{ background: colorOf(events[row.i]) }} />
+                  <span><small>{formatShort(dates[row.i])}</small> {events[row.i].title}</span>
+                </button>
+              )}
+            </div>
+          );
+        })}
+        <div className="fs-pad" />
+      </div>
+
+      <button className="fs-close" onClick={onClose} aria-label="Close this list">✕</button>
+    </div>
+  );
+}
+
 /** The menu for a selected bubble. The scale bar then expands time around it. */
 function BubbleMenu({ ev, resolved, at, onOpen, onClose }: {
   ev: TimelineEvent;
@@ -765,12 +897,13 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
     }
   };
 
-  // The menu closes on a click elsewhere, Escape, or scrolling. (The ring's dim backdrop closes the ring.)
+  // The menu closes on a click elsewhere, Escape, or scrolling. The ring does NOT close on a
+  // scroll: while it's open the river is locked (see River below), so scrolling never loses it.
+  // Only its dim backdrop, its ✕, Escape or picking something closes it.
   useEffect(() => {
     if (!selectedId && !fan) return;
     const outsideClick = (e: Event) => {
-      if (e.type === 'wheel') setFan(null); // travelling closes the ring too
-      if (!(e.target instanceof Element) || !e.target.closest('.fan, .bubble-menu, .scene-dim')) onSelect(null);
+      if (!(e.target instanceof Element) || !e.target.closest('.fan, .fan-sheet, .bubble-menu, .scene-dim')) onSelect(null);
     };
     const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFan(null); onSelect(null); } };
     window.addEventListener('pointerdown', outsideClick, true);
@@ -835,7 +968,7 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
         <EntityNode key={en.id} en={en} scale={display} onOpen={() => onOpenEntity(en.id)} highlighted={highlightId === en.id} mobile={mobile} outside={!inside(win, en.founded.best)} />
       ))}
 
-      {fan && (
+      {fan && !mobile && (
         <FanRing
           events={fanEvents}
           resolved={resolved}
@@ -867,19 +1000,24 @@ export function River(props: Props) {
   const scale = useMemo(() => makeScale(currentWindow(view.change.stack)), [view.change.stack]);
   // The fanned-out cluster lives here (not in the 3D scene) so the page-level dim layer can see it.
   const [fan, setFan] = useState<FanState>(null);
+  const fanOpen = useRef(false);
+  fanOpen.current = !!fan;
 
   // Scroll / drag / swipe / arrow keys travel through time; + / − step the scale bar.
+  // While a cluster is fanned out, the river is locked: scrolling or swiping moves the list
+  // of events instead, so you can reach every one (and the expand button) without losing it.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
     const clamp = (s: number) => Math.max(scale.sMin, Math.min(scale.sMax, s));
     const typing = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
     const onWheel = (e: WheelEvent) => {
+      if (fanOpen.current) return; // let the event list scroll instead
       e.preventDefault();
       setTargetS((s) => clamp(s + e.deltaY * 0.015));
     };
     let lastY: number | null = null;
-    const down = (e: PointerEvent) => { lastY = e.clientY; };
+    const down = (e: PointerEvent) => { lastY = fanOpen.current ? null : e.clientY; };
     const move = (e: PointerEvent) => {
       if (lastY === null) return;
       const d = lastY - e.clientY;
@@ -888,7 +1026,7 @@ export function River(props: Props) {
     };
     const up = () => { lastY = null; };
     const key = (e: KeyboardEvent) => {
-      if (typing(e.target) || topicOpen.current) return; // not while typing, or while a claim map is open
+      if (typing(e.target) || topicOpen.current || fanOpen.current) return; // not while typing, or while a map or event list is open
       if (e.key === 'ArrowUp' || e.key === 'ArrowRight') setTargetS((s) => clamp(s + 5));
       if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') setTargetS((s) => clamp(s - 5));
       if (e.key === '+' || e.key === '=') stepRef.current(1);
@@ -917,6 +1055,15 @@ export function River(props: Props) {
       </Canvas>
       {/* While a cluster is fanned out, dim everything else; a click on the dim closes the ring. */}
       {fan && !props.topic && <div className="scene-dim" onPointerDown={() => setFan(null)} />}
+      {fan && !props.topic && mobile && (
+        <FanSheet
+          data={props.data}
+          ids={fan.ids}
+          onClose={() => setFan(null)}
+          onPick={(id) => { setFan(null); props.onSelect(id); }}
+          onExpand={() => { setFan(null); props.onExpandCluster(fan.ids); }}
+        />
+      )}
     </div>
   );
 }
