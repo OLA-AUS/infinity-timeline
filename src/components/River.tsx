@@ -574,6 +574,55 @@ function FanRing({ events, resolved, at, onPick, onExpand }: {
   );
 }
 
+/**
+ * Phones: the overlapping events as a scrollable list down the left, joined to a spine, with
+ * a tall "Expand" button down the right that's always in reach. A phone has no room for a
+ * full ring, and a ring taller than the screen cut off events and the expand button.
+ * The river stays locked while this is open; ✕, a tap on empty space, picking an event or
+ * expanding closes it.
+ */
+function FanSheet({ data, ids, onClose, onPick, onExpand }: {
+  data: Dataset;
+  ids: string[]; // already sorted by date
+  onClose: () => void;
+  onPick: (id: string) => void;
+  onExpand: () => void;
+}) {
+  const events = ids.map((id) => data.events.find((e) => e.id === id)).filter((e): e is TimelineEvent => !!e);
+  const dates = events.map((e) => resolveEventDate(e, data).date);
+  if (!events.length) return null;
+  const from = formatShort(dates[0]);
+  const to = formatShort(dates[dates.length - 1]);
+  return (
+    <div className="fan-sheet" role="dialog" aria-label={`${events.length} overlapping events`} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="fs-list" onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="fs-head"><b>{events.length} events here</b> · {from} – {to}</div>
+        <ol>
+          {events.map((ev, i) => (
+            <li key={ev.id}>
+              <button className="fan-item" onClick={() => onPick(ev.id)}>
+                <i style={{ background: colorOf(ev) }} />
+                <span><small>{formatShort(dates[i])}</small> {ev.title}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="fs-side">
+        <button className="fs-close" onClick={onClose} aria-label="Close this list">✕</button>
+        <button className="fs-expand" onClick={onExpand}>
+          <span aria-hidden>⤢</span>
+          <b>Expand</b>
+          <span>{events.length} events</span>
+          <small>{from}</small>
+          <small>–</small>
+          <small>{to}</small>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** The menu for a selected bubble. The scale bar then expands time around it. */
 function BubbleMenu({ ev, resolved, at, onOpen, onClose }: {
   ev: TimelineEvent;
@@ -765,12 +814,13 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
     }
   };
 
-  // The menu closes on a click elsewhere, Escape, or scrolling. (The ring's dim backdrop closes the ring.)
+  // The menu closes on a click elsewhere, Escape, or scrolling. The ring does NOT close on a
+  // scroll: while it's open the river is locked (see River below), so scrolling never loses it.
+  // Only its dim backdrop, its ✕, Escape or picking something closes it.
   useEffect(() => {
     if (!selectedId && !fan) return;
     const outsideClick = (e: Event) => {
-      if (e.type === 'wheel') setFan(null); // travelling closes the ring too
-      if (!(e.target instanceof Element) || !e.target.closest('.fan, .bubble-menu, .scene-dim')) onSelect(null);
+      if (!(e.target instanceof Element) || !e.target.closest('.fan, .fan-sheet, .bubble-menu, .scene-dim')) onSelect(null);
     };
     const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFan(null); onSelect(null); } };
     window.addEventListener('pointerdown', outsideClick, true);
@@ -835,7 +885,7 @@ function Scene(props: Props & { fan: FanState; setFan: (f: FanState) => void }) 
         <EntityNode key={en.id} en={en} scale={display} onOpen={() => onOpenEntity(en.id)} highlighted={highlightId === en.id} mobile={mobile} outside={!inside(win, en.founded.best)} />
       ))}
 
-      {fan && (
+      {fan && !mobile && (
         <FanRing
           events={fanEvents}
           resolved={resolved}
@@ -867,19 +917,24 @@ export function River(props: Props) {
   const scale = useMemo(() => makeScale(currentWindow(view.change.stack)), [view.change.stack]);
   // The fanned-out cluster lives here (not in the 3D scene) so the page-level dim layer can see it.
   const [fan, setFan] = useState<FanState>(null);
+  const fanOpen = useRef(false);
+  fanOpen.current = !!fan;
 
   // Scroll / drag / swipe / arrow keys travel through time; + / − step the scale bar.
+  // While a cluster is fanned out, the river is locked: scrolling or swiping moves the list
+  // of events instead, so you can reach every one (and the expand button) without losing it.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
     const clamp = (s: number) => Math.max(scale.sMin, Math.min(scale.sMax, s));
     const typing = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
     const onWheel = (e: WheelEvent) => {
+      if (fanOpen.current) return; // let the event list scroll instead
       e.preventDefault();
       setTargetS((s) => clamp(s + e.deltaY * 0.015));
     };
     let lastY: number | null = null;
-    const down = (e: PointerEvent) => { lastY = e.clientY; };
+    const down = (e: PointerEvent) => { lastY = fanOpen.current ? null : e.clientY; };
     const move = (e: PointerEvent) => {
       if (lastY === null) return;
       const d = lastY - e.clientY;
@@ -888,7 +943,7 @@ export function River(props: Props) {
     };
     const up = () => { lastY = null; };
     const key = (e: KeyboardEvent) => {
-      if (typing(e.target) || topicOpen.current) return; // not while typing, or while a claim map is open
+      if (typing(e.target) || topicOpen.current || fanOpen.current) return; // not while typing, or while a map or event list is open
       if (e.key === 'ArrowUp' || e.key === 'ArrowRight') setTargetS((s) => clamp(s + 5));
       if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') setTargetS((s) => clamp(s - 5));
       if (e.key === '+' || e.key === '=') stepRef.current(1);
@@ -917,6 +972,15 @@ export function River(props: Props) {
       </Canvas>
       {/* While a cluster is fanned out, dim everything else; a click on the dim closes the ring. */}
       {fan && !props.topic && <div className="scene-dim" onPointerDown={() => setFan(null)} />}
+      {fan && !props.topic && mobile && (
+        <FanSheet
+          data={props.data}
+          ids={fan.ids}
+          onClose={() => setFan(null)}
+          onPick={(id) => { setFan(null); props.onSelect(id); }}
+          onExpand={() => { setFan(null); props.onExpandCluster(fan.ids); }}
+        />
+      )}
     </div>
   );
 }

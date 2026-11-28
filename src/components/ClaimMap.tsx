@@ -4,7 +4,11 @@
 // lines out to its children (topics → claims → evidence / counter-claims).
 // Positions come from a force layout (src/lib/forceLayout.ts) so labels never sit on a line.
 // You can drag to pan, pinch or Ctrl+scroll to zoom, and tap a bubble to go deeper.
-// On phones everything is drawn much larger, and you pan around instead of squinting.
+// It opens zoomed out far enough to see every thread coming off the middle; zoom in from there.
+//
+// Phones: the details (links, dates, claims, votes) live in a sheet along the bottom that
+// starts tucked away, so the map gets the screen. Tapping any bubble (or the middle one)
+// slides the sheet up with that bubble's details; "Hide" tucks it away again.
 //
 // Topic rivers: behind the map runs a river of events related to the one in the middle
 // (TopicRiver.tsx). A plain scroll, or dragging the strip at the bottom, glides along it,
@@ -86,9 +90,10 @@ interface Node {
 }
 
 /** Sizes for desktop and for phones. Phone sizes are deliberately big — you pan around instead. */
+// fitMin: how far the first view may zoom out to fit every bubble on screen.
 const SIZES = {
-  desktop: { scale: 1, font: 12, sub: 10.5, lineH: 15, labelW: 170, centerR: 66, centerFont: 12.5, link: 105, minZoom: 0.35 },
-  mobile: { scale: 1.35, font: 16, sub: 13, lineH: 20, labelW: 190, centerR: 80, centerFont: 16, link: 70, minZoom: 0.9 },
+  desktop: { scale: 1, font: 12, sub: 10.5, lineH: 15, labelW: 170, centerR: 66, centerFont: 12.5, link: 105, fitMin: 0.35 },
+  mobile: { scale: 1.35, font: 16, sub: 13, lineH: 20, labelW: 190, centerR: 80, centerFont: 16, link: 70, fitMin: 0.4 },
 };
 const MAX_LINES = 3;
 
@@ -228,16 +233,21 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
   const size = useElementSize(svgRef);
   // With a topic river, a plain scroll glides along it; Ctrl+scroll / pinch zooms the map.
   const { view, setView, wasDrag, zoomBy } = usePanZoom(svgRef, { x: 0, y: 0, k: 1 }, {
-    minZoom: sz.minZoom * 0.5,
+    minZoom: sz.fitMin * 0.75,
     maxZoom: 4,
     onPlainWheel: topic ? (dy) => topic.onGlide(dy / 300) : undefined,
   });
-  const fit = () => setView(fitView(bounds, size.w, size.h, sz.minZoom));
+  const fit = () => setView(fitView(bounds, size.w, size.h, sz.fitMin));
   useEffect(fit, [bounds, size.w, size.h]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- 4. The details sheet (phones). Starts tucked away unless you arrived at a claim. ----
+  const [sheetOpen, setSheetOpen] = useState(path.length > 1);
 
   const placedByKey = new Map<string, Placed>(placed.map((p) => [p.id, p]));
   const tap = (fn: () => void) => () => {
-    if (!wasDrag()) fn(); // ignore the "click" at the end of a drag or pinch
+    if (wasDrag()) return; // ignore the "click" at the end of a drag or pinch
+    fn();
+    setSheetOpen(true); // show what you just tapped
   };
 
   // Breadcrumb labels and the opinion chart for the current topic.
@@ -297,9 +307,9 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
                 return <line key={`l-${n.key}`} x1={0} y1={0} x2={p.x} y2={p.y} stroke={n.color} strokeOpacity={0.45} strokeWidth={2 * sz.scale} strokeDasharray={n.dashed ? '6 5' : n.dotted ? '2 5' : undefined} strokeLinecap="round" />;
               })}
 
-              {/* The bubble in the middle. */}
+              {/* The bubble in the middle. Tapping it shows / hides its details on phones. */}
               <circle r={sz.centerR * 1.75} fill="url(#glow)" />
-              <circle r={sz.centerR} fill="#0d1324" stroke={center.color} strokeWidth={3 * sz.scale} />
+              <circle r={sz.centerR} fill="#0d1324" stroke={center.color} strokeWidth={3 * sz.scale} className="map-center" onClick={() => { if (!wasDrag()) setSheetOpen((o) => !o); }} />
               <text className="node-text center" fontSize={sz.centerFont} textAnchor="middle">
                 {centerLines.map((l, i) => (
                   <tspan key={i} x={0} y={(i - (centerLines.length - 1) / 2) * sz.centerFont * 1.25 - sz.centerFont * 0.4} fontWeight={700}>{l}</tspan>
@@ -347,11 +357,11 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
             <button onClick={() => zoomBy(1 / 1.3)} aria-label="Zoom out">－</button>
             <button onClick={fit} aria-label="Fit map to screen">⤢</button>
           </div>
-          <p className="map-help">
+          {!mobile && <p className="map-help">
             {topic
               ? mobile ? 'Swipe the strip to glide · pinch to zoom · tap a bubble' : 'Scroll or drag the strip to glide along the topic river · Ctrl+scroll to zoom · click a bubble'
-              : mobile ? 'Drag to move · pinch to zoom · tap a bubble' : 'Drag to move · scroll or pinch to zoom · click a bubble'}
-          </p>
+              : 'Drag to move · scroll or pinch to zoom · click a bubble'}
+          </p>}
           {topic && (
             <TopicStrip
               data={data}
@@ -367,7 +377,14 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
           )}
         </div>
 
-        <aside className="map-side">
+        <aside className={`map-side ${mobile ? (sheetOpen ? 'sheet open' : 'sheet') : ''}`}>
+          {mobile && (
+            <button className="sheet-handle" onClick={() => setSheetOpen((o) => !o)} aria-expanded={sheetOpen}>
+              <span className="grabber" aria-hidden />
+              <span className="sheet-title">{truncate(center.label, 40)}</span>
+              <span className="sheet-toggle">{sheetOpen ? 'Hide ▾' : 'Details ▴'}</span>
+            </button>
+          )}
           {focus.kind === 'claim' ? (
             <ClaimDetail data={data} claimId={focus.id} onOpenSource={onOpenSource} onOpenEntity={onOpenEntity} onVote={onVote} />
           ) : focusStory ? (
@@ -402,6 +419,7 @@ export function ClaimMap({ data, path, setPath, onClose, onOpenSource, onOpenEnt
                 </p>
               )}
               <p>Tap a bubble to go deeper. Claims are coloured by their <b>earned status</b>; bubble size shows how much public attention they get.</p>
+              {mobile && <p className="muted small">Pinch to zoom the map · swipe the strip to glide along the topic river · ⤢ fits everything on screen.</p>}
               <Legend />
             </div>
           )}

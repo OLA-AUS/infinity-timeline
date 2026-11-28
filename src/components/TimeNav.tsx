@@ -6,7 +6,7 @@
 //   • Breadcrumb  — the trail of expansions: "Full river › May 1939 – Jun 1943 › …".
 //                   Click a step to go back to it.
 //   • OverviewBar — a thin bar showing all of history, with the expanded window highlighted
-//                   and a marker for where you are. Tap it to travel there.
+//                   and a marker for where you are. Tap or drag along it to travel.
 import type { ScaleLevel, TimeWindow } from '../lib/timeScale';
 import { LEVEL_LABEL, SCALE_LEVELS, windowLabel, YEAR_MAX, YEAR_MIN } from '../lib/timeScale';
 import { yearToS } from '../lib/time';
@@ -90,14 +90,22 @@ export function OverviewBar({ window, year, onTravel }: OverviewProps) {
     }
     return (lo + hi) / 2;
   };
-  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Tap to jump, or keep your finger down and drag along the bar to travel.
+  const travelTo = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
-    onTravel(fromPct(((e.clientX - r.left) / r.width) * 100));
+    onTravel(fromPct(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100))));
+  };
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    travelTo(e);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) travelTo(e);
   };
   const w = window ? { left: pct(window.start), width: Math.max(0.6, pct(window.end) - pct(window.start)) } : null;
 
   return (
-    <div className="overview" role="slider" aria-label="Where you are in all of history" aria-valuetext={formatYear(year)} aria-valuenow={Math.round(year)} aria-valuemin={YEAR_MIN} aria-valuemax={YEAR_MAX} tabIndex={0} onClick={onClick}>
+    <div className="overview" role="slider" aria-label="Where you are in all of history" aria-valuetext={formatYear(year)} aria-valuenow={Math.round(year)} aria-valuemin={YEAR_MIN} aria-valuemax={YEAR_MAX} tabIndex={0} onPointerDown={onPointerDown} onPointerMove={onPointerMove}>
       {OVERVIEW_TICKS.map((t) => (
         <span key={t} className={`ov-tick ${MINOR_TICKS.has(t) ? 'minor' : ''}`} style={{ left: `${pct(t)}%` }}>{formatYear(t)}</span>
       ))}
